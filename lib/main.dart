@@ -1,12 +1,15 @@
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hire_q/helpers/routes.dart';
-import 'package:hire_q/helpers/constants.dart';
-import 'package:hire_q/helpers/strings.dart';
+// import 'package:hire_q/helpers/constants.dart';
+// import 'package:hire_q/helpers/strings.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:hire_q/screens/splash/splash_screen.dart';
 import 'package:url_strategy/url_strategy.dart';
+// import provider
+import 'package:hire_q/provider/index.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +22,22 @@ void main() {
   FluroRouter.setupRouter();
   setPathUrlStrategy();
 
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(
+          value: AppState(),
+        ),
+        // ChangeNotifierProvider(
+        //   create: (_) => AppLocale(),
+        // ),
+        // ChangeNotifierProvider(
+        //     create: (_) => DataNotifier(),
+        //   ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

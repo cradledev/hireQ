@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
+// import provider
+import 'package:hire_q/provider/index.dart';
+import 'package:provider/provider.dart';
 
 class SwipeConfiguration {
   //Vertical swipe configuration options
   double verticalSwipeMaxWidthThreshold = 100.0;
-  double verticalSwipeMinDisplacement = 250.0;
-  double verticalSwipeMinVelocity = 100.0;
+  double verticalSwipeMinDisplacement = 300.0;
+  double verticalSwipeMinVelocity = 80.0;
 
   //Horizontal swipe configuration options
   double horizontalSwipeMaxHeightThreshold = 100.0;
@@ -72,11 +75,8 @@ class _SwipeDetector extends State<SwipeDetector>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
 
-  /// The alignment of the card as it is dragged or being animated.
-  ///
-  /// While the card is being dragged, this value is set to the values computed
-  /// in the GestureDetector onPanUpdate callback. If the animation is running,
-  /// this value is set to the value of the [_animation].
+  // appstate
+  AppState _appState;
   Alignment _dragAlignment = Alignment.center;
 
   Animation<Alignment> _animation;
@@ -119,6 +119,7 @@ class _SwipeDetector extends State<SwipeDetector>
         _dragAlignment = _animation.value;
       });
     });
+    _appState = Provider.of<AppState>(context, listen: false);
   }
 
   @override
@@ -134,13 +135,11 @@ class _SwipeDetector extends State<SwipeDetector>
     //Horizontal drag details
     DragStartDetails startHorizontalDragDetails;
     DragUpdateDetails updateHorizontalDragDetails;
-    final size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size * 0.8;
     return GestureDetector(
       child: Align(
         alignment: _dragAlignment,
-        child: Card(
-          child: widget.child,
-        ),
+        child: widget.child,
       ),
       // onPanDown: (details) {
       //   _controller.stop();
@@ -162,11 +161,21 @@ class _SwipeDetector extends State<SwipeDetector>
         // });
       },
       onVerticalDragUpdate: (dragDetails) {
+        // print(dragDetails.globalPosition.dy);
+        // print(dragDetails.delta.direction);
+        if (dragDetails.delta.direction > 1 &&
+            dragDetails.globalPosition.dy > (size.height / 2)) {
+          _appState.talentSwipeUp = false;
+        }
+        if (dragDetails.delta.direction < 1 &&
+            dragDetails.globalPosition.dy < (size.height / 2)) {
+          _appState.talentSwipeUp = true;
+        }
         setState(() {
           // updateVerticalDragDetails = dragDetails;
           _dragAlignment += Alignment(
             0,
-            dragDetails.delta.dy / (size.height / 2),
+            dragDetails.delta.dy / (size.height / 15),
           );
         });
       },
@@ -197,18 +206,40 @@ class _SwipeDetector extends State<SwipeDetector>
         //   return;
         // }
         double dx = dragDx * size.width / 2;
-        double dy = dragDy * size.height / 2;
-
+        double dy = dragDy * size.height / 15;
+        // print("dy==================");
+        // print(dy);
+        // if (dx > widget.swipeConfiguration.verticalSwipeMaxWidthThreshold) {
+        //   print(1);
+        //   _runAnimation(endDetails.velocity.pixelsPerSecond, size);
+        //   return;
+        // }
+        // if (dy < widget.swipeConfiguration.verticalSwipeMinDisplacement) {
+        //   print(2);
+        //   _runAnimation(endDetails.velocity.pixelsPerSecond, size);
+        //   return;
+        // }
+        // if (positiveVelocity <
+        //     widget.swipeConfiguration.verticalSwipeMinVelocity) {
+        //   print(3);
+        //   _runAnimation(endDetails.velocity.pixelsPerSecond, size);
+        //   return;
+        // }
         if (dx > widget.swipeConfiguration.verticalSwipeMaxWidthThreshold) {
+          // print(1);
           _runAnimation(endDetails.velocity.pixelsPerSecond, size);
           return;
         }
-        if (dy < widget.swipeConfiguration.verticalSwipeMinDisplacement) {
+        // print("dy ==========");
+        // print(dy);
+        if (dy < size.height * 0.8) {
+          // print(2);
           _runAnimation(endDetails.velocity.pixelsPerSecond, size);
           return;
         }
         if (positiveVelocity <
             widget.swipeConfiguration.verticalSwipeMinVelocity) {
+          // print(3);
           _runAnimation(endDetails.velocity.pixelsPerSecond, size);
           return;
         }

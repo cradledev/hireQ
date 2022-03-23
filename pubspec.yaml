@@ -42,6 +42,10 @@ dependencies:
   flutter_easyloading: ^3.0.3
 
   fancy_bottom_navigation: ^0.3.2
+
+  shared_preferences: 2.0.0
+  toast:  ^0.1.5
+  cached_network_image: ^3.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

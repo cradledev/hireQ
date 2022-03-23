@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -333,6 +335,30 @@ class DismissKeyboard extends StatelessWidget {
         }
       },
       child: child,
+    );
+  }
+}
+
+class HireQLogo extends StatelessWidget {
+  const HireQLogo({
+    Key key,
+    this.fontSize = 60.0,
+  }) : super(key: key);
+
+  final double fontSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: fontSize * 2.7,
+      child: Hero(
+        tag: 'logo',
+        child: Image.asset(
+          "assets/icons/Q.png",
+          height: 60,
+          fit: BoxFit.fitHeight,
+        ),
+      ),
     );
   }
 }

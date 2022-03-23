@@ -20,7 +20,7 @@ class _HomeScreen extends State<HomeScreen> {
         backgroundColor: primaryColor,
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 15),
+        padding: const EdgeInsets.symmetric(horizontal: 15),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
