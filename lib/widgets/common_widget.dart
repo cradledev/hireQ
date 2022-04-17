@@ -260,6 +260,39 @@ class ImageTextButton extends StatelessWidget {
   }
 }
 
+class ImageButton extends StatelessWidget {
+  final Function() onPressed;
+  final String image;
+  final double imageHeight;
+  final double radius;
+
+  const ImageButton({
+    Key key,
+    this.onPressed,
+    this.image,
+    this.imageHeight = 50,
+    this.radius = 15,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onPressed,
+      child: Container(
+        width: imageHeight,
+        height: imageHeight,
+        padding: EdgeInsets.zero,
+        color: Colors.transparent,
+        child: Image.asset(
+          image,
+          width: imageHeight * 0.6,
+          fit: BoxFit.fitWidth,
+        ),
+      ),
+    );
+  }
+}
+
 class AppbarSearchFormField extends StatelessWidget {
   final String hintText;
   final bool obsecureText;

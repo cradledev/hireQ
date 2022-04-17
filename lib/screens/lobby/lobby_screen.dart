@@ -1,7 +1,6 @@
 import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 import 'package:hire_q/helpers/constants.dart';
 import 'package:hire_q/widgets/common_widget.dart';
 
@@ -11,9 +10,9 @@ import 'package:hire_q/screens/profile/profile_screen.dart';
 import 'package:hire_q/screens/talent/talent_screen.dart';
 
 class LobbyScreen extends StatefulWidget {
-  LobbyScreen({Key key, this.indexTab, this.tabString}) : super(key: key);
-  int indexTab;
-  String tabString;
+  const LobbyScreen({Key key, this.indexTab, this.tabString}) : super(key: key);
+  final int indexTab;
+  final String tabString;
 
   @override
   _LobbyScreen createState() => _LobbyScreen();

@@ -1,7 +1,6 @@
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hire_q/helpers/routes.dart';
-// import 'package:hire_q/helpers/constants.dart';
-// import 'package:hire_q/helpers/strings.dart';
+import 'package:hire_q/helpers/constants.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -50,10 +49,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
-        // primarySwatch: primaryColor,
-        // textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme)
-        //     .apply(bodyColor: Colors.white),
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        primaryColor: primaryColor,
+        // scaffoldBackgroundColor: Colors.grey.shade100,
+        // visualDensity: VisualDensity.adaptivePlatformDensity,
+        // colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple)
+        //     .copyWith(secondary: secondaryColor),
       ),
       initialRoute: '/',
       // onUnknownRoute: (settings) => MaterialPageRoute(

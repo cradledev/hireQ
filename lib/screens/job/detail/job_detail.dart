@@ -1,21 +1,22 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:hire_q/helpers/constants.dart';
-import 'package:hire_q/models/talent_model.dart';
+import 'package:hire_q/models/job_model.dart';
 
 import 'package:hire_q/widgets/common_widget.dart';
 
 // import lobby page
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
 
-class TalentDetail extends StatelessWidget {
-  TalentDetail({Key key, this.data}) : super(key: key);
+class JobDetail extends StatelessWidget {
+  JobDetail({Key key, this.data}) : super(key: key);
 
-  final TalentModel data;
+  final JobModel data;
   // bottom navbar
-  int currentPage = 1;
+  int currentPage = 0;
 
   void _minimizeDetail(BuildContext context) {
     final newRoute = PageRouteBuilder(
@@ -86,45 +87,79 @@ class TalentDetail extends StatelessWidget {
               height: size.height,
               child: Column(
                 children: <Widget>[
-                  SizedBox(height: size.height * .26),
-                  Center(
-                    child: HireQLogo(
-                      fontSize: size.height * .065,
+                  SizedBox(height: size.height * .24),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
+                      width: size.width,
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color.fromRGBO(204, 209, 206, 1),
+                            Color.fromRGBO(204, 209, 206, 0.0),
+                          ],
+                          stops: [1, 0.0],
+                        ),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10),
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          HireQLogo(
+                            fontSize: size.height * .065,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  data.companyName,
+                                  style: const TextStyle(
+                                      color: Colors.black87, fontSize: 28),
+                                ),
+                                SizedBox(
+                                  width: 64,
+                                  child: Hero(
+                                    tag: 'company_logo' + data.id.toString(),
+                                    child: CachedNetworkImage(
+                                      imageUrl: data.logo,
+                                      progressIndicatorBuilder:
+                                          (context, url, downloadProgress) {
+                                        return Center(
+                                          child: SizedBox(
+                                            width: 30,
+                                            height: 30,
+                                            child: CircularProgressIndicator(
+                                                value:
+                                                    downloadProgress.progress),
+                                          ),
+                                        );
+                                      },
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   const Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        SizedBox(
-                          height: 35,
-                          width: 35,
-                          child: RawMaterialButton(
-                            onPressed: () {
-                              resizeNotifier.value = false;
-                              Navigator.pop(context);
-                            },
-                            elevation: 1.0,
-                            fillColor: Colors.white,
-                            child: const Icon(
-                              CupertinoIcons.minus,
-                              size: 30.0,
-                              color: primaryColor,
-                            ),
-                            padding: const EdgeInsets.all(0),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5)),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                   Stack(
                     children: [
                       Container(
-                        height: 300,
+                        height: size.height * .5,
                         margin: const EdgeInsets.only(top: 20),
                         width: double.infinity,
                         color: Colors.white,
@@ -142,13 +177,46 @@ class TalentDetail extends StatelessWidget {
                                           child: Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Text(
-                                              data.firstName +
-                                                  " " +
-                                                  data.lastName,
+                                              data.title + " " + data.title,
                                               style: const TextStyle(
                                                   fontSize: 28,
                                                   color: primaryColor),
                                             ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              SizedBox(
+                                                height: 35,
+                                                width: 35,
+                                                child: RawMaterialButton(
+                                                  onPressed: () {
+                                                    resizeNotifier.value =
+                                                        false;
+                                                    Navigator.pop(context);
+                                                  },
+                                                  elevation: 1.0,
+                                                  fillColor: primaryColor,
+                                                  child: const Icon(
+                                                    CupertinoIcons.minus,
+                                                    size: 30.0,
+                                                    color: Colors.white,
+                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.all(0),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
@@ -184,7 +252,7 @@ class TalentDetail extends StatelessWidget {
                                           child: Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Text(
-                                              data.description,
+                                              data.requirement,
                                               style: const TextStyle(
                                                   fontSize: 18,
                                                   color: Colors.grey),

@@ -2,8 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class ImageGradientOverlay extends StatefulWidget {
-  ImageGradientOverlay({Key key, this.imageUrl}) : super(key: key);
-  String imageUrl;
+  const ImageGradientOverlay({Key key, this.imageUrl}) : super(key: key);
+  final String imageUrl;
 
   @override
   ImageGradientOverlayState createState() => ImageGradientOverlayState();
@@ -50,18 +50,18 @@ class ImageGradientOverlayState extends State<ImageGradientOverlay> {
         const Positioned.fill(
           child: DecoratedBox(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.center,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color.fromRGBO(10, 16, 63, 0.0),
-                  Color.fromRGBO(57, 35, 81, 0.3),
-                  Color.fromRGBO(57, 35, 81, 0.6),
-                  Color.fromRGBO(57, 35, 81, 0.9)
-                ],
-                stops: [0.0, 0.2, 0.6867, 0.9913],
-              ),
-            ),
+                gradient: LinearGradient(
+                  begin: Alignment.center,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color.fromRGBO(10, 16, 63, 0.0),
+                    Color.fromRGBO(57, 35, 81, 0.3),
+                    Color.fromRGBO(57, 35, 81, 0.6),
+                    Color.fromRGBO(57, 35, 81, 0.9)
+                  ],
+                  stops: [0.0, 0.2, 0.6867, 0.9913],
+                ),
+                borderRadius: BorderRadius.all(Radius.circular(12))),
           ),
         ),
       ],

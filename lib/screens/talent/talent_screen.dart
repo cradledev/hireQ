@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hire_q/provider/index.dart';
-import 'package:hire_q/widgets/common_widget.dart';
 
 import 'package:hire_q/widgets/swipe_detector.dart';
 import 'package:provider/provider.dart';
 
 import './widgets/talent_card.dart';
 import 'package:hire_q/models/talent_model.dart';
+// import home page
+import 'package:hire_q/screens/home/home_screen.dart';
 
 class TalentScreen extends StatefulWidget {
   const TalentScreen({Key key}) : super(key: key);
@@ -101,6 +102,20 @@ class _TalentScreen extends State<TalentScreen> {
                     ), //Your Widget Tree here
                     onSwipeUp: () {
                       print("Swipe Up");
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration:
+                                const Duration(milliseconds: 800),
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) {
+                              return FadeTransition(
+                                opacity: animation,
+                                child: const HomeScreen(),
+                              );
+                            },
+                          ),
+                          (Route<dynamic> route) => false);
                     },
                     onSwipeDown: () {
                       print("Swipe Down");

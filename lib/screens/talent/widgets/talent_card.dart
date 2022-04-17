@@ -5,7 +5,7 @@ import 'package:hire_q/models/talent_model.dart';
 import 'package:hire_q/widgets/common_widget.dart';
 
 import '../detail/talent_detail.dart';
-import './image_gradient_overlay.dart';
+import 'package:hire_q/widgets/image_gradient_overlay.dart';
 
 class TalentCard extends StatelessWidget {
   final BuildContext buildContext;
@@ -80,7 +80,8 @@ class TalentCard extends StatelessWidget {
                               width: 35,
                               child: RawMaterialButton(
                                 onPressed: () {
-                                  _openPage(context, const TalentDetail());
+                                  _openPage(
+                                      context, TalentDetail(data: talentData));
                                 },
                                 elevation: 1.0,
                                 fillColor: Colors.white,

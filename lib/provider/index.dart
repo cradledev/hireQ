@@ -5,12 +5,18 @@ import 'package:flutter/material.dart';
 
 class AppState extends ChangeNotifier {
   bool _talentSwipeUp = false;
+  bool _isTalent = true;
   //get
   get talentSwipeUp => _talentSwipeUp;
-
+  get isTalent => _isTalent;
   // set
   set talentSwipeUp(value) {
     _talentSwipeUp = value;
+    notifyListeners();
+  }
+
+  set isTalent(value) {
+    _isTalent = value;
     notifyListeners();
   }
 
