@@ -1,11 +1,9 @@
-import 'dart:ui';
-
-import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
+// import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hire_q/helpers/constants.dart';
-import 'package:hire_q/screens/auth/login_screen.dart';
+// import 'package:hire_q/screens/auth/login_screen.dart';
 
 class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
   @override
@@ -69,11 +67,7 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
                 onPressed: actionEvent,
               ),
             ]
-          : [
-              const SizedBox(
-                width: 0,
-              )
-            ],
+          : null,
       centerTitle: true,
       flexibleSpace: Container(
         decoration: BoxDecoration(
@@ -167,6 +161,81 @@ class OutlineButtonCustom extends StatelessWidget {
               color: primaryColor,
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class OutlineButtonCustomWithIcon extends StatelessWidget {
+  final String text;
+  final Function() onTap;
+  final double height;
+  final String image;
+
+  const OutlineButtonCustomWithIcon(
+      {Key key, this.onTap, this.text, this.height = 60, this.image})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        height: height,
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.7),
+          borderRadius: const BorderRadius.all(
+            Radius.circular(20),
+          ),
+          border: Border.all(
+            width: 2.0,
+            color: primaryColor,
+          ),
+          boxShadow: [
+            BoxShadow(
+              offset: const Offset(0, 1),
+              blurRadius: 5,
+              color: Colors.black.withOpacity(0.3),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              height: height,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    bottomLeft: Radius.circular(20)),
+                color: Colors.transparent,
+              ),
+              child: Image.asset(
+                image,
+                height: height * 0.8,
+                // color: Colors.transparent,
+                fit: BoxFit.cover,
+              ),
+            ),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(5),
+                color: Colors.transparent,
+                height: height,
+                alignment: Alignment.center,
+                child: Text(
+                  text,
+                  style: const TextStyle(
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.normal,
+                    color: primaryColor,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -390,6 +459,54 @@ class HireQLogo extends StatelessWidget {
           "assets/icons/Q.png",
           height: 60,
           fit: BoxFit.fitHeight,
+        ),
+      ),
+    );
+  }
+}
+
+class ReusableCard extends StatelessWidget {
+  const ReusableCard(
+      {Key key, this.title, this.content, this.backgroundColor, this.onTap})
+      : super(key: key);
+  final Widget title;
+  final Widget content;
+  final Color backgroundColor;
+  final Function() onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          elevation: 7,
+          color: backgroundColor,
+          shadowColor: Colors.grey,
+          child: Column(
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Center(
+                      child: title,
+                    ),
+                  ),
+                ],
+              ),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [content],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

@@ -7,7 +7,12 @@ import 'package:hire_q/widgets/common_widget.dart';
 import 'package:hire_q/screens/job/job_screen.dart';
 import 'package:hire_q/screens/message/message_screen.dart';
 import 'package:hire_q/screens/profile/profile_screen.dart';
+import 'package:hire_q/screens/profile/profile_company_screen.dart';
 import 'package:hire_q/screens/talent/talent_screen.dart';
+
+import 'package:provider/provider.dart';
+
+import 'package:hire_q/provider/index.dart';
 
 class LobbyScreen extends StatefulWidget {
   const LobbyScreen({Key key, this.indexTab, this.tabString}) : super(key: key);
@@ -19,6 +24,8 @@ class LobbyScreen extends StatefulWidget {
 }
 
 class _LobbyScreen extends State<LobbyScreen> {
+  // appstate
+  AppState _appState;
   // bottom navbar
   int currentPage = 0;
   // search text controller
@@ -28,6 +35,7 @@ class _LobbyScreen extends State<LobbyScreen> {
     super.initState();
     currentPage = widget.indexTab;
     _searchTextController = TextEditingController();
+    _appState = Provider.of<AppState>(context, listen: false);
   }
 
   @override
@@ -37,12 +45,21 @@ class _LobbyScreen extends State<LobbyScreen> {
   }
 
   List<Widget> _buildScreens() {
-    return [
-      const JobScreen(),
-      const TalentScreen(),
-      const MessageScreen(),
-      const ProfileScreen()
-    ];
+    if (_appState.isTalent) {
+      return [
+        const JobScreen(),
+        const TalentScreen(),
+        const MessageScreen(),
+        const ProfileScreen()
+      ];
+    } else {
+      return [
+        const JobScreen(),
+        const TalentScreen(),
+        const MessageScreen(),
+        const ProfileCompanyScreen()
+      ];
+    }
   }
 
   @override
