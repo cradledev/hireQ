@@ -10,6 +10,8 @@ import 'package:url_strategy/url_strategy.dart';
 // import provider
 import 'package:hire_q/provider/index.dart';
 
+import 'package:intl/date_symbol_data_local.dart';
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
@@ -20,21 +22,22 @@ void main() {
   ));
   FluroRouter.setupRouter();
   setPathUrlStrategy();
-
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(
-          value: AppState(),
-        ),
-        // ChangeNotifierProvider(
-        //   create: (_) => AppLocale(),
-        // ),
-        // ChangeNotifierProvider(
-        //     create: (_) => DataNotifier(),
-        //   ),
-      ],
-      child: const MyApp(),
+  initializeDateFormatting().then(
+    (_) => runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(
+            value: AppState(),
+          ),
+          // ChangeNotifierProvider(
+          //   create: (_) => AppLocale(),
+          // ),
+          // ChangeNotifierProvider(
+          //     create: (_) => DataNotifier(),
+          //   ),
+        ],
+        child: const MyApp(),
+      ),
     ),
   );
 }

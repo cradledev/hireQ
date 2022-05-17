@@ -58,80 +58,85 @@ class _JobScreen extends State<JobScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => AppState(),
-      child: Consumer<AppState>(
-        builder: ((context, value, child) {
-          return Stack(
-            fit: StackFit.expand,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.5,
-                    height: MediaQuery.of(context).size.width * 0.5,
-                    alignment: Alignment.center,
-                    child: Padding(
-                      padding: EdgeInsets.zero,
-                      child: Image.asset(
-                        value.talentSwipeUp
-                            ? 'assets/icons/up.png'
-                            : 'assets/icons/down.png',
-                        fit: BoxFit.cover,
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: ChangeNotifierProvider(
+        create: (context) => AppState(),
+        child: Consumer<AppState>(
+          builder: ((context, value, child) {
+            return Stack(
+              fit: StackFit.expand,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      height: MediaQuery.of(context).size.width * 0.5,
+                      alignment: Alignment.center,
+                      child: Padding(
+                        padding: EdgeInsets.zero,
+                        child: Image.asset(
+                          value.talentSwipeUp
+                              ? 'assets/icons/up.png'
+                              : 'assets/icons/down.png',
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              PageView.builder(
-                itemCount: _talents.length,
-                controller: _pageController,
-                // NeverScrollableScrollPhysics disables PageView built-in gestures.
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return SwipeDetector(
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height * 0.8,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      // decoration: BoxDecoration(
-                      //     borderRadius: BorderRadius.all(Radius.circular(50))),
-                      child: JobCard(
-                          buildContext: context, jobData: _talents[index]),
-                    ), //Your Widget Tree here
-                    onSwipeUp: () {
-                      print("Swipe Up");
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          PageRouteBuilder(
-                            transitionDuration:
-                                const Duration(milliseconds: 800),
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) {
-                              return FadeTransition(
-                                opacity: animation,
-                                child: const HomeScreen(),
-                              );
-                            },
-                          ),
-                          (Route<dynamic> route) => false);
-                    },
-                    onSwipeDown: () {
-                      print("Swipe Down");
-                    },
-                    onSwipeLeft: () {
-                      _goForward();
-                    },
-                    onSwipeRight: () {
-                      _goBack();
-                    },
-                  );
-                },
-              )
-            ],
-          );
-        }),
+                  ],
+                ),
+                PageView.builder(
+                  itemCount: _talents.length,
+                  controller: _pageController,
+                  // NeverScrollableScrollPhysics disables PageView built-in gestures.
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return SwipeDetector(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.8,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        // decoration: BoxDecoration(
+                        //     borderRadius: BorderRadius.all(Radius.circular(50))),
+                        child: JobCard(
+                            buildContext: context, jobData: _talents[index]),
+                      ), //Your Widget Tree here
+                      onSwipeUp: () {
+                        print("Swipe Up");
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            PageRouteBuilder(
+                              transitionDuration:
+                                  const Duration(milliseconds: 800),
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) {
+                                return FadeTransition(
+                                  opacity: animation,
+                                  child: const HomeScreen(),
+                                );
+                              },
+                            ),
+                            (Route<dynamic> route) => false);
+                      },
+                      onSwipeDown: () {
+                        print("Swipe Down");
+                      },
+                      onSwipeLeft: () {
+                        _goForward();
+                      },
+                      onSwipeRight: () {
+                        _goBack();
+                      },
+                    );
+                  },
+                )
+              ],
+            );
+          }),
+        ),
       ),
     );
   }

@@ -2,6 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hire_q/helpers/constants.dart';
+import 'package:hire_q/screens/appliedq/applied_q_company_screen.dart';
+import 'package:hire_q/screens/jobsq/jobs_q_company_screen.dart';
+import 'package:hire_q/screens/videoview/video_view_screen.dart';
 import 'package:hire_q/widgets/common_widget.dart';
 
 import 'package:steps_indicator/steps_indicator.dart';
@@ -57,6 +60,7 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
               Container(
                 height: MediaQuery.of(context).size.height * 0.35 * 4 / 6 +
                     MediaQuery.of(context).size.height * 0.33 * 2 / 5,
+                padding: EdgeInsets.zero,
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
@@ -462,7 +466,22 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
                                   TextStyle(color: accentColor, fontSize: 40),
                             ),
                             backgroundColor: primaryColor,
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  transitionDuration:
+                                      const Duration(milliseconds: 500),
+                                  pageBuilder:
+                                      (context, animation, secondaryAnimation) {
+                                    return FadeTransition(
+                                      opacity: animation,
+                                      child: const VideoViewScreen(),
+                                    );
+                                  },
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ],
@@ -490,7 +509,22 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
                                   TextStyle(color: Colors.white, fontSize: 40),
                             ),
                             backgroundColor: secondaryColor,
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  transitionDuration:
+                                      const Duration(milliseconds: 500),
+                                  pageBuilder:
+                                      (context, animation, secondaryAnimation) {
+                                    return FadeTransition(
+                                      opacity: animation,
+                                      child: const AppliedQCompanyScreen(),
+                                    );
+                                  },
+                                ),
+                              );
+                            },
                           ),
                         ),
                         SizedBox(
@@ -498,7 +532,7 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
                           width: MediaQuery.of(context).size.width * 0.46,
                           child: ReusableCard(
                             title: const Text(
-                              "Jobs Q",
+                              "Jobs Shortlist Q",
                               style: TextStyle(
                                 color: primaryColor,
                                 fontSize: 16,
@@ -510,7 +544,22 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
                                   TextStyle(color: primaryColor, fontSize: 40),
                             ),
                             backgroundColor: accentColor,
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  transitionDuration:
+                                      const Duration(milliseconds: 500),
+                                  pageBuilder:
+                                      (context, animation, secondaryAnimation) {
+                                    return FadeTransition(
+                                      opacity: animation,
+                                      child: const JobsQCompanyScreen(),
+                                    );
+                                  },
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ],

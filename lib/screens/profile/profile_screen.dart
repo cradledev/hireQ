@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hire_q/helpers/constants.dart';
 import 'package:hire_q/screens/appliedq/applied_q_talent_screen.dart';
+import 'package:hire_q/screens/lobby/lobby_screen.dart';
 import 'package:hire_q/screens/videoview/video_view_screen.dart';
 import 'package:hire_q/widgets/common_widget.dart';
 
@@ -226,74 +227,98 @@ class _ProfileScreen extends State<ProfileScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        CircleAvatar(
-                          radius: 25.0,
-                          backgroundColor: Color(0xffC8D3D5),
-                          child: Image(
-                            image: AssetImage("assets/icons/Creat video.png"),
-                            height: 22.0,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.zero,
-                          child: Text(
-                            "Create Video",
-                            style: TextStyle(
-                              color: primaryColor,
-                              fontSize: 16,
+                    InkWell(
+                      onTap: () {},
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          CircleAvatar(
+                            radius: 25.0,
+                            backgroundColor: Color(0xffC8D3D5),
+                            child: Image(
+                              image: AssetImage("assets/icons/Creat video.png"),
+                              height: 22.0,
                             ),
                           ),
-                        ),
-                      ],
+                          Padding(
+                            padding: EdgeInsets.zero,
+                            child: Text(
+                              "Create Video",
+                              style: TextStyle(
+                                color: primaryColor,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        CircleAvatar(
-                          radius: 25.0,
-                          backgroundColor: Color(0xffC8D3D5),
-                          child: Image(
-                            image: AssetImage("assets/icons/message.png"),
-                            height: 22.0,
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration:
+                                const Duration(milliseconds: 800),
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) {
+                              return FadeTransition(
+                                opacity: animation,
+                                child: const LobbyScreen(indexTab: 2),
+                              );
+                            },
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.zero,
-                          child: Text(
-                            "Message",
-                            style: TextStyle(
-                              color: primaryColor,
-                              fontSize: 16,
+                        );
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          CircleAvatar(
+                            radius: 25.0,
+                            backgroundColor: Color(0xffC8D3D5),
+                            child: Image(
+                              image: AssetImage("assets/icons/message.png"),
+                              height: 22.0,
                             ),
                           ),
-                        ),
-                      ],
+                          Padding(
+                            padding: EdgeInsets.zero,
+                            child: Text(
+                              "Message",
+                              style: TextStyle(
+                                color: primaryColor,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        CircleAvatar(
-                          radius: 25.0,
-                          backgroundColor: Color(0xffC8D3D5),
-                          child: Image(
-                            image: AssetImage("assets/icons/upload file.png"),
-                            height: 22.0,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.zero,
-                          child: Text(
-                            "Upload File",
-                            style: TextStyle(
-                              color: primaryColor,
-                              fontSize: 16,
+                    InkWell(
+                      onTap: () {},
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          CircleAvatar(
+                            radius: 25.0,
+                            backgroundColor: Color(0xffC8D3D5),
+                            child: Image(
+                              image: AssetImage("assets/icons/upload file.png"),
+                              height: 22.0,
                             ),
                           ),
-                        ),
-                      ],
+                          Padding(
+                            padding: EdgeInsets.zero,
+                            child: Text(
+                              "Upload File",
+                              style: TextStyle(
+                                color: primaryColor,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),

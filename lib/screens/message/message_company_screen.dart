@@ -1,34 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hire_q/helpers/constants.dart';
-import 'package:hire_q/models/talent_model.dart';
-import 'package:hire_q/screens/detail_board/talent_detail_board.dart';
+import 'package:hire_q/screens/detail_board/message_talent_board.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
 
-import 'package:hire_q/widgets/common_widget.dart';
+class MessageCompanyScreen extends StatefulWidget {
+  const MessageCompanyScreen({Key key}) : super(key: key);
 
-class VideoViewScreen extends StatefulWidget {
-  const VideoViewScreen({Key key}) : super(key: key);
   @override
-  _VideoViewScreen createState() => _VideoViewScreen();
+  _MessageCompanyScreen createState() => _MessageCompanyScreen();
 }
 
-class _VideoViewScreen extends State<VideoViewScreen> {
-  int currentPage = 3;
-  // search text controller
-  TextEditingController _searchTextController;
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
+class _MessageCompanyScreen extends State<MessageCompanyScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -36,67 +20,6 @@ class _VideoViewScreen extends State<VideoViewScreen> {
         return false;
       },
       child: Scaffold(
-        appBar: CustomAppBar(
-          leadingIcon: const Icon(
-            CupertinoIcons.line_horizontal_3,
-            size: 40,
-            color: Colors.white,
-          ),
-          backgroundColor: primaryColor,
-          leadingAction: () {},
-          leadingFlag: true,
-          actionEvent: () {},
-          actionFlag: true,
-          actionIcon: const Icon(
-            CupertinoIcons.bell_fill,
-            size: 30,
-            color: Colors.white,
-          ),
-          title: AppbarSearchFormField(
-            obsecureText: false,
-            textInputType: TextInputType.text,
-            prefixIcon: const Icon(
-              CupertinoIcons.search,
-              color: secondaryColor,
-            ),
-            maxLines: 1,
-            textInputAction: TextInputAction.done,
-            suffixIcon: const Icon(
-              CupertinoIcons.slider_horizontal_3,
-              color: secondaryColor,
-            ),
-            controller: _searchTextController,
-          ),
-        ),
-        bottomNavigationBar: FancyBottomNavigation(
-          tabs: [
-            TabData(iconData: CupertinoIcons.briefcase_fill, title: "Job"),
-            TabData(iconData: CupertinoIcons.person_3_fill, title: "Talent"),
-            TabData(
-                iconData: CupertinoIcons.chat_bubble_2_fill, title: "Messages"),
-            TabData(iconData: CupertinoIcons.person_fill, title: "Profile")
-          ],
-          onTabChangedListener: (position) {
-            currentPage = position;
-            Navigator.push(
-              context,
-              PageRouteBuilder(
-                transitionDuration: const Duration(milliseconds: 800),
-                pageBuilder: (context, animation, secondaryAnimation) {
-                  return FadeTransition(
-                    opacity: animation,
-                    child: LobbyScreen(indexTab: currentPage),
-                  );
-                },
-              ),
-            );
-          },
-          initialSelection: currentPage,
-          activeIconColor: Colors.white,
-          circleColor: primaryColor,
-          textColor: primaryColor,
-          inactiveIconColor: Colors.grey,
-        ),
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,12 +31,25 @@ class _VideoViewScreen extends State<VideoViewScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      "Video Views",
+                      "Message Sent & Received",
                       style: TextStyle(fontSize: 26, color: primaryColor),
                     ),
                     IconButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration:
+                                const Duration(milliseconds: 800),
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) {
+                              return FadeTransition(
+                                opacity: animation,
+                                child: const LobbyScreen(indexTab: 3),
+                              );
+                            },
+                          ),
+                        );
                       },
                       icon: const Icon(CupertinoIcons.forward),
                       color: primaryColor,
@@ -137,9 +73,7 @@ class _VideoViewScreen extends State<VideoViewScreen> {
                                 (context, animation, secondaryAnimation) {
                               return FadeTransition(
                                 opacity: animation,
-                                child: TalentDetailBoard(
-                                  data: TalentModel.dumpListData[1],
-                                ),
+                                child: const MessageTalentBoard(),
                               );
                             },
                           ),
@@ -157,7 +91,7 @@ class _VideoViewScreen extends State<VideoViewScreen> {
                                 width: 64,
                                 height: 64,
                                 imageUrl:
-                                    "https://images.unsplash.com/photo-1569124589354-615739ae007b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
+                                    "https://images.pexels.com/photos/3244513/pexels-photo-3244513.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
                                 progressIndicatorBuilder:
                                     (context, url, downloadProgress) {
                                   return Center(
@@ -194,7 +128,7 @@ class _VideoViewScreen extends State<VideoViewScreen> {
                                       padding:
                                           EdgeInsets.symmetric(horizontal: 8),
                                       child: Text(
-                                        "Beca Lway",
+                                        "Project Manager",
                                         style: TextStyle(
                                           color: primaryColor,
                                           fontSize: 16,
@@ -205,7 +139,7 @@ class _VideoViewScreen extends State<VideoViewScreen> {
                                       padding:
                                           EdgeInsets.symmetric(horizontal: 8),
                                       child: Text(
-                                        "@Beca_Lway",
+                                        "Riyadh",
                                         style: TextStyle(
                                           color: Colors.black45,
                                           fontSize: 16,
@@ -214,18 +148,6 @@ class _VideoViewScreen extends State<VideoViewScreen> {
                                     ),
                                   ],
                                 ),
-                                // child: const ListTile(
-                                //   title: Text(
-                                //     "Jeddah",
-                                //     style: TextStyle(
-                                //       color: primaryColor,
-                                //     ),
-                                //   ),
-                                //   subtitle: Text(
-                                //     "Project Manager",
-                                //     style: TextStyle(fontSize: 16),
-                                //   ),
-                                // ),
                               ),
                             ),
                           ],

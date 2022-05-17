@@ -2,6 +2,7 @@ import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hire_q/helpers/constants.dart';
+import 'package:hire_q/screens/message/message_company_screen.dart';
 import 'package:hire_q/widgets/common_widget.dart';
 
 import 'package:hire_q/screens/job/job_screen.dart';
@@ -56,7 +57,7 @@ class _LobbyScreen extends State<LobbyScreen> {
       return [
         const JobScreen(),
         const TalentScreen(),
-        const MessageScreen(),
+        const MessageCompanyScreen(),
         const ProfileCompanyScreen()
       ];
     }

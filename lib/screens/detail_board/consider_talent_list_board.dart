@@ -9,13 +9,14 @@ import 'package:hire_q/screens/lobby/lobby_screen.dart';
 
 import 'package:hire_q/widgets/common_widget.dart';
 
-class VideoViewScreen extends StatefulWidget {
-  const VideoViewScreen({Key key}) : super(key: key);
+class ConsiderTalentListBoard extends StatefulWidget {
+  const ConsiderTalentListBoard({Key key, this.title}) : super(key: key);
+  final String title;
   @override
-  _VideoViewScreen createState() => _VideoViewScreen();
+  _ConsiderTalentListBoard createState() => _ConsiderTalentListBoard();
 }
 
-class _VideoViewScreen extends State<VideoViewScreen> {
+class _ConsiderTalentListBoard extends State<ConsiderTalentListBoard> {
   int currentPage = 3;
   // search text controller
   TextEditingController _searchTextController;
@@ -107,9 +108,9 @@ class _VideoViewScreen extends State<VideoViewScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      "Video Views",
-                      style: TextStyle(fontSize: 26, color: primaryColor),
+                    Text(
+                      widget.title,
+                      style: const TextStyle(fontSize: 26, color: primaryColor),
                     ),
                     IconButton(
                       onPressed: () {
@@ -214,18 +215,6 @@ class _VideoViewScreen extends State<VideoViewScreen> {
                                     ),
                                   ],
                                 ),
-                                // child: const ListTile(
-                                //   title: Text(
-                                //     "Jeddah",
-                                //     style: TextStyle(
-                                //       color: primaryColor,
-                                //     ),
-                                //   ),
-                                //   subtitle: Text(
-                                //     "Project Manager",
-                                //     style: TextStyle(fontSize: 16),
-                                //   ),
-                                // ),
                               ),
                             ),
                           ],
@@ -233,7 +222,7 @@ class _VideoViewScreen extends State<VideoViewScreen> {
                       ),
                     );
                   },
-                  itemCount: 30,
+                  itemCount: 15,
                   shrinkWrap: true,
                   physics: AlwaysScrollableScrollPhysics(),
                   scrollDirection: Axis.vertical,
