@@ -33,32 +33,39 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^1.0.4
 
-  provider: ^6.0.2
+  provider: ^6.0.3
   fluro: ^2.0.3
-  http: ^0.13.3
+  http: ^0.13.4
   url_strategy: ^0.2.0
-  flutter_easyloading: ^3.0.3
+  flutter_easyloading: ^3.0.5
 
-  fancy_bottom_navigation: ^0.3.2
+  fancy_bottom_navigation: ^0.3.3
 
-  shared_preferences: 2.0.0
-  toast:  ^0.1.5
+  shared_preferences: ^2.0.15
+  toast: ^0.2.9
   cached_network_image: ^3.2.0
-  hexcolor: ^2.0.4
-  otp_text_field: ^1.1.1
-  font_awesome_flutter: ^9.1.0
+  hexcolor: ^2.0.7
+  otp_text_field: ^1.1.3
+  font_awesome_flutter: ^10.1.0
   steps_indicator: ^1.3.0
-  pie_chart: ^5.3.0
+  pie_chart: ^5.3.1
 
-  file_picker: ^4.5.1
-  image_picker: ^0.8.5
+  file_picker: ^4.6.0
+  image_picker: ^0.8.5+3
   intl: ^0.17.0
-  mime: ^1.0.1
+  mime: ^1.0.2
   open_file: ^3.2.1
   uuid: ^3.0.6
   flutter_chat_ui: ^1.5.8
+
+  csc_picker: ^0.2.6
+  intl_phone_field: ^3.1.0
+
+  flick_video_player:
+  video_player:
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -68,7 +75,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^1.0.0
+  flutter_lints: ^1.0.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

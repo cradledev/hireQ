@@ -4,6 +4,7 @@ import 'package:hire_q/helpers/constants.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hire_q/provider/navigation_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:hire_q/screens/splash/splash_screen.dart';
 import 'package:url_strategy/url_strategy.dart';
@@ -29,9 +30,9 @@ void main() {
           ChangeNotifierProvider.value(
             value: AppState(),
           ),
-          // ChangeNotifierProvider(
-          //   create: (_) => AppLocale(),
-          // ),
+          ChangeNotifierProvider(
+            create: (_) => NavigationProvider(),
+          ),
           // ChangeNotifierProvider(
           //     create: (_) => DataNotifier(),
           //   ),

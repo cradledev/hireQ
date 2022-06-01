@@ -8,6 +8,7 @@ import 'package:hire_q/screens/detail_board/job_detail_board.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
 
 import 'package:hire_q/widgets/common_widget.dart';
+import 'package:hire_q/widgets/custom_drawer_widget.dart';
 
 class AppliedQTalentScreen extends StatefulWidget {
   const AppliedQTalentScreen({Key key}) : super(key: key);
@@ -43,7 +44,8 @@ class _AppliedQTalentScreen extends State<AppliedQTalentScreen> {
             color: Colors.white,
           ),
           backgroundColor: primaryColor,
-          leadingAction: () {},
+          leadingAction: () {
+          },
           leadingFlag: true,
           actionEvent: () {},
           actionFlag: true,
@@ -68,6 +70,7 @@ class _AppliedQTalentScreen extends State<AppliedQTalentScreen> {
             controller: _searchTextController,
           ),
         ),
+        drawer: const CustomDrawerWidget(),
         bottomNavigationBar: FancyBottomNavigation(
           tabs: [
             TabData(iconData: CupertinoIcons.briefcase_fill, title: "Job"),

@@ -10,6 +10,7 @@ import 'package:hire_q/screens/message/message_screen.dart';
 import 'package:hire_q/screens/profile/profile_screen.dart';
 import 'package:hire_q/screens/profile/profile_company_screen.dart';
 import 'package:hire_q/screens/talent/talent_screen.dart';
+import 'package:hire_q/widgets/custom_drawer_widget.dart';
 
 import 'package:provider/provider.dart';
 
@@ -46,7 +47,15 @@ class _LobbyScreen extends State<LobbyScreen> {
   }
 
   List<Widget> _buildScreens() {
-    if (_appState.isTalent) {
+    if (widget.indexTab == 0 || widget.indexTab == 1) {
+      return [
+        const JobScreen(),
+        const TalentScreen(),
+        const MessageScreen(),
+        const ProfileScreen()
+      ];
+    }
+    if (_appState.user['type'] == "talent") {
       return [
         const JobScreen(),
         const TalentScreen(),
@@ -75,7 +84,8 @@ class _LobbyScreen extends State<LobbyScreen> {
           color: Colors.white,
         ),
         backgroundColor: primaryColor,
-        leadingAction: () {},
+        leadingAction: () {
+        },
         leadingFlag: true,
         actionEvent: () {},
         actionFlag: true,
@@ -100,6 +110,7 @@ class _LobbyScreen extends State<LobbyScreen> {
           controller: _searchTextController,
         ),
       ),
+      drawer: const CustomDrawerWidget(),
       bottomNavigationBar: FancyBottomNavigation(
         tabs: [
           TabData(iconData: CupertinoIcons.briefcase_fill, title: "Job"),

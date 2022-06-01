@@ -53,7 +53,10 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
                       size: 30,
                       color: leadingIconColor ?? Colors.black,
                     ),
-                onPressed: leadingAction,
+                // onPressed: leadingAction,
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                },
               ),
             )
           : const SizedBox(

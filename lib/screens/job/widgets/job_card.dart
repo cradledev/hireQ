@@ -3,10 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hire_q/helpers/constants.dart';
 import 'package:hire_q/models/job_model.dart';
+import 'package:hire_q/screens/video_player/video_player.dart';
 import 'package:hire_q/widgets/common_widget.dart';
+import 'package:hire_q/widgets/theme_helper.dart';
 
 import '../detail/job_detail.dart';
 import 'package:hire_q/widgets/image_gradient_overlay.dart';
+
 
 class JobCard extends StatelessWidget {
   final BuildContext buildContext;
@@ -161,12 +164,22 @@ class JobCard extends StatelessWidget {
                                         ],
                                       ),
                                     ),
-                                    Text(
-                                      jobData.description,
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        color: Colors.white,
-                                        height: 1.5,
+                                    Expanded(
+                                      flex: 1,
+                                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.vertical,
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              jobData.description,
+                                              style: const TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.white,
+                                                height: 1.5,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -221,6 +234,36 @@ class JobCard extends StatelessWidget {
                     ),
                   )
                 ],
+              ),
+            ),
+          ),
+          Center(
+            child: InkWell(
+              onTap: () {
+                // showDialog(
+                //   context: context,
+                //   builder: (BuildContext context) {
+                //     return ThemeHelper().alartDialog("warning",
+                //         "Something went wrong, Please try again it.", context);
+                //   },
+                // );
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    transitionDuration: const Duration(microseconds: 800),
+                    pageBuilder: (context, animation, secondaryAnimation) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: const CustomVideoPlayer(),
+                      );
+                    },
+                  ),
+                );
+              },
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20.0),
+                child: Image.asset('assets/icons/Play.png',
+                    width: 110.0, height: 110.0),
               ),
             ),
           ),

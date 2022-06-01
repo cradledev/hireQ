@@ -29,6 +29,10 @@ class JobModel {
       description:
           'Riviera Maya tiene más de 120 km de costa turquesa cristalina,'
           ' playas de arena blanca, sitios arqueológicos, parques '
+          ' playas de arena blanca, sitios arqueológicos, parques '
+          ' playas de arena blanca, sitios arqueológicos, parques '
+          ' playas de arena blanca, sitios arqueológicos, parques '
+          ' playas de arena blanca, sitios arqueológicos, parques '
           'naturales y actividades acuáticas únicas',
       requirement:
           "You have strong React experience combined with an advanced knowledge of HTML, CSS and WC3 standards You have strong JavaScript experience, ideally also some TypeScript or Flow (you can learn on the job)"

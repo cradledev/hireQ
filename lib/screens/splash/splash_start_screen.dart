@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 import 'package:hire_q/helpers/constants.dart';
+import 'package:hire_q/provider/index.dart';
+import 'package:hire_q/screens/lobby/lobby_screen.dart';
+import 'package:provider/provider.dart';
 
 class SplashStartScreen extends StatefulWidget {
   const SplashStartScreen({Key key}) : super(key: key);
@@ -16,13 +19,33 @@ class _SplashStartScreen extends State<SplashStartScreen>
     with SingleTickerProviderStateMixin {
   AnimationController animationController;
   Animation<double> animation;
+  // app state setting
+  AppState appState;
   startTime() async {
     var _duration = const Duration(seconds: 6);
     return Timer(_duration, navigationPage);
   }
 
-  void navigationPage() {
-    Navigator.of(context).pushReplacementNamed('/home');
+  void navigationPage() async {
+    String _tempUserStorage = await appState.getLocalStorage('user');
+    Map _user = _tempUserStorage.isNotEmpty ? jsonDecode(_tempUserStorage) : null;
+    if (_user == null) {
+      Navigator.of(context).pushReplacementNamed('/home');
+    } else {
+      appState.user = _user;
+      Navigator.pushAndRemoveUntil(
+          context,
+          PageRouteBuilder(
+            transitionDuration: const Duration(microseconds: 800),
+            pageBuilder: (context, animation, secondaryAnimation) {
+              return FadeTransition(
+                opacity: animation,
+                child: const LobbyScreen(indexTab: 3),
+              );
+            },
+          ),
+          (route) => false);
+    }
   }
 
   @override
@@ -32,7 +55,7 @@ class _SplashStartScreen extends State<SplashStartScreen>
         AnimationController(vsync: this, duration: const Duration(seconds: 5));
     animation =
         CurvedAnimation(parent: animationController, curve: Curves.easeOut);
-
+    appState = Provider.of<AppState>(context, listen: false);
     animation.addListener(() => setState(() {}));
     animationController.forward();
     startTime();

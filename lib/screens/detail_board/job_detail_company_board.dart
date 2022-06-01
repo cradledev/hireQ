@@ -9,6 +9,7 @@ import 'package:hire_q/screens/detail_board/job_detail_board.dart';
 import 'package:hire_q/screens/detail_board/message_talent_board.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
 import 'package:hire_q/widgets/common_widget.dart';
+import 'package:hire_q/widgets/custom_drawer_widget.dart';
 
 class JobDetailCompanyBoard extends StatefulWidget {
   const JobDetailCompanyBoard({Key key}) : super(key: key);
@@ -45,7 +46,8 @@ class _JobDetailCompanyBoard extends State<JobDetailCompanyBoard> {
             color: Colors.white,
           ),
           backgroundColor: primaryColor,
-          leadingAction: () {},
+          leadingAction: () {
+          },
           leadingFlag: true,
           actionEvent: () {},
           actionFlag: true,
@@ -70,6 +72,7 @@ class _JobDetailCompanyBoard extends State<JobDetailCompanyBoard> {
             controller: _searchTextController,
           ),
         ),
+        drawer: const CustomDrawerWidget(),
         bottomNavigationBar: FancyBottomNavigation(
           tabs: [
             TabData(iconData: CupertinoIcons.briefcase_fill, title: "Job"),

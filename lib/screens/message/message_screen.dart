@@ -2,8 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hire_q/helpers/constants.dart';
+import 'package:hire_q/provider/index.dart';
 import 'package:hire_q/screens/detail_board/message_talent_board.dart';
+import 'package:hire_q/screens/home/home_screen.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
+import 'package:provider/provider.dart';
 
 class MessageScreen extends StatefulWidget {
   const MessageScreen({Key key}) : super(key: key);
@@ -13,6 +16,35 @@ class MessageScreen extends StatefulWidget {
 }
 
 class _MessageScreen extends State<MessageScreen> {
+  // app state setting
+  AppState appState;
+
+  @override
+  void initState() {
+    super.initState();
+    onInit();
+  }
+
+  void onInit() {
+    appState = Provider.of<AppState>(context, listen: false);
+    if (appState.user == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            transitionDuration: const Duration(microseconds: 800),
+            pageBuilder: (context, animation, secondaryAnimation) {
+              return FadeTransition(
+                opacity: animation,
+                child: const HomeScreen(),
+              );
+            },
+          ),
+        );
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(

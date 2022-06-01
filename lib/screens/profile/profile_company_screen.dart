@@ -6,6 +6,7 @@ import 'package:hire_q/screens/appliedq/applied_q_company_screen.dart';
 import 'package:hire_q/screens/jobsq/jobs_q_company_screen.dart';
 import 'package:hire_q/screens/videoview/video_view_screen.dart';
 import 'package:hire_q/widgets/common_widget.dart';
+import 'package:hire_q/widgets/theme_helper.dart';
 
 import 'package:steps_indicator/steps_indicator.dart';
 import 'package:pie_chart/pie_chart.dart';
@@ -28,11 +29,11 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
     "Ionic": 2,
   };
   List<Color> colorList = <Color>[
-    Color(0xfffdcb6e),
-    Color(0xff0984e3),
-    Color(0xfffd79a8),
-    Color(0xffe17055),
-    Color(0xff6c5ce7),
+    const Color(0xfffdcb6e),
+    const Color(0xff0984e3),
+    const Color(0xfffd79a8),
+    const Color(0xffe17055),
+    const Color(0xff6c5ce7)
   ];
   @override
   void initState() {
@@ -58,8 +59,8 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
           child: Column(
             children: [
               Container(
-                height: MediaQuery.of(context).size.height * 0.35 * 4 / 6 +
-                    MediaQuery.of(context).size.height * 0.33 * 2 / 5,
+                height: MediaQuery.of(context).size.height * 0.35 * 5 / 6 +
+                    MediaQuery.of(context).size.height * 0.33 * 0.5,
                 padding: EdgeInsets.zero,
                 child: Stack(
                   fit: StackFit.expand,
@@ -69,7 +70,7 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
                         Container(
                           padding: EdgeInsets.zero,
                           height:
-                              MediaQuery.of(context).size.height * 0.35 * 4 / 6,
+                              MediaQuery.of(context).size.height * 0.35 * 5 / 6,
                           width: MediaQuery.of(context).size.width,
                           child: CachedNetworkImage(
                             imageUrl:
@@ -92,7 +93,7 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
                         ),
                         Container(
                           height:
-                              MediaQuery.of(context).size.height * 0.33 * 2 / 5,
+                              MediaQuery.of(context).size.height * 0.33 * 0.5,
                           width: MediaQuery.of(context).size.width,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 12),
@@ -176,7 +177,7 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 10),
                           height:
-                              MediaQuery.of(context).size.height * 0.35 * 4 / 6,
+                              MediaQuery.of(context).size.height * 0.35 * 5 / 6,
                           width: MediaQuery.of(context).size.width,
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
@@ -259,7 +260,17 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
                               Expanded(
                                 flex: 1,
                                 child: OutlineButtonCustomWithIcon(
-                                  onTap: () {},
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return ThemeHelper().alartDialog(
+                                            "warning",
+                                            "Something went wrong, Please try again it.",
+                                            context);
+                                      },
+                                    );
+                                  },
                                   text: "edit",
                                   height: 35,
                                   image: "assets/icons/edit.png",

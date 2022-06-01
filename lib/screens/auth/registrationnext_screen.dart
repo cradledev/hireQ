@@ -1,10 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hire_q/helpers/constants.dart';
+import 'package:hire_q/provider/index.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
 import 'package:hire_q/widgets/theme_helper.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:hexcolor/hexcolor.dart';
+import 'package:provider/provider.dart';
+
+import 'package:csc_picker/csc_picker.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 
 import 'widgets/header_widget.dart';
 
@@ -18,15 +23,40 @@ class RegisterNextScreen extends StatefulWidget {
 }
 
 class _RegisterNextScreenState extends State<RegisterNextScreen> {
+  // app state import
+  AppState appState;
   // slide setting
   final int _numPages = 2;
   final PageController _pageController = PageController(initialPage: 0);
   int _currentPage = 0;
 
+  // from setting
   final _formKey = GlobalKey<FormState>();
   final _formKey1 = GlobalKey<FormState>();
-  bool checkedValue = false;
-  bool checkboxValue = false;
+
+  // textediting controller set
+  TextEditingController firstnameController;
+  TextEditingController lastnameController;
+  TextEditingController currentJobTitleController;
+  TextEditingController companyController;
+
+  // address values setting
+  final GlobalKey<CSCPickerState> _cscPickerKey = GlobalKey();
+  String countryValue = "";
+  String stateValue = "";
+  String cityValue = "";
+
+  // phone number setting
+  String phoneNumber = "";
+  String initialCountryCode = "SA";
+  String displayPhoneNumber = "";
+
+  // isloading setting true or false when processing with rest api
+  bool isLoading;
+
+  // validation flag setting
+  bool isValid = false;
+  bool isValid1 = false;
 
   List<Widget> _buildPageIndicator() {
     List<Widget> list = [];
@@ -37,31 +67,142 @@ class _RegisterNextScreenState extends State<RegisterNextScreen> {
     return list;
   }
 
-  void _onNextPage() {
+  @override
+  void initState() {
+    super.initState();
+    _onInit();
+  }
+
+  void _onInit() {
+    setState(() {
+      isLoading = false;
+    });
+    appState = Provider.of<AppState>(context, listen: false);
+    firstnameController = TextEditingController();
+    lastnameController = TextEditingController();
+    currentJobTitleController = TextEditingController();
+    companyController = TextEditingController();
+  }
+
+  void _checkValidation() {
+    isValid = _formKey.currentState?.validate();
+    isValid1 = _formKey1.currentState?.validate();
+    if (isValid == true) {
+      _formKey.currentState?.save();
+    }
+    if (isValid1 == true) {
+      _formKey1.currentState?.save();
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  bool _onValidationRegion() {
+    if (countryValue.isNotEmpty &&
+        stateValue.isNotEmpty &&
+        cityValue.isNotEmpty) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  void _onNextPage() async {
+    _checkValidation();
     if (_currentPage != _numPages - 1) {
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.ease,
-      );
+      if (isValid == true) {
+        _pageController.nextPage(
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.ease,
+        );
+      }
     } else {
       print("last screen");
-      Navigator.pushAndRemoveUntil(
-          context,
-          PageRouteBuilder(
-            transitionDuration: const Duration(microseconds: 800),
-            pageBuilder: (context, animation, secondaryAnimation) {
-              return FadeTransition(
-                opacity: animation,
-                child: const LobbyScreen(indexTab: 1),
+      if (isValid1 == true) {
+        _formKey1.currentState?.save();
+        // print(1);
+        if (_onValidationRegion()) {
+          setState(() {
+            isLoading = true;
+          });
+          try {
+            Map payloads = {
+              'user_id': appState.user['id'],
+              'first_name': firstnameController.text,
+              'last_name': lastnameController.text,
+              "phone_number": phoneNumber,
+              "region": {
+                "country": countryValue,
+                "city": cityValue,
+                "state": stateValue
+              },
+              "current_jobTitle": currentJobTitleController.text,
+              "company": companyController.text
+            };
+
+            var res = await appState.postWithToken(
+                Uri.parse(appState.endpoint + "talents/"),
+                jsonEncode(payloads));
+            setState(() {
+              isLoading = false;
+            });
+            var body = jsonDecode(res.body);
+            if (res.statusCode == 200) {
+              if (body['status'] == "success") {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return ThemeHelper()
+                        .alartDialog("Success", "Success.", context);
+                  },
+                );
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    PageRouteBuilder(
+                      transitionDuration: const Duration(microseconds: 800),
+                      pageBuilder: (context, animation, secondaryAnimation) {
+                        return FadeTransition(
+                          opacity: animation,
+                          child: const LobbyScreen(indexTab: 3),
+                        );
+                      },
+                    ),
+                    (route) => false);
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return ThemeHelper().alartDialog("warning",
+                        "Something went wrong, Please try again it.", context);
+                  },
+                );
+              }
+            } else {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return ThemeHelper()
+                      .alartDialog("Error", body['error'], context);
+                },
               );
-            },
-          ),
-          (route) => false);
-      // if (_appState.user == null) {
-      //   Navigator.pushNamed(context, '/auth');
-      // } else {
-      //   Navigator.pushReplacementNamed(context, '/home');
-      // }
+            }
+          } catch (e) {
+            setState(() {
+              isLoading = false;
+            });
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return ThemeHelper()
+                    .alartDialog("Error", "Unknown error is occured.", context);
+              },
+            );
+          }
+        }
+      }
     }
   }
 
@@ -85,12 +226,14 @@ class _RegisterNextScreenState extends State<RegisterNextScreen> {
       body: Padding(
         padding: EdgeInsets.zero,
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               padding: EdgeInsets.zero,
-              height: 250,
+              height: 200,
               child: const HeaderWidget(
-                  250, false, Icons.person_add_alt_1_rounded),
+                  200, false, Icons.person_add_alt_1_rounded),
             ),
             const Text(
               'Sign up',
@@ -123,10 +266,18 @@ class _RegisterNextScreenState extends State<RegisterNextScreen> {
                                 ),
                                 Container(
                                   child: TextFormField(
-                                    decoration: ThemeHelper()
-                                        .textInputDecoration('First Name',
-                                            'Enter your first name'),
-                                  ),
+                                      controller: firstnameController,
+                                      decoration: ThemeHelper()
+                                          .textInputDecoration('First Name',
+                                              'Enter your first name'),
+                                      validator: (value) {
+                                        if (value == null ||
+                                            value.trim().isEmpty) {
+                                          return "Please enter First Name";
+                                        }
+                                        // Return null if the entered password is valid
+                                        return null;
+                                      }),
                                   decoration:
                                       ThemeHelper().inputBoxDecorationShaddow(),
                                 ),
@@ -135,50 +286,167 @@ class _RegisterNextScreenState extends State<RegisterNextScreen> {
                                 ),
                                 Container(
                                   child: TextFormField(
-                                    decoration: ThemeHelper()
-                                        .textInputDecoration('Last Name',
-                                            'Enter your last name'),
-                                  ),
+                                      controller: lastnameController,
+                                      decoration: ThemeHelper()
+                                          .textInputDecoration('Last Name',
+                                              'Enter your last name'),
+                                      validator: (value) {
+                                        if (value == null ||
+                                            value.trim().isEmpty) {
+                                          return "Please enter Last Name";
+                                        }
+                                        // Return null if the entered password is valid
+                                        return null;
+                                      }),
                                   decoration:
                                       ThemeHelper().inputBoxDecorationShaddow(),
                                 ),
                                 const SizedBox(height: 30.0),
-                                Container(
-                                  child: TextFormField(
-                                    decoration: ThemeHelper()
-                                        .textInputDecoration(
-                                            'County', 'Enter your County'),
-                                  ),
-                                  decoration:
-                                      ThemeHelper().inputBoxDecorationShaddow(),
+                                Column(
+                                  children: [
+                                    CSCPicker(
+                                      key: _cscPickerKey,
+                                      layout: Layout.vertical,
+
+                                      ///Enable disable state dropdown [OPTIONAL PARAMETER]
+                                      showStates: true,
+
+                                      /// Enable disable city drop down [OPTIONAL PARAMETER]
+                                      showCities: true,
+
+                                      ///Enable (get flag with country name) / Disable (Disable flag) / ShowInDropdownOnly (display flag in dropdown only) [OPTIONAL PARAMETER]
+                                      flagState: CountryFlag.DISABLE,
+
+                                      ///Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER] (USE with disabledDropdownDecoration)
+                                      dropdownDecoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(10)),
+                                          color: Colors.white,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.black.withOpacity(0.7),
+                                              blurRadius: 20,
+                                              offset: const Offset(0, 5),
+                                            )
+                                          ],
+                                          border: Border.all(
+                                              color: Colors.grey.shade300,
+                                              width: 1)),
+
+                                      ///Disabled Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER]  (USE with disabled dropdownDecoration)
+                                      disabledDropdownDecoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(10)),
+                                        color: Colors.grey.shade300,
+                                        border: Border.all(
+                                            color: Colors.grey.shade300,
+                                            width: 1),
+                                      ),
+
+                                      ///placeholders for dropdown search field
+                                      countrySearchPlaceholder: "Country",
+                                      stateSearchPlaceholder: "State",
+                                      citySearchPlaceholder: "City",
+
+                                      ///labels for dropdown
+                                      countryDropdownLabel: "*Country",
+                                      stateDropdownLabel: "*State",
+                                      cityDropdownLabel: "*City",
+
+                                      ///Default Country
+                                      //defaultCountry: DefaultCountry.India,
+
+                                      ///Disable country dropdown (Note: use it with default country)
+                                      //disableCountry: true,
+
+                                      ///selected item style [OPTIONAL PARAMETER]
+                                      selectedItemStyle: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 14,
+                                      ),
+
+                                      ///DropdownDialog Heading style [OPTIONAL PARAMETER]
+                                      dropdownHeadingStyle: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold),
+
+                                      ///DropdownDialog Item style [OPTIONAL PARAMETER]
+                                      dropdownItemStyle: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 14,
+                                      ),
+
+                                      ///Dialog box radius [OPTIONAL PARAMETER]
+                                      dropdownDialogRadius: 10.0,
+
+                                      ///Search bar radius [OPTIONAL PARAMETER]
+                                      searchBarRadius: 10.0,
+
+                                      ///triggers once country selected in dropdown
+                                      onCountryChanged: (value) {
+                                        setState(() {
+                                          ///store value in country variable
+                                          countryValue = value;
+                                        });
+                                      },
+
+                                      ///triggers once state selected in dropdown
+                                      onStateChanged: (value) {
+                                        setState(() {
+                                          ///store value in state variable
+                                          stateValue = value;
+                                        });
+                                      },
+
+                                      ///triggers once city selected in dropdown
+                                      onCityChanged: (value) {
+                                        setState(() {
+                                          ///store value in city variable
+                                          cityValue = value;
+                                        });
+                                      },
+                                      currentCountry: countryValue,
+                                      currentCity: cityValue,
+                                      currentState: stateValue,
+                                    ),
+                                  ],
                                 ),
                                 const SizedBox(height: 30.0),
                                 Container(
-                                  child: TextFormField(
+                                  child: IntlPhoneField(
                                     decoration: ThemeHelper()
-                                        .textInputDecoration(
-                                            'City', 'Enter your City'),
-                                  ),
-                                  decoration:
-                                      ThemeHelper().inputBoxDecorationShaddow(),
-                                ),
-                                const SizedBox(height: 30.0),
-                                Container(
-                                  child: TextFormField(
-                                    decoration: ThemeHelper()
-                                        .textInputDecoration("Mobile Number",
-                                            "Enter your mobile number"),
-                                    keyboardType: TextInputType.phone,
-                                    validator: (val) {
-                                      if (val.isNotEmpty &&
-                                          !RegExp(r"^(\d+)*$").hasMatch(val)) {
-                                        return "Enter a valid phone number";
-                                      }
-                                      return null;
+                                        .textInputDecoration('Phone Number',
+                                            'Enter your phone number.'),
+                                    onChanged: (phone) {
+                                      // print(phone.number);
+                                      // print(phone.completeNumber);
+                                      setState(() {
+                                        phoneNumber = phone.completeNumber;
+                                        displayPhoneNumber = phone.number;
+                                      });
+                                    },
+                                    initialValue: displayPhoneNumber,
+                                    initialCountryCode: initialCountryCode,
+                                    onCountryChanged: (country) {
+                                      setState(() {
+                                        initialCountryCode = country.code;
+                                      });
+                                      // print(country.code);
+                                      // print('Country changed to: ' +
+                                      //     country.name);
                                     },
                                   ),
-                                  decoration:
-                                      ThemeHelper().inputBoxDecorationShaddow(),
+                                  decoration: BoxDecoration(
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.4),
+                                        blurRadius: 20,
+                                        offset: const Offset(0, 3),
+                                      )
+                                    ],
+                                  ),
                                 ),
                                 const SizedBox(height: 15.0),
                               ],
@@ -192,38 +460,56 @@ class _RegisterNextScreenState extends State<RegisterNextScreen> {
                     child: Column(
                       children: [
                         Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Form(
-                                key: _formKey1,
-                                child: Column(
-                                  children: [
-                                    const SizedBox(
-                                      height: 30,
-                                    ),
-                                    Container(
-                                      child: TextFormField(
-                                        decoration: ThemeHelper()
-                                            .textInputDecoration(
-                                                'Current Job Title',
-                                                'Enter your Job Title'),
-                                      ),
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Form(
+                            key: _formKey1,
+                            child: Column(
+                              children: [
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                Container(
+                                  child: TextFormField(
+                                      controller: currentJobTitleController,
                                       decoration: ThemeHelper()
-                                          .inputBoxDecorationShaddow(),
-                                    ),
-                                    const SizedBox(
-                                      height: 30,
-                                    ),
-                                    Container(
-                                      child: TextFormField(
-                                        decoration: ThemeHelper()
-                                            .textInputDecoration('Company',
-                                                'Enter your Company'),
-                                      ),
+                                          .textInputDecoration(
+                                              'Current Job Title',
+                                              'Enter your Job Title'),
+                                      validator: (value) {
+                                        if (value == null ||
+                                            value.trim().isEmpty) {
+                                          return "Please enter Current Job Title";
+                                        }
+                                        // Return null if the entered password is valid
+                                        return null;
+                                      }),
+                                  decoration:
+                                      ThemeHelper().inputBoxDecorationShaddow(),
+                                ),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                Container(
+                                  child: TextFormField(
+                                      controller: companyController,
                                       decoration: ThemeHelper()
-                                          .inputBoxDecorationShaddow(),
-                                    ),
-                                  ],
-                                ))),
+                                          .textInputDecoration(
+                                              'Company', 'Enter your Company'),
+                                      validator: (value) {
+                                        if (value == null ||
+                                            value.trim().isEmpty) {
+                                          return "Please enter Company Name";
+                                        }
+                                        // Return null if the entered password is valid
+                                        return null;
+                                      }),
+                                  decoration:
+                                      ThemeHelper().inputBoxDecorationShaddow(),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   )
@@ -245,18 +531,29 @@ class _RegisterNextScreenState extends State<RegisterNextScreen> {
                       style: ThemeHelper().buttonStyle(),
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(40, 10, 40, 10),
-                        child: Text(
-                          (_currentPage != _numPages - 1) ? "Next" : "Finish",
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
+                        child: isLoading ?? false
+                            ? const CircularProgressIndicator(
+                                backgroundColor: Colors.transparent,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    Color(0xff283488)),
+                                strokeWidth: 2,
+                              )
+                            : Text(
+                                (_currentPage != _numPages - 1)
+                                    ? "Next"
+                                    : "Finish",
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
                       ),
-                      onPressed: () {
-                        _onNextPage();
-                      },
+                      onPressed: isLoading ?? false
+                          ? null
+                          : () {
+                              _onNextPage();
+                            },
                     ),
                   )
                 ],

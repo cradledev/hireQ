@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hire_q/helpers/constants.dart';
+import 'package:hire_q/provider/index.dart';
 import 'package:hire_q/screens/appliedq/applied_q_talent_screen.dart';
+import 'package:hire_q/screens/home/home_screen.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
 import 'package:hire_q/screens/videoview/video_view_screen.dart';
 import 'package:hire_q/widgets/common_widget.dart';
 
 import 'package:hire_q/screens/jobsq/jobs_q_talent_screen.dart';
+import 'package:provider/provider.dart';
 
 import 'package:steps_indicator/steps_indicator.dart';
 import 'package:pie_chart/pie_chart.dart';
@@ -20,6 +23,9 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreen extends State<ProfileScreen> {
+  // app state setting
+  AppState appState;
+
   int selectedStep = 2;
   int nbSteps = 5;
   Map<String, double> dataMap = {
@@ -29,11 +35,11 @@ class _ProfileScreen extends State<ProfileScreen> {
     "Ionic": 2,
   };
   List<Color> colorList = <Color>[
-    Color(0xfffdcb6e),
-    Color(0xff0984e3),
-    Color(0xfffd79a8),
-    Color(0xffe17055),
-    Color(0xff6c5ce7),
+    const Color(0xfffdcb6e),
+    const Color(0xff0984e3),
+    const Color(0xfffd79a8),
+    const Color(0xffe17055),
+    const Color(0xff6c5ce7)
   ];
   @override
   void initState() {
@@ -41,6 +47,27 @@ class _ProfileScreen extends State<ProfileScreen> {
     setState(() {
       selectedStep = 2;
     });
+    onInit();
+  }
+
+  void onInit() {
+    appState = Provider.of<AppState>(context, listen: false);
+    if (appState.user == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            transitionDuration: const Duration(microseconds: 800),
+            pageBuilder: (context, animation, secondaryAnimation) {
+              return FadeTransition(
+                opacity: animation,
+                child: const HomeScreen(),
+              );
+            },
+          ),
+        );
+      });
+    }
   }
 
   @override
@@ -61,7 +88,7 @@ class _ProfileScreen extends State<ProfileScreen> {
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                height: MediaQuery.of(context).size.height * 0.35 * 4 / 6,
+                height: MediaQuery.of(context).size.height * 0.35 * 5 / 6,
                 width: MediaQuery.of(context).size.width,
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
@@ -150,7 +177,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                 ),
               ),
               Container(
-                height: MediaQuery.of(context).size.height * 0.33 * 2 / 5,
+                height: MediaQuery.of(context).size.height * 0.33 * 0.5,
                 width: MediaQuery.of(context).size.width,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 12),

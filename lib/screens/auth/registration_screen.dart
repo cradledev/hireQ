@@ -1,10 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hire_q/provider/index.dart';
 import 'package:hire_q/screens/auth/emailvalidatioin_screen.dart';
-import 'package:hire_q/screens/lobby/lobby_screen.dart';
 import 'package:hire_q/widgets/theme_helper.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:hexcolor/hexcolor.dart';
+import 'package:provider/provider.dart';
 
 import 'widgets/header_widget.dart';
 
@@ -18,9 +19,89 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
+  // appstate provider
+  AppState appState;
   final _formKey = GlobalKey<FormState>();
-  bool checkedValue = false;
+  // form text controller
+  TextEditingController emailController;
+  TextEditingController passwordController;
+
+  //checking is loading? not
+  bool isLoading;
+
+  // value of accepting all terms and condition
   bool checkboxValue = false;
+
+  @override
+  void initState() {
+    super.initState();
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+    setState(() {
+      isLoading = false;
+    });
+    appState = Provider.of<AppState>(context, listen: false);
+  }
+
+  void onNextRegister() async {
+    if (_formKey.currentState.validate()) {
+      try {
+        Map payload = {
+          'email': emailController.text,
+          'password': passwordController.text,
+          'type': appState.entryType
+        };
+        var res = await appState.post(
+            Uri.parse(appState.endpoint + "users/"), jsonEncode(payload));
+        setState(() {
+          isLoading = false;
+        });
+        if (res.statusCode == 200) {
+          var body = jsonDecode(res.body);
+          if (body['status'] == "success") {
+            Navigator.pushReplacement(
+              context,
+              PageRouteBuilder(
+                  transitionDuration: const Duration(milliseconds: 800),
+                  pageBuilder: (context, animation, secondaryAnimation) {
+                    return FadeTransition(
+                        opacity: animation,
+                        child: EmailValidationScreen(
+                          email: payload['email'],
+                          password: payload['password'],
+                          type: payload['type'],
+                        ));
+                  }),
+            );
+          }
+        } else {
+          var body = jsonDecode(res.body);
+          appState.notifyToastDanger(context: context, message: body['error']);
+        }
+      } catch (e) {
+        appState.notifyToastDanger(context: context, message: "Unknown error is occured.");
+        setState(() {
+          isLoading = false;
+        });
+      }
+      // Navigator.pushReplacement(
+      //   context,
+      //   PageRouteBuilder(
+      //       transitionDuration: const Duration(milliseconds: 800),
+      //       pageBuilder: (context, animation, secondaryAnimation) {
+      //         return FadeTransition(
+      //             opacity: animation, child: const EmailValidationScreen());
+      //       }),
+      // );
+    }
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +167,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         ),
                         Container(
                           child: TextFormField(
+                            controller: emailController,
                             decoration: ThemeHelper().textInputDecoration(
                                 "E-mail address", "Enter your email"),
                             keyboardType: TextInputType.emailAddress,
@@ -106,9 +188,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         const SizedBox(height: 40.0),
                         Container(
                           child: TextFormField(
+                            controller: passwordController,
                             obscureText: true,
                             decoration: ThemeHelper().textInputDecoration(
-                                "Password*", "Enter your password"),
+                                "Password", "Enter your password"),
                             validator: (val) {
                               if (val.isEmpty) {
                                 return "Please enter your password";
@@ -166,37 +249,28 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           decoration:
                               ThemeHelper().buttonBoxDecoration(context),
                           child: ElevatedButton(
-                            style: ThemeHelper().buttonStyle(),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.fromLTRB(40, 10, 40, 10),
-                              child: Text(
-                                "Next".toUpperCase(),
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
+                              style: ThemeHelper().buttonStyle(),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(40, 10, 40, 10),
+                                child: (isLoading)
+                                    ? const CircularProgressIndicator(
+                                        backgroundColor: Colors.transparent,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                Color(0xff283488)),
+                                        strokeWidth: 2,
+                                      )
+                                    : Text(
+                                        "Next".toUpperCase(),
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
                               ),
-                            ),
-                            onPressed: () {
-                              if (_formKey.currentState.validate()) {
-                                Navigator.pushReplacement(
-                                  context,
-                                  PageRouteBuilder(
-                                      transitionDuration:
-                                          const Duration(milliseconds: 800),
-                                      pageBuilder: (context, animation,
-                                          secondaryAnimation) {
-                                        return FadeTransition(
-                                            opacity: animation,
-                                            child:
-                                                const EmailValidationScreen());
-                                      }),
-                                );
-                              }
-                            },
-                          ),
+                              onPressed: isLoading ? null : onNextRegister),
                         ),
                         const SizedBox(height: 30.0),
                         const Text(

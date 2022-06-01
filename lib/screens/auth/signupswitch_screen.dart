@@ -62,7 +62,7 @@ class _SignupSwitchScreen extends State<SignupSwitchScreen> {
                           image: "assets/icons/Jobs.png",
                           text: "Individual".toUpperCase(),
                           onPressed: () {
-                            _appState.isTalent = true;
+                            _appState.entryType = "talent";
                             Navigator.pushReplacement(
                               context,
                               PageRouteBuilder(
@@ -116,7 +116,7 @@ class _SignupSwitchScreen extends State<SignupSwitchScreen> {
                           image: "assets/icons/Jobs.png",
                           text: "Company".toUpperCase(),
                           onPressed: () {
-                            _appState.isTalent = false;
+                            _appState.entryType = "company";
                             Navigator.pushReplacement(
                               context,
                               PageRouteBuilder(
