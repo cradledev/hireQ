@@ -6,7 +6,7 @@ import 'package:hire_q/widgets/swipe_detector.dart';
 import 'package:provider/provider.dart';
 
 import './widgets/talent_card.dart';
-import 'package:hire_q/models/talent_model.dart';
+import 'package:hire_q/models/talent1_model.dart';
 // import home page
 import 'package:hire_q/screens/home/home_screen.dart';
 
@@ -22,7 +22,7 @@ class _TalentScreen extends State<TalentScreen> {
   Duration pageTurnDuration = const Duration(milliseconds: 500);
   Curve pageTurnCurve = Curves.ease;
   // talent data
-  List<TalentModel> _talents;
+  List<TalentModel1> _talents;
   // import provider
   @override
   void initState() {
@@ -33,7 +33,7 @@ class _TalentScreen extends State<TalentScreen> {
   }
 
   void _init() {
-    _talents = TalentModel.dumpListData;
+    _talents = TalentModel1.dumpListData;
   }
 
   void _goForward() {

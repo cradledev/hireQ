@@ -139,13 +139,14 @@ class _RegisterNextScreenState extends State<RegisterNextScreen> {
               },
               "region": {
                 "country": countryValue,
-                "city": cityValue,
+                "city" : cityValue ?? "no city",
                 "state": stateValue
               },
               "current_jobTitle": currentJobTitleController.text,
               "company": companyController.text
             };
 
+            print(payloads);
             var res = await appState.postWithToken(
                 Uri.parse(appState.endpoint + "/talents/"),
                 jsonEncode(payloads));
@@ -250,9 +251,17 @@ class _RegisterNextScreenState extends State<RegisterNextScreen> {
                 physics: const ClampingScrollPhysics(),
                 controller: _pageController,
                 onPageChanged: (int page) {
-                  setState(() {
-                    _currentPage = page;
-                  });
+                  WidgetsBinding.instance?.focusManager?.primaryFocus
+                      ?.unfocus();
+                  _checkValidation();
+                  if (isValid == false && _currentPage == 0) {
+                    // _pageController.jumpTo(0);
+                    _pageController.jumpToPage(0);
+                  } else {
+                    setState(() {
+                      _currentPage = page;
+                    });
+                  }
                 },
                 children: <Widget>[
                   SingleChildScrollView(

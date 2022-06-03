@@ -3,7 +3,7 @@ import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hire_q/helpers/constants.dart';
-import 'package:hire_q/models/talent_model.dart';
+import 'package:hire_q/models/talent1_model.dart';
 import 'package:hire_q/screens/detail_board/talent_detail_board.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
 
@@ -142,7 +142,7 @@ class _ConsiderTalentListBoard extends State<ConsiderTalentListBoard> {
                               return FadeTransition(
                                 opacity: animation,
                                 child: TalentDetailBoard(
-                                  data: TalentModel.dumpListData[1],
+                                  data: TalentModel1.dumpListData[1],
                                 ),
                               );
                             },

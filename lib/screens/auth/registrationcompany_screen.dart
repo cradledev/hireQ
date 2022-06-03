@@ -123,9 +123,10 @@ class _RegisterCompanyScreenState extends State<RegisterCompanyScreen> {
               },
               "region": {
                 "country": countryValue,
-                "city": cityValue,
+                "city" : cityValue ?? "no city",
                 "state": stateValue
               },
+              
             };
 
             

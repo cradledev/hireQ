@@ -42,5 +42,18 @@ class ProfileModel {
       type : json['type'] ?? ""
     );
   }
+  Map<String, dynamic> toMap() {
+    return {
+      "id": id,
+      "avator": avator,
+      "user_id": user_id,
+      "resume": resume,
+      "video_id": video_id,
+      "video": video,
+      "job": job,
+      "work_history": work_history,
+      "type" : type
+    };
+  }
 }
 

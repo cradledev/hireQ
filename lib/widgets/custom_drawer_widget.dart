@@ -5,6 +5,7 @@ import 'package:hire_q/screens/home/home_screen.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
 import 'package:hire_q/screens/profile/edit/profile_company_edit.dart';
 import 'package:hire_q/screens/profile/setting/setting_company_screen.dart';
+import 'package:hire_q/screens/profile/setting/setting_talent_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'package:hire_q/models/navigation_item.dart';
@@ -196,7 +197,7 @@ class CustomDrawerWidget extends StatelessWidget {
     switch (item) {
       case NavigationItem.logout:
         appState.setLocalStorage(key: "user", value: "");
-        appState.user = null;
+        appState.removeAllState();
         Navigator.pushAndRemoveUntil(
             context,
             PageRouteBuilder(
@@ -225,18 +226,34 @@ class CustomDrawerWidget extends StatelessWidget {
             (route) => false);
         break;
       case NavigationItem.setting:
-        Navigator.push(
-          context,
-          PageRouteBuilder(
-            transitionDuration: const Duration(microseconds: 800),
-            pageBuilder: (context, animation, secondaryAnimation) {
-              return FadeTransition(
-                opacity: animation,
-                child: const SettingCompanyScreen(),
-              );
-            },
-          ),
-        );
+        if (appState.user['type'] == "company") {
+          Navigator.push(
+            context,
+            PageRouteBuilder(
+              transitionDuration: const Duration(microseconds: 800),
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: const SettingCompanyScreen(),
+                );
+              },
+            ),
+          );
+        } else {
+          Navigator.push(
+            context,
+            PageRouteBuilder(
+              transitionDuration: const Duration(microseconds: 800),
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: const SettingTalentScreen(),
+                );
+              },
+            ),
+          );
+        }
+
         break;
       case NavigationItem.header:
         Navigator.pushAndRemoveUntil(

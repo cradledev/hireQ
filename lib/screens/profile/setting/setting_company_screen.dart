@@ -75,7 +75,6 @@ class _SettingCompanyScreen extends State<SettingCompanyScreen> {
       accountManageerNameController.text =
           (appState.company).account_manager_name;
     }
-    
   }
 
   void _checkValidation() {
@@ -107,6 +106,9 @@ class _SettingCompanyScreen extends State<SettingCompanyScreen> {
     if (isValid == true) {
       _formKey.currentState?.save();
       if (_onValidationRegion()) {
+        setState(() {
+          isLoading = true;
+        });
         Map payloads = {
           'user_id': appState.user['id'],
           'account_manager_name': accountManageerNameController.text,
@@ -118,15 +120,25 @@ class _SettingCompanyScreen extends State<SettingCompanyScreen> {
           },
           "region": {
             "country": countryValue,
-            "city": cityValue,
+            "city": cityValue ?? "no city",
             "state": stateValue
           },
         };
         try {
-          var res = await api.updateCompany(
-              companyId: (appState.company).id,
-              token: appState.user['jwt_token'],
-              payloads: jsonEncode(payloads));
+          var res;
+          if (appState.company != null) {
+            res = await api.updateCompany(
+                companyId: (appState.company).id,
+                token: appState.user['jwt_token'],
+                payloads: jsonEncode(payloads));
+          } else {
+            res = await api.createCompanyInfo(
+                token: appState.user['jwt_token'],
+                payloads: jsonEncode(payloads));
+          }
+          setState(() {
+            isLoading = false;
+          });
           if (res.statusCode == 200) {
             var result = jsonDecode(res.body);
             if (result['status'] == "success") {
@@ -138,6 +150,9 @@ class _SettingCompanyScreen extends State<SettingCompanyScreen> {
             }
           }
         } catch (e) {
+          setState(() {
+            isLoading = false;
+          });
           print(e);
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             backgroundColor: Colors.red,
@@ -201,12 +216,15 @@ class _SettingCompanyScreen extends State<SettingCompanyScreen> {
                           backgroundColor: Colors.grey.shade200,
                           child: CircleAvatar(
                             radius: 70,
-                            backgroundImage:
-                                NetworkImage(
-                                      (appState.profile).avator == ""
-                                          ? 'https://via.placeholder.com/150'
-                                          : appState.hostAddress +
-                                              (appState.profile).avator),
+                            backgroundImage: NetworkImage(
+                              appState.profile == null
+                                  ? "https://images.pexels.com/photos/2422915/pexels-photo-2422915.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+                                  : ((appState.profile).avator == null ||
+                                          (appState.profile).avator == "")
+                                      ? "https://images.pexels.com/photos/2422915/pexels-photo-2422915.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+                                      : appState.hostAddress +
+                                          (appState.profile).avator,
+                            ),
                           ),
                         ),
                       ),

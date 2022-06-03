@@ -56,13 +56,14 @@ class _JobDetailCompanyBoard extends State<JobDetailCompanyBoard> {
       child: Scaffold(
         appBar: CustomAppBar(
           leadingIcon: const Icon(
-            CupertinoIcons.line_horizontal_3,
+            CupertinoIcons.arrow_left,
             size: 40,
             color: Colors.white,
           ),
           backgroundColor: primaryColor,
-          // leadingAction: () {
-          // },
+          leadingAction: () {
+            Navigator.of(context).pop();
+          },
           leadingFlag: true,
           actionEvent: () {},
           actionFlag: true,
@@ -117,336 +118,297 @@ class _JobDetailCompanyBoard extends State<JobDetailCompanyBoard> {
           textColor: primaryColor,
           inactiveIconColor: Colors.grey,
         ),
-        body: SingleChildScrollView(
+        body: Padding(
+          padding: EdgeInsets.zero,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Job Detail",
-                      style: TextStyle(fontSize: 26, color: primaryColor),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(CupertinoIcons.forward),
-                      color: primaryColor,
-                      iconSize: 30,
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                height: MediaQuery.of(context).size.height * 0.7,
-                width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.symmetric(horizontal: 0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            transitionDuration:
-                                const Duration(milliseconds: 500),
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) {
-                              return FadeTransition(
-                                opacity: animation,
-                                child: JobDetailBoard(
-                                  data: widget.selectedCompanyJob,
-                                ),
-                              );
-                            },
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      transitionDuration: const Duration(milliseconds: 500),
+                      pageBuilder: (context, animation, secondaryAnimation) {
+                        return FadeTransition(
+                          opacity: animation,
+                          child: JobDetailBoard(
+                            data: widget.selectedCompanyJob,
                           ),
                         );
                       },
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        height:
-                            MediaQuery.of(context).size.height * 0.35 * 4 / 6,
-                        padding: EdgeInsets.zero,
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            CachedNetworkImage(
-                              imageUrl: appState.hostAddress +
-                                  (appState.profile).avator,
-                              progressIndicatorBuilder:
-                                  (context, url, downloadProgress) {
-                                return Center(
-                                  child: SizedBox(
-                                    width: 30,
-                                    height: 30,
-                                    child: CircularProgressIndicator(
-                                        value: downloadProgress.progress),
-                                  ),
-                                );
-                              },
-                              errorWidget: (context, url, error) =>
-                                  const Icon(Icons.error),
-                              fit: BoxFit.fill,
+                    ),
+                  );
+                },
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * 0.35,
+                  padding: EdgeInsets.zero,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      CachedNetworkImage(
+                        imageUrl:
+                            appState.hostAddress + (appState.profile).avator,
+                        progressIndicatorBuilder:
+                            (context, url, downloadProgress) {
+                          return Center(
+                            child: SizedBox(
+                              width: 30,
+                              height: 30,
+                              child: CircularProgressIndicator(
+                                  value: downloadProgress.progress),
                             ),
-                            Positioned.fill(
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.3),
-                                ),
-                              ),
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          );
+                        },
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                        fit: BoxFit.fill,
+                      ),
+                      Positioned.fill(
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.3),
+                          ),
+                        ),
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height *
+                                0.35,
+                            padding: EdgeInsets.zero,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: MediaQuery.of(context).size.height *
-                                      0.35 *
-                                      4 /
-                                      6,
-                                  padding: EdgeInsets.zero,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Expanded(
-                                            child: Padding(
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 12.0,
-                                                  vertical: 10),
-                                              child: Text(
-                                                (widget.selectedCompanyJob).title,
-                                                textAlign: TextAlign.center,
-                                                style: const TextStyle(
-                                                    fontSize: 28,
-                                                    color: Colors.white),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Padding(
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: Padding(
                                         padding: const EdgeInsets.symmetric(
-                                            vertical: 5),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children:  [
-                                            const Icon(
-                                              CupertinoIcons.location_solid,
-                                              color: Colors.white70,
-                                              size: 30.0,
-                                            ),
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
-                                            Text(
-                                              jsonDecode((widget.selectedCompanyJob).region)['city'],
-                                              style: const TextStyle(
-                                                fontSize: 18,
-                                                color: Colors.white70,
-                                              ),
-                                            ),
-                                          ],
+                                            horizontal: 12.0, vertical: 10),
+                                        child: Text(
+                                          (widget.selectedCompanyJob).title,
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                              fontSize: 28,
+                                              color: Colors.white),
                                         ),
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 5),
-                                        child: Text(
-                                          (appState.company).name,
-                                          style: const TextStyle(
-                                              fontSize: 24,
-                                              color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 5),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(
+                                        CupertinoIcons.location_solid,
+                                        color: Colors.white70,
+                                        size: 30.0,
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        jsonDecode((widget.selectedCompanyJob)
+                                            .region)['city'],
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          color: Colors.white70,
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 5),
+                                  child: Text(
+                                    (appState.company).name,
+                                    style: const TextStyle(
+                                        fontSize: 24, color: Colors.white),
+                                  ),
+                                ),
                               ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                PageRouteBuilder(
-                                  transitionDuration:
-                                      const Duration(milliseconds: 800),
-                                  pageBuilder:
-                                      (context, animation, secondaryAnimation) {
-                                    return FadeTransition(
-                                      opacity: animation,
-                                      child: const ConsiderTalentListBoard(
-                                          title: "Shortlist Talent"),
-                                    );
-                                  },
-                                ),
-                              );
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.only(
-                                  bottom: 10, left: 10, right: 10),
-                              decoration: BoxDecoration(
-                                boxShadow: [
-                                  BoxShadow(
-                                    offset: const Offset(0, 1),
-                                    blurRadius: 5,
-                                    color: Colors.black.withOpacity(0.3),
-                                  ),
-                                ],
-                              ),
-                              height: MediaQuery.of(context).size.height * 0.15,
-                              child: Card(
-                                color: primaryColor,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12)),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 15, horizontal: 25),
-                                      width: 120,
-                                      height: 64,
-                                      child: const Text(
-                                        "15",
-                                        style: TextStyle(
-                                          fontSize: 32,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: const [
-                                          Text(
-                                            "Shortlist",
-                                            style: TextStyle(
-                                                fontSize: 32,
-                                                color: Colors.white),
-                                          ),
-                                          Text(
-                                            "Q",
-                                            style: TextStyle(
-                                                fontSize: 32,
-                                                color: Colors.white),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                PageRouteBuilder(
-                                  transitionDuration:
-                                      const Duration(milliseconds: 800),
-                                  pageBuilder:
-                                      (context, animation, secondaryAnimation) {
-                                    return FadeTransition(
-                                      opacity: animation,
-                                      child: const ConsiderTalentListBoard(
-                                          title: "Applied Talent"),
-                                    );
-                                  },
-                                ),
-                              );
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.only(
-                                  bottom: 10, left: 10, right: 10),
-                              decoration: BoxDecoration(
-                                boxShadow: [
-                                  BoxShadow(
-                                    offset: const Offset(0, 1),
-                                    blurRadius: 5,
-                                    color: Colors.black.withOpacity(0.3),
-                                  ),
-                                ],
-                              ),
-                              height: MediaQuery.of(context).size.height * 0.15,
-                              child: Card(
-                                color: primaryColor,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12)),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 15, horizontal: 25),
-                                      width: 120,
-                                      height: 64,
-                                      child: const Text(
-                                        "87",
-                                        style: TextStyle(
-                                          fontSize: 32,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: const [
-                                          Text(
-                                            "Applied",
-                                            style: TextStyle(
-                                                fontSize: 32,
-                                                color: Colors.white),
-                                          ),
-                                          Text(
-                                            "Q",
-                                            style: TextStyle(
-                                                fontSize: 32,
-                                                color: Colors.white),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
                             ),
                           ),
                         ],
                       ),
-                    )
-                  ],
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              transitionDuration:
+                                  const Duration(milliseconds: 800),
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) {
+                                return FadeTransition(
+                                  opacity: animation,
+                                  child: const ConsiderTalentListBoard(
+                                      title: "Shortlist Talent"),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(
+                              bottom: 10, left: 10, right: 10),
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                offset: const Offset(0, 1),
+                                blurRadius: 5,
+                                color: Colors.black.withOpacity(0.3),
+                              ),
+                            ],
+                          ),
+                          height: MediaQuery.of(context).size.height * 0.15,
+                          child: Card(
+                            color: primaryColor,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 15, horizontal: 25),
+                                  width: 120,
+                                  height: 64,
+                                  child: const Text(
+                                    "15",
+                                    style: TextStyle(
+                                      fontSize: 32,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.center,
+                                    children: const [
+                                      Text(
+                                        "Shortlist",
+                                        style: TextStyle(
+                                            fontSize: 32,
+                                            color: Colors.white),
+                                      ),
+                                      Text(
+                                        "Q",
+                                        style: TextStyle(
+                                            fontSize: 32,
+                                            color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              transitionDuration:
+                                  const Duration(milliseconds: 800),
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) {
+                                return FadeTransition(
+                                  opacity: animation,
+                                  child: const ConsiderTalentListBoard(
+                                      title: "Applied Talent"),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(
+                              bottom: 10, left: 10, right: 10),
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                offset: const Offset(0, 1),
+                                blurRadius: 5,
+                                color: Colors.black.withOpacity(0.3),
+                              ),
+                            ],
+                          ),
+                          height: MediaQuery.of(context).size.height * 0.15,
+                          child: Card(
+                            color: primaryColor,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 15, horizontal: 25),
+                                  width: 120,
+                                  height: 64,
+                                  child: const Text(
+                                    "87",
+                                    style: TextStyle(
+                                      fontSize: 32,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.center,
+                                    children: const [
+                                      Text(
+                                        "Applied",
+                                        style: TextStyle(
+                                            fontSize: 32,
+                                            color: Colors.white),
+                                      ),
+                                      Text(
+                                        "Q",
+                                        style: TextStyle(
+                                            fontSize: 32,
+                                            color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

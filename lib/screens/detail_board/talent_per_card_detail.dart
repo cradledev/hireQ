@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:hire_q/helpers/constants.dart';
-import 'package:hire_q/models/talent_model.dart';
+import 'package:hire_q/models/talent1_model.dart';
 
 import 'package:hire_q/widgets/common_widget.dart';
 
@@ -13,7 +13,7 @@ import 'package:hire_q/screens/lobby/lobby_screen.dart';
 class TalentPerCardDetail extends StatelessWidget {
   TalentPerCardDetail({Key key, this.data}) : super(key: key);
 
-  final TalentModel data;
+  final TalentModel1 data;
   // bottom navbar
   int currentPage = 3;
 

@@ -78,14 +78,12 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
         body: Stack(
           fit: StackFit.expand,
           children: [
-            Container(
-              child: FlickVideoPlayer(
-                flickManager: flickManager,
-                preferredDeviceOrientation: const [
-                  DeviceOrientation.portraitUp,
-                  DeviceOrientation.portraitDown
-                ],
-              ),
+            FlickVideoPlayer(
+              flickManager: flickManager,
+              preferredDeviceOrientation: const [
+                DeviceOrientation.portraitUp,
+                DeviceOrientation.portraitDown
+              ],
             ),
             // Positioned.fill(
             //   child: DecoratedBox(

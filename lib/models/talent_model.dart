@@ -1,102 +1,48 @@
+import 'dart:convert';
+
 class TalentModel {
   int id;
-  String type;
-  String mediaUrl;
-  String imageUrl;
-  String description;
-  String firstName;
-  String lastName;
-  String country;
-  String city;
-  String phoneNumber;
-  String currentJobTitle;
-  String companyName;
+  int user_id;
+  String first_name;
+  String last_name;
+  String phone_number;
+  String region;
+  String current_jobTitle;
+  String current_jobDescription;
+  String company;
+
   TalentModel({
     this.id,
-    this.type,
-    this.mediaUrl,
-    this.imageUrl,
-    this.description,
-    this.firstName,
-    this.lastName,
-    this.country,
-    this.city,
-    this.phoneNumber,
-    this.currentJobTitle,
-    this.companyName,
+    this.user_id,
+    this.first_name,
+    this.last_name,
+    this.phone_number,
+    this.region,
+    this.current_jobTitle,
+    this.current_jobDescription,
+    this.company
   });
-  static final dumpListData = [
-    TalentModel(
-      id: 3,
-      type: "Video",
-      firstName: "Ramiro",
-      lastName: "Talavera",
-      mediaUrl: "",
-      imageUrl:
-          "https://images.unsplash.com/photo-1549068106-b024baf5062d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80",
-      description:
-          'Riviera Maya tiene más de 120 km de costa turquesa cristalina,'
-          ' playas de arena blanca, sitios arqueológicos, parques '
-          'naturales y actividades acuáticas únicas',
-      country: "Saudi Native",
-      city: "Riyadh",
-      phoneNumber: "123456789",
-      currentJobTitle: "Talent Developer",
-      companyName: "Self Employed",
-    ),
-    TalentModel(
-      id: 1,
-      type: "Video",
-      firstName: "Beca",
-      lastName: "Lway",
-      mediaUrl: "",
-      imageUrl:
-          "https://images.unsplash.com/photo-1569124589354-615739ae007b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
-      description:
-          'Riviera Maya tiene más de 120 km de costa turquesa cristalina,'
-          ' playas de arena blanca, sitios arqueológicos, parques '
-          'naturales y actividades acuáticas únicas',
-      country: "Saudi Native",
-      city: "Riyadh",
-      phoneNumber: "123456789",
-      currentJobTitle: "Talent Developer",
-      companyName: "Self Employed",
-    ),
-    TalentModel(
-      id: 2,
-      type: "Video",
-      firstName: "Mariela",
-      lastName: "Guajardo",
-      mediaUrl: "",
-      imageUrl:
-          "https://images.unsplash.com/photo-1554151228-14d9def656e4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=333&q=80",
-      description:
-          'Riviera Maya tiene más de 120 km de costa turquesa cristalina,'
-          ' playas de arena blanca, sitios arqueológicos, parques '
-          'naturales y actividades acuáticas únicas',
-      country: "Saudi Native",
-      city: "Riyadh",
-      phoneNumber: "123456789",
-      currentJobTitle: "Talent Developer",
-      companyName: "Self Employed",
-    ),
-    TalentModel(
-      id: 4,
-      type: "image",
-      firstName: "Marcos",
-      lastName: "Reine",
-      mediaUrl: "",
-      imageUrl:
-          "https://images.unsplash.com/photo-1493863641943-9b68992a8d07?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=739&q=80",
-      description:
-          'Riviera Maya tiene más de 120 km de costa turquesa cristalina,'
-          ' playas de arena blanca, sitios arqueológicos, parques '
-          'naturales y actividades acuáticas únicas',
-      country: "Saudi Native",
-      city: "Riyadh",
-      phoneNumber: "123456789",
-      currentJobTitle: "Talent Developer",
-      companyName: "Self Employed",
-    ),
-  ];
+  factory TalentModel.fromJson(Map<String, dynamic> json) {
+    String _region = "";
+    String _phoneNumber = "";
+    if (json['region'] != null) {
+      _region = jsonEncode(json['region']);
+    }
+    if (json['phone_number'] != null) {
+      _phoneNumber = jsonEncode(json['phone_number']);
+    }
+    return TalentModel(
+      id: json['id'],
+      user_id: json['user_id'] ?? "",
+      first_name : json['first_name'] ?? "",
+      last_name: json['last_name'] ?? "",
+      region: _region,
+      phone_number: _phoneNumber,
+      current_jobTitle: json['current_jobTitle'] ?? "",
+      current_jobDescription: json['current_jobDescription'] ?? "",
+      company: json['company'] ?? "",
+
+    );
+  }
 }
+

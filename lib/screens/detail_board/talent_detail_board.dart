@@ -3,7 +3,7 @@ import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hire_q/helpers/constants.dart';
-import 'package:hire_q/models/talent_model.dart';
+import 'package:hire_q/models/talent1_model.dart';
 import 'package:hire_q/screens/detail_board/talent_per_card.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
 import 'package:hire_q/screens/talent/widgets/talent_card.dart';
@@ -13,7 +13,7 @@ import 'package:hire_q/widgets/custom_drawer_widget.dart';
 
 class TalentDetailBoard extends StatefulWidget {
   const TalentDetailBoard({Key key, this.data}) : super(key: key);
-  final TalentModel data;
+  final TalentModel1 data;
   @override
   _TalentDetailBoard createState() => _TalentDetailBoard();
 }

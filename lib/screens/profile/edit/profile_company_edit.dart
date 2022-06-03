@@ -286,7 +286,9 @@ class _ProfileCompanyEdit extends State<ProfileCompanyEdit> {
                   children: [
                     Consumer<AppState>(builder: (context, _pAppState, child) {
                       return Text(
-                        (_pAppState.company).name,
+                        _pAppState.company == null
+                            ? ""
+                            : (_pAppState.company).name,
                         style:
                             const TextStyle(fontSize: 30, color: primaryColor),
                       );
@@ -347,11 +349,16 @@ class _ProfileCompanyEdit extends State<ProfileCompanyEdit> {
                                 backgroundColor: Colors.grey.shade200,
                                 child: CircleAvatar(
                                   radius: 70,
-                                  backgroundImage: NetworkImage(
-                                      (_pAppState.profile).avator == ""
-                                          ? 'https://via.placeholder.com/150'
-                                          : appState.hostAddress +
-                                              (appState.profile).avator),
+                                  backgroundImage: _pAppState.profile == null
+                                      ? const NetworkImage(
+                                          'https://via.placeholder.com/150')
+                                      : ((_pAppState.profile).avator == null ||
+                                              (_pAppState.profile).avator == "")
+                                          ? const NetworkImage(
+                                              'https://via.placeholder.com/150')
+                                          : NetworkImage(
+                                              _pAppState.hostAddress +
+                                                  (_pAppState.profile).avator),
                                 ),
                               );
                             },
@@ -622,9 +629,11 @@ class _ProfileCompanyEdit extends State<ProfileCompanyEdit> {
                                 ),
                                 subtitle: Text(
                                   ((jsonDecode(_currentCompanyJobs[index]
-                                              .region))['city'] ==
-                                          null || (jsonDecode(_currentCompanyJobs[index]
-                                              .region))['city'] == "")
+                                                  .region))['city'] ==
+                                              null ||
+                                          (jsonDecode(_currentCompanyJobs[index]
+                                                  .region))['city'] ==
+                                              "")
                                       ? ""
                                       : (jsonDecode(_currentCompanyJobs[index]
                                           .region))['city'],

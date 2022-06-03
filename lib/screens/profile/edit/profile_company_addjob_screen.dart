@@ -171,7 +171,7 @@ class _ProfileCompanyAddJobScreenState
               "experience_year": yearsOfExperienceController.text,
               "region": {
                 "country": countryValue,
-                "city": cityValue,
+                "city" : cityValue ?? "no city",
                 "state": stateValue
               },
               "salary": salaryController.text,
@@ -232,7 +232,7 @@ class _ProfileCompanyAddJobScreenState
               "experience_year": yearsOfExperienceController.text,
               "region": {
                 "country": countryValue,
-                "city": cityValue,
+                "city" : cityValue ?? "no city",
                 "state": stateValue
               },
               "salary": salaryController.text,

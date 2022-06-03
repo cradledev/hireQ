@@ -45,6 +45,7 @@ class _JobDetailBoard extends State<JobDetailBoard> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
         return false;
@@ -52,13 +53,14 @@ class _JobDetailBoard extends State<JobDetailBoard> {
       child: Scaffold(
         appBar: CustomAppBar(
           leadingIcon: const Icon(
-            CupertinoIcons.line_horizontal_3,
+            CupertinoIcons.arrow_left,
             size: 40,
             color: Colors.white,
           ),
           backgroundColor: primaryColor,
-          // leadingAction: () {
-          // },
+          leadingAction: () {
+            Navigator.of(context).pop();
+          },
           leadingFlag: true,
           actionEvent: () {},
           actionFlag: true,
@@ -113,127 +115,209 @@ class _JobDetailBoard extends State<JobDetailBoard> {
           textColor: primaryColor,
           inactiveIconColor: Colors.grey,
         ),
-        body: Padding(
-          padding: EdgeInsets.zero,
+        body: Container(
+          padding: const EdgeInsets.fromLTRB(8, 4, 8, 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Job Detail",
-                      style: TextStyle(fontSize: 26, color: primaryColor),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(CupertinoIcons.forward),
-                      color: primaryColor,
-                      iconSize: 30,
-                    )
-                  ],
-                ),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      widget.data.company_name,
-                      style:
-                          const TextStyle(color: Colors.black87, fontSize: 28),
-                    ),
-                    SizedBox(
-                      width: 64,
-                      child: Hero(
-                        tag: 'company_logo' + widget.data.id.toString(),
-                        child: CachedNetworkImage(
-                          imageUrl:
-                              appState.hostAddress + widget.data.company_logo,
-                          progressIndicatorBuilder:
-                              (context, url, downloadProgress) {
-                            return Center(
-                              child: SizedBox(
-                                width: 30,
-                                height: 30,
-                                child: CircularProgressIndicator(
-                                    value: downloadProgress.progress),
-                              ),
-                            );
-                          },
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.error),
-                          fit: BoxFit.cover,
-                        ),
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.zero,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(width: 5, color: Colors.white),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.7),
+                        blurRadius: 20,
+                        offset: const Offset(1, 5),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 14.0, vertical: 5),
-                    child: Text(
-                      widget.data.title,
-                      style: const TextStyle(fontSize: 28, color: primaryColor),
-                    ),
+                    ],
                   ),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 5),
-                        child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Icon(
-                              CupertinoIcons.location_solid,
-                              color: primaryColor,
-                              size: 30.0,
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 10),
+                              width: size.width,
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(10),
+                                  topRight: Radius.circular(10),
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  HireQLogo(
+                                    fontSize: size.height * .065,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 5),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          widget.data.company_name,
+                                          style: const TextStyle(
+                                              color: Colors.black54,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 28),
+                                        ),
+                                        SizedBox(
+                                          width: 64,
+                                          height: 64,
+                                          child: CachedNetworkImage(
+                                            imageUrl: Provider.of<AppState>(
+                                                        context,
+                                                        listen: false)
+                                                    .hostAddress +
+                                                widget.data.company_logo,
+                                            progressIndicatorBuilder:
+                                                (context, url,
+                                                    downloadProgress) {
+                                              return Center(
+                                                child: SizedBox(
+                                                  width: 30,
+                                                  height: 30,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                          value:
+                                                              downloadProgress
+                                                                  .progress),
+                                                ),
+                                              );
+                                            },
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    const Icon(Icons.error),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                            const SizedBox(
-                              width: 10,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 10),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    widget.data.title,
+                                    style: const TextStyle(
+                                        fontSize: 24,
+                                        color: primaryColor,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    child: Row(
+                                      children: [
+                                        const Icon(
+                                          CupertinoIcons.location_solid,
+                                          color: primaryColor,
+                                          size: 30.0,
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          jsonDecode(widget.data.region)[
+                                                  'city'] ??
+                                              "",
+                                          style: const TextStyle(
+                                              fontSize: 18,
+                                              color: Colors.grey),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                            Text(
-                              jsonDecode(widget.data.region)['city'],
-                              style: const TextStyle(
-                                  fontSize: 18, color: Colors.grey),
+                            Expanded(
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 15, vertical: 8),
+                                      child: Text(
+                                        widget.data.description.isNotEmpty
+                                            ? widget.data.description
+                                            : "",
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          color: Colors.grey,
+                                          height: 1.5,
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
                             ),
                           ],
                         ),
                       ),
-                    ],
-                  ),
-                ],
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 10),
-                              child: Text(
-                                widget.data.description,
-                                style: const TextStyle(
-                                    fontSize: 18, color: Colors.grey),
+                      Container(
+                        height: 60,
+                        width: MediaQuery.of(context).size.width,
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        alignment: Alignment.center,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(10),
+                              bottomRight: Radius.circular(10)),
+                          color: primaryColor,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.zero,
+                              child: ImageButton(
+                                  onPressed: () {},
+                                  imageHeight: 40,
+                                  image: "assets/icons/q white.png"),
+                            ),
+                            Center(
+                              child: IconButton(
+                                onPressed: () {
+                                  // _openPage(context, const TalentDetail());
+                                },
+                                icon: const Icon(
+                                    CupertinoIcons.multiply_circle),
+                                color: Colors.red,
+                                iconSize: 30,
                               ),
                             ),
-                          ),
-                        ],
-                      ),
+                            Padding(
+                              padding: EdgeInsets.zero,
+                              child: ImageButton(
+                                  onPressed: () {},
+                                  imageHeight: 35,
+                                  image: "assets/icons/share.png"),
+                            ),
+                          ],
+                        ),
+                      )
                     ],
                   ),
                 ),

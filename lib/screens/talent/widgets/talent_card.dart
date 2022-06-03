@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hire_q/helpers/constants.dart';
-import 'package:hire_q/models/talent_model.dart';
+import 'package:hire_q/models/talent1_model.dart';
 import 'package:hire_q/widgets/common_widget.dart';
 
 import '../detail/talent_detail.dart';
@@ -9,7 +9,7 @@ import 'package:hire_q/widgets/image_gradient_overlay.dart';
 
 class TalentCard extends StatelessWidget {
   final BuildContext buildContext;
-  final TalentModel talentData;
+  final TalentModel1 talentData;
   TalentCard({Key key, this.buildContext, this.talentData}) : super(key: key);
   final hideNotifier = ValueNotifier(false);
   @override

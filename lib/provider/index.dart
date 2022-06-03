@@ -1,6 +1,7 @@
 
 import 'package:hire_q/models/company_model.dart';
 import 'package:hire_q/models/profile_model.dart';
+import 'package:hire_q/models/talent_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
@@ -21,8 +22,11 @@ class AppState extends ChangeNotifier {
   Map _user;
   // Company, Talent data of authenticated user
   CompanyModel _authorizedCompany;
+  TalentModel _authorizedTalent;
+
   // Authorized user profile model both taletn and company
   ProfileModel _authorizedProfile;
+  
 
   //get
   get talentSwipeUp => _talentSwipeUp;
@@ -31,6 +35,7 @@ class AppState extends ChangeNotifier {
   get endpoint => _endpoint;
   get entryType => _entryType;
   get company => _authorizedCompany;
+  get talent => _authorizedTalent;
   get profile => _authorizedProfile;
   get hostAddress => _hostAddress;
   // set
@@ -54,13 +59,25 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  set company(value) {
+  set company(CompanyModel value) {
     _authorizedCompany = value;
     notifyListeners();
   }
-  set profile(value) {
+
+  set talent(TalentModel value) {
+    _authorizedTalent = value;
+    notifyListeners();
+  }
+  
+  set profile(ProfileModel value) {
     _authorizedProfile = value;
     notifyListeners();
+  }
+  void removeAllState() {
+    user = null;
+    company = null;
+    talent = null;
+    profile = null;
   }
   void notifyToast({context, message}) {
     ToastContext().init(context);

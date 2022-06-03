@@ -23,6 +23,20 @@ class APIClient {
     }
   }
 
+  // create company info 
+  Future<http.Response> createCompanyInfo({token, payloads}) async {
+    try {
+      header['api-token'] = token;
+      var response = await http.post(
+          Uri.parse(endpoint + "/companies/"),
+          body: payloads,
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception("Unknow Error.");
+    }
+  }
+
   // update company data for authenticated company
   Future<http.Response> updateCompany({companyId, token, payloads}) async {
     try {
@@ -37,6 +51,47 @@ class APIClient {
     }
   }
 
+  // =================== Talent Model ============
+
+  // get talent info by user id
+  Future<http.Response> getTalentByUser({userId, token}) async {
+    try {
+      header['api-token'] = token;
+      var response = await http.get(
+          Uri.parse(
+              endpoint + "/talents/by_user/" + userId.toString()),
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception("Unknow Error.");
+    }
+  }
+  // create talent data
+  Future<http.Response> createTalentInfo({token, payloads}) async {
+    try {
+      header['api-token'] = token;
+      var response = await http.post(
+          Uri.parse(endpoint + "/talents/"),
+          body: payloads,
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception("Unknow Error.");
+    }
+  }
+  // update talent data
+  Future<http.Response> updateTalentInfo({talentId, token, payloads}) async {
+    try {
+      header['api-token'] = token;
+      var response = await http.put(
+          Uri.parse(endpoint + "/talents/update/" + talentId.toString()),
+          body: payloads,
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception("Unknow Error.");
+    }
+  }
   // ===================== company profile =================
 
   // get profile model for authenticated company or talent
@@ -103,6 +158,22 @@ class APIClient {
     }
   }
 
+  // applied job by talent 
+  Future<http.Response> applyCompanyJob({token, payloads}) async {
+    try {
+      header['api-token'] = token;
+      var response = await http.post(
+          Uri.parse(endpoint + "/appliedjobs/"),
+          body: payloads,
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception("Unknow Error.");
+    }
+  }
+
+  // get applied job in company
+
   // ================ company job board part ===================
 
   // get the company jobs including pagination  
@@ -110,6 +181,19 @@ class APIClient {
     try {
       var response = await http.get(
           Uri.parse(endpoint + "/jobs/pages/" + pageNum.toString() + "/" + pageLength.toString()),
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception("Unknow Error.");
+    }
+  }
+
+  // get the company jobs excepting applied job by user id
+  Future<http.Response> getCompanyJobsByUserId({token, pageNum, pageLength}) async {
+    try {
+      header['api-token'] = token;
+      var response = await http.get(
+          Uri.parse(endpoint + "/jobs/pages_by_user/" + pageNum.toString() + "/" + pageLength.toString()),
           headers: header);
       return response;
     } catch (e) {

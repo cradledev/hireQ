@@ -16,6 +16,7 @@ class CompanyJobModel {
   String title;
   String company_logo;
   String company_name;
+  String company_video;
 
   CompanyJobModel({
     this.id,
@@ -32,7 +33,8 @@ class CompanyJobModel {
     this.salary,
     this.title,
     this.company_logo,
-    this.company_name
+    this.company_name,
+    this.company_video
   });
   factory CompanyJobModel.fromJson(Map<String, dynamic> json) {
     String _region = "";
@@ -54,7 +56,8 @@ class CompanyJobModel {
       salary: json['salary'] ?? "",
       title: json['title'] ?? "",
       company_logo : json['company_logo'] ?? "",
-      company_name : json['company_name'] ?? ""
+      company_name : json['company_name'] ?? "",
+      company_video: json['company_video'] ?? ""
     );
   }
 }
