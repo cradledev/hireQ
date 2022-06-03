@@ -1,12 +1,24 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:hire_q/helpers/api.dart';
 import 'package:hire_q/helpers/constants.dart';
+import 'package:hire_q/models/company_job_model.dart';
+import 'package:hire_q/models/company_model.dart';
+import 'package:hire_q/models/profile_model.dart';
+import 'package:hire_q/provider/index.dart';
+import 'package:hire_q/provider/jobs_provider.dart';
 import 'package:hire_q/screens/appliedq/applied_q_company_screen.dart';
+import 'package:hire_q/screens/detail_board/job_detail_company_board.dart';
 import 'package:hire_q/screens/jobsq/jobs_q_company_screen.dart';
+import 'package:hire_q/screens/lobby/lobby_screen.dart';
+import 'package:hire_q/screens/profile/edit/profile_company_edit.dart';
+import 'package:hire_q/screens/video_player/video_player.dart';
 import 'package:hire_q/screens/videoview/video_view_screen.dart';
 import 'package:hire_q/widgets/common_widget.dart';
-import 'package:hire_q/widgets/theme_helper.dart';
+import 'package:provider/provider.dart';
 
 import 'package:steps_indicator/steps_indicator.dart';
 import 'package:pie_chart/pie_chart.dart';
@@ -20,6 +32,11 @@ class ProfileCompanyScreen extends StatefulWidget {
 }
 
 class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
+  // app state setting
+  AppState appState;
+
+  // Job provider setting
+  JobsProvider jobProvider;
   int selectedStep = 2;
   int nbSteps = 5;
   Map<String, double> dataMap = {
@@ -28,6 +45,8 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
     "Xamarin": 2,
     "Ionic": 2,
   };
+  // API service import
+  APIClient api;
   List<Color> colorList = <Color>[
     const Color(0xfffdcb6e),
     const Color(0xff0984e3),
@@ -38,9 +57,147 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
   @override
   void initState() {
     super.initState();
+    onInit();
+  }
+
+  void onInit() {
+    appState = Provider.of<AppState>(context, listen: false);
+    // job provider init
+    jobProvider = Provider.of<JobsProvider>(context, listen: false);
+    // set init state
     setState(() {
       selectedStep = 2;
     });
+    // APIClient instance
+    api = APIClient();
+    // init get data including company, profile, company jobs
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      onGetCompany();
+      onGetProfile();
+    });
+  }
+
+  void onGetCompany() async {
+    try {
+      var res = await api.getCompany(
+          userId: appState.user['id'], token: appState.user['jwt_token']);
+      if (res.statusCode == 200) {
+        appState.company =
+            CompanyModel.fromJson(jsonDecode(res.body.toString()));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.red,
+        content: Text(e.message),
+      ));
+    }
+  }
+
+  void onGetProfile() async {
+    try {
+      var res = await api.getProfile(
+          userId: appState.user['id'], token: appState.user['jwt_token']);
+      var body = jsonDecode(res.body.toString());
+      if (res.statusCode == 200) {
+        appState.profile = ProfileModel.fromJson(body);
+        onGetCurrentCompayJobs(body['id']);
+      }
+      if (res.statusCode == 400) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.red,
+          content: Text(body['error']),
+        ));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        backgroundColor: Colors.red,
+        content: Text("Unknown Error is occured."),
+      ));
+    }
+  }
+
+  void onGetCurrentCompayJobs(_p_companyId) async {
+    try {
+      var res = await api.getCurrentCompanyJobs(
+          companyId: _p_companyId, token: appState.user['jwt_token']);
+      var body = jsonDecode(res.body.toString());
+      if (res.statusCode == 200) {
+        if ((body as List).isNotEmpty) {
+          jobProvider.currentCompanyJobs = (body as List)
+              .map((item) => CompanyJobModel.fromJson(item))
+              .toList();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            backgroundColor: Colors.red,
+            content: Text("Your Company has no jobs."),
+          ));
+        }
+      }
+      if (res.statusCode == 400) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          backgroundColor: Colors.red,
+          content: Text("Something went wrong. Please try again it."),
+        ));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        backgroundColor: Colors.red,
+        content: Text("Unknown Error is occured."),
+      ));
+    }
+  }
+
+  // go to company video view page
+  void onGoToCompanyVideoView() {
+    if (appState.profile != null) {
+      ProfileModel _tmpProfile = appState.profile;
+      if (_tmpProfile.video.isNotEmpty) {
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            transitionDuration: const Duration(microseconds: 800),
+            pageBuilder: (context, animation, secondaryAnimation) {
+              return FadeTransition(
+                opacity: animation,
+                child: CustomVideoPlayer(
+                  sourceUrl: appState.hostAddress + _tmpProfile.video,
+                ),
+              );
+            },
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.red,
+            content: Text("Your Company has nothing for Video."),
+          ),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.red,
+          content: Text("The video is loading... Please wait for a while."),
+        ),
+      );
+    }
+  }
+
+  // go to job detail board page
+  void onGotoJobDetailBoard(CompanyJobModel _pCompanyJob) {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 500),
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return FadeTransition(
+            opacity: animation,
+            child: JobDetailCompanyBoard(selectedCompanyJob: _pCompanyJob),
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -72,23 +229,32 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
                           height:
                               MediaQuery.of(context).size.height * 0.35 * 5 / 6,
                           width: MediaQuery.of(context).size.width,
-                          child: CachedNetworkImage(
-                            imageUrl:
-                                "https://images.pexels.com/photos/2422915/pexels-photo-2422915.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                            progressIndicatorBuilder:
-                                (context, url, downloadProgress) {
-                              return Center(
-                                child: SizedBox(
-                                  width: 30,
-                                  height: 30,
-                                  child: CircularProgressIndicator(
-                                      value: downloadProgress.progress),
-                                ),
+                          child: Consumer<AppState>(
+                            builder: (context, _pAppState, child) {
+                              return CachedNetworkImage(
+                                imageUrl: _pAppState.profile == null
+                                    ? "https://images.pexels.com/photos/2422915/pexels-photo-2422915.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+                                    : ((appState.profile).avator == null ||
+                                            (appState.profile).avator == "")
+                                        ? "https://images.pexels.com/photos/2422915/pexels-photo-2422915.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+                                        : appState.hostAddress +
+                                            (appState.profile).avator,
+                                progressIndicatorBuilder:
+                                    (context, url, downloadProgress) {
+                                  return Center(
+                                    child: SizedBox(
+                                      width: 30,
+                                      height: 30,
+                                      child: CircularProgressIndicator(
+                                          value: downloadProgress.progress),
+                                    ),
+                                  );
+                                },
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error),
+                                fit: BoxFit.fill,
                               );
                             },
-                            errorWidget: (context, url, error) =>
-                                const Icon(Icons.error),
-                            fit: BoxFit.fill,
                           ),
                         ),
                         Container(
@@ -226,34 +392,56 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
                               Expanded(
                                 flex: 2,
                                 child: Column(
-                                  children: const [
-                                    CircleAvatar(
-                                      radius: 50.0,
-                                      backgroundImage: NetworkImage(
-                                          'https://via.placeholder.com/150'),
-                                      backgroundColor: Colors.transparent,
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.zero,
-                                      child: Text(
-                                        "@ Aramco",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 24,
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 5),
-                                      child: Text(
-                                        "aramco",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                    ),
+                                  children: [
+                                    Consumer<AppState>(
+                                        builder: (context, _pAppState, child) {
+                                      return Column(
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 50.0,
+                                            backgroundImage: _pAppState.profile ==
+                                                    null
+                                                ? const NetworkImage(
+                                                    'https://via.placeholder.com/150')
+                                                : ((_pAppState.profile).avator ==
+                                                            null ||
+                                                        (_pAppState.profile)
+                                                                .avator ==
+                                                            "")
+                                                    ? const NetworkImage(
+                                                        'https://via.placeholder.com/150')
+                                                    : NetworkImage(
+                                                        _pAppState.hostAddress +
+                                                            (_pAppState.profile)
+                                                                .avator),
+                                            backgroundColor: Colors.transparent,
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.zero,
+                                            child: Text(
+                                              _pAppState.company != null ?
+                                              (_pAppState.company).name : "",
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 5),
+                                            child: Text(
+                                              _pAppState.company == null ? "":
+                                              '@${(_pAppState.company).account_manager_name}',
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }),
                                   ],
                                 ),
                               ),
@@ -261,14 +449,19 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
                                 flex: 1,
                                 child: OutlineButtonCustomWithIcon(
                                   onTap: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return ThemeHelper().alartDialog(
-                                            "warning",
-                                            "Something went wrong, Please try again it.",
-                                            context);
-                                      },
+                                    Navigator.push(
+                                      context,
+                                      PageRouteBuilder(
+                                        transitionDuration:
+                                            const Duration(milliseconds: 500),
+                                        pageBuilder: (context, animation,
+                                            secondaryAnimation) {
+                                          return FadeTransition(
+                                            opacity: animation,
+                                            child: const ProfileCompanyEdit(),
+                                          );
+                                        },
+                                      ),
                                     );
                                   },
                                   text: "edit",
@@ -285,22 +478,25 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Container(
-                          margin: const EdgeInsets.only(
-                              bottom: 15, left: 15, right: 15),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            boxShadow: [
-                              BoxShadow(
-                                offset: const Offset(0, 2),
-                                blurRadius: 10,
-                                color: Colors.black.withOpacity(0.3),
-                              ),
-                            ],
-                          ),
-                          child: const Image(
-                            image: AssetImage("assets/icons/Play.png"),
-                            height: 35.0,
+                        InkWell(
+                          onTap: onGoToCompanyVideoView,
+                          child: Container(
+                            margin: const EdgeInsets.only(
+                                bottom: 15, left: 15, right: 15),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              boxShadow: [
+                                BoxShadow(
+                                  offset: const Offset(0, 2),
+                                  blurRadius: 10,
+                                  color: Colors.black.withOpacity(0.3),
+                                ),
+                              ],
+                            ),
+                            child: const Image(
+                              image: AssetImage("assets/icons/Play.png"),
+                              height: 35.0,
+                            ),
                           ),
                         ),
                       ],
@@ -320,74 +516,130 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        CircleAvatar(
-                          radius: 25.0,
-                          backgroundColor: Color(0xffC8D3D5),
-                          child: Image(
-                            image: AssetImage("assets/icons/Creat video.png"),
-                            height: 22.0,
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration:
+                                const Duration(milliseconds: 500),
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) {
+                              return FadeTransition(
+                                opacity: animation,
+                                child: const ProfileCompanyEdit(),
+                              );
+                            },
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.zero,
-                          child: Text(
-                            "Create Video",
-                            style: TextStyle(
-                              color: primaryColor,
-                              fontSize: 16,
+                        );
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          CircleAvatar(
+                            radius: 25.0,
+                            backgroundColor: Color(0xffC8D3D5),
+                            child: Image(
+                              image: AssetImage("assets/icons/Creat video.png"),
+                              height: 22.0,
                             ),
                           ),
-                        ),
-                      ],
+                          Padding(
+                            padding: EdgeInsets.zero,
+                            child: Text(
+                              "Create Video",
+                              style: TextStyle(
+                                color: primaryColor,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        CircleAvatar(
-                          radius: 25.0,
-                          backgroundColor: Color(0xffC8D3D5),
-                          child: Image(
-                            image: AssetImage("assets/icons/message.png"),
-                            height: 22.0,
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration:
+                                const Duration(milliseconds: 500),
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) {
+                              return FadeTransition(
+                                opacity: animation,
+                                child: const LobbyScreen(
+                                  indexTab: 2,
+                                ),
+                              );
+                            },
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.zero,
-                          child: Text(
-                            "Message",
-                            style: TextStyle(
-                              color: primaryColor,
-                              fontSize: 16,
+                        );
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          CircleAvatar(
+                            radius: 25.0,
+                            backgroundColor: Color(0xffC8D3D5),
+                            child: Image(
+                              image: AssetImage("assets/icons/message.png"),
+                              height: 22.0,
                             ),
                           ),
-                        ),
-                      ],
+                          Padding(
+                            padding: EdgeInsets.zero,
+                            child: Text(
+                              "Message",
+                              style: TextStyle(
+                                color: primaryColor,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        CircleAvatar(
-                          radius: 25.0,
-                          backgroundColor: Color(0xffC8D3D5),
-                          child: Image(
-                            image: AssetImage("assets/icons/upload file.png"),
-                            height: 22.0,
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration:
+                                const Duration(milliseconds: 500),
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) {
+                              return FadeTransition(
+                                opacity: animation,
+                                child: const ProfileCompanyEdit(),
+                              );
+                            },
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.zero,
-                          child: Text(
-                            "Upload File",
-                            style: TextStyle(
-                              color: primaryColor,
-                              fontSize: 16,
+                        );
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          CircleAvatar(
+                            radius: 25.0,
+                            backgroundColor: Color(0xffC8D3D5),
+                            child: Image(
+                              image: AssetImage("assets/icons/upload file.png"),
+                              height: 22.0,
                             ),
                           ),
-                        ),
-                      ],
+                          Padding(
+                            padding: EdgeInsets.zero,
+                            child: Text(
+                              "Upload File",
+                              style: TextStyle(
+                                color: primaryColor,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -425,7 +677,8 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
                               padding: EdgeInsets.zero,
                               child: PieChart(
                                 dataMap: dataMap,
-                                animationDuration: Duration(milliseconds: 800),
+                                animationDuration:
+                                    const Duration(milliseconds: 800),
                                 chartLegendSpacing: 32,
                                 chartRadius: math.min(
                                     MediaQuery.of(context).size.width / 3.2,
@@ -592,33 +845,56 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
                       ),
                     ),
                     Expanded(
-                      child: ListView.builder(
-                        itemBuilder: (context, index) {
-                          return Container(
-                            margin: const EdgeInsets.only(bottom: 10),
-                            child: Card(
-                              // color: Colors.transparent,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const ListTile(
-                                title: Text(
-                                  "Location",
-                                  style: TextStyle(color: primaryColor),
+                      child: Consumer<JobsProvider>(
+                        builder: (context, pJobProvider, child) {
+                          List<CompanyJobModel> _currentCompanyJobs =
+                              pJobProvider.currentCompanyJobs;
+                          return ListView.builder(
+                            itemBuilder: (context, index) {
+                              return InkWell(
+                                onTap: () {
+                                  onGotoJobDetailBoard(
+                                      _currentCompanyJobs[index]);
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.only(bottom: 10),
+                                  child: Card(
+                                    // color: Colors.transparent,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: ListTile(
+                                      title: Text(
+                                        _currentCompanyJobs[index].title,
+                                        style: const TextStyle(
+                                            color: primaryColor),
+                                      ),
+                                      subtitle: Text(
+                                        ((jsonDecode(_currentCompanyJobs[index]
+                                                        .region))['city'] ==
+                                                    null ||
+                                                (jsonDecode(_currentCompanyJobs[
+                                                            index]
+                                                        .region))['city'] ==
+                                                    "")
+                                            ? ""
+                                            : (jsonDecode(
+                                                _currentCompanyJobs[index]
+                                                    .region))['city'],
+                                        style: const TextStyle(fontSize: 20),
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                                subtitle: Text(
-                                  "Jeddah",
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                              ),
-                            ),
+                              );
+                            },
+                            itemCount: _currentCompanyJobs.length,
+                            shrinkWrap: true,
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            // padding: EdgeInsets.all(5),
+                            scrollDirection: Axis.vertical,
                           );
                         },
-                        itemCount: 5,
-                        shrinkWrap: true,
-                        physics: AlwaysScrollableScrollPhysics(),
-                        // padding: EdgeInsets.all(5),
-                        scrollDirection: Axis.vertical,
                       ),
                     )
                   ],

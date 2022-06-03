@@ -45,8 +45,8 @@ class _ConsiderTalentListBoard extends State<ConsiderTalentListBoard> {
             color: Colors.white,
           ),
           backgroundColor: primaryColor,
-          leadingAction: () {
-          },
+          // leadingAction: () {
+          // },
           leadingFlag: true,
           actionEvent: () {},
           actionFlag: true,

@@ -78,8 +78,7 @@ class _RegisterCompanyScreenState extends State<RegisterCompanyScreen> {
 
   bool _onValidationRegion() {
     if (countryValue.isNotEmpty &&
-        stateValue.isNotEmpty &&
-        cityValue.isNotEmpty) {
+        stateValue.isNotEmpty) {
       return true;
     } else {
       return false;
@@ -117,7 +116,11 @@ class _RegisterCompanyScreenState extends State<RegisterCompanyScreen> {
               'user_id': appState.user['id'],
               'account_manager_name': accountManageerNameController.text,
               'name': companyNameController.text,
-              "phone_number": phoneNumber,
+              "phone_number": {
+                "phoneNumber": phoneNumber,
+                "initialCountryCode": initialCountryCode,
+                "displayPhoneNumber": displayPhoneNumber
+              },
               "region": {
                 "country": countryValue,
                 "city": cityValue,
@@ -127,7 +130,7 @@ class _RegisterCompanyScreenState extends State<RegisterCompanyScreen> {
 
             
             var res = await appState.postWithToken(
-                Uri.parse(appState.endpoint + "companies/"),
+                Uri.parse(appState.endpoint + "/companies/"),
                 jsonEncode(payloads));
             setState(() {
               isLoading = false;

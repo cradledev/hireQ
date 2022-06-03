@@ -1,5 +1,6 @@
 enum NavigationItem {
   header,
   logout,
-  login
+  login,
+  setting
 }

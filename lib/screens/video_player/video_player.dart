@@ -9,16 +9,15 @@ import 'package:hire_q/widgets/custom_drawer_widget.dart';
 import 'package:video_player/video_player.dart';
 
 class CustomVideoPlayer extends StatefulWidget {
-  const CustomVideoPlayer({Key key}) : super(key: key);
-
+  const CustomVideoPlayer({Key key, this.sourceUrl}) : super(key: key);
+  final String sourceUrl;
   @override
   _CustomVideoPlayerState createState() => _CustomVideoPlayerState();
 }
 
 class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
   FlickManager flickManager;
-  final videoPlayerController = VideoPlayerController.network(
-      'http://192.168.116.39:5000/static/uploads/history.mp4');
+  VideoPlayerController videoPlayerController;
   Future<void> _initializeVideoPlayerFuture;
   @override
   void initState() {
@@ -28,6 +27,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
 
   void onInit() {
     // await videoPlayerController.initialize();
+    videoPlayerController = VideoPlayerController.network(widget.sourceUrl.toString());
     _initializeVideoPlayerFuture = videoPlayerController.initialize();
     flickManager = FlickManager(
       videoPlayerController: videoPlayerController,
@@ -61,7 +61,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
             color: Colors.white,
           ),
           backgroundColor: primaryColor,
-          leadingAction: () {},
+          // leadingAction: () {},
           leadingFlag: true,
           actionEvent: () {},
           actionFlag: false,

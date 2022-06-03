@@ -189,7 +189,7 @@ class _MessageScreen extends State<MessageScreen> {
                   },
                   itemCount: 30,
                   shrinkWrap: true,
-                  physics: AlwaysScrollableScrollPhysics(),
+                  physics: const AlwaysScrollableScrollPhysics(),
                   scrollDirection: Axis.vertical,
                 ),
               ),

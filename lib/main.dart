@@ -4,6 +4,7 @@ import 'package:hire_q/helpers/constants.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hire_q/provider/jobs_provider.dart';
 import 'package:hire_q/provider/navigation_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:hire_q/screens/splash/splash_screen.dart';
@@ -32,6 +33,9 @@ void main() {
           ),
           ChangeNotifierProvider(
             create: (_) => NavigationProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => JobsProvider(),
           ),
           // ChangeNotifierProvider(
           //     create: (_) => DataNotifier(),

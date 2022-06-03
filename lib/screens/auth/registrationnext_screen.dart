@@ -102,8 +102,7 @@ class _RegisterNextScreenState extends State<RegisterNextScreen> {
 
   bool _onValidationRegion() {
     if (countryValue.isNotEmpty &&
-        stateValue.isNotEmpty &&
-        cityValue.isNotEmpty) {
+        stateValue.isNotEmpty) {
       return true;
     } else {
       return false;
@@ -133,7 +132,11 @@ class _RegisterNextScreenState extends State<RegisterNextScreen> {
               'user_id': appState.user['id'],
               'first_name': firstnameController.text,
               'last_name': lastnameController.text,
-              "phone_number": phoneNumber,
+              "phone_number": {
+                "phoneNumber": phoneNumber,
+                "initialCountryCode": initialCountryCode,
+                "displayPhoneNumber": displayPhoneNumber
+              },
               "region": {
                 "country": countryValue,
                 "city": cityValue,
@@ -144,7 +147,7 @@ class _RegisterNextScreenState extends State<RegisterNextScreen> {
             };
 
             var res = await appState.postWithToken(
-                Uri.parse(appState.endpoint + "talents/"),
+                Uri.parse(appState.endpoint + "/talents/"),
                 jsonEncode(payloads));
             setState(() {
               isLoading = false;

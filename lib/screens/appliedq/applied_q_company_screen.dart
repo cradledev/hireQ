@@ -45,8 +45,8 @@ class _AppliedQCompanyScreen extends State<AppliedQCompanyScreen> {
             color: Colors.white,
           ),
           backgroundColor: primaryColor,
-          leadingAction: () {
-          },
+          // leadingAction: () {
+          // },
           leadingFlag: true,
           actionEvent: () {},
           actionFlag: true,

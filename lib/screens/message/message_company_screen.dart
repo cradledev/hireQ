@@ -157,7 +157,7 @@ class _MessageCompanyScreen extends State<MessageCompanyScreen> {
                   },
                   itemCount: 30,
                   shrinkWrap: true,
-                  physics: AlwaysScrollableScrollPhysics(),
+                  physics: const AlwaysScrollableScrollPhysics(),
                   scrollDirection: Axis.vertical,
                 ),
               ),

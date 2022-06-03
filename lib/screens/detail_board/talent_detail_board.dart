@@ -46,8 +46,8 @@ class _TalentDetailBoard extends State<TalentDetailBoard> {
             color: Colors.white,
           ),
           backgroundColor: primaryColor,
-          leadingAction: () {
-          },
+          // leadingAction: () {
+          // },
           leadingFlag: true,
           actionEvent: () {},
           actionFlag: true,

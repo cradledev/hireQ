@@ -48,6 +48,8 @@ class JobModel {
       title: "Frontend Developer",
       requirement:
           "You have strong React experience combined with an advanced knowledge of HTML, CSS and WC3 standards You have strong JavaScript experience, ideally also some TypeScript or Flow (you can learn on the job)"
+          "You have strong React experience combined with an advanced knowledge of HTML, CSS and WC3 standards You have strong JavaScript experience, ideally also some TypeScript or Flow (you can learn on the job)"
+          "You have strong React experience combined with an advanced knowledge of HTML, CSS and WC3 standards You have strong JavaScript experience, ideally also some TypeScript or Flow (you can learn on the job)"
           "You have experience across the full software development lifecycle from requirements through to testing and deployment"
           "Ideally you will have an interest and desire to work with functional programming languages e.g. Elm (the backend team also use Rust and Elixir), you can gain exposure across the full stack"
           "You’re collaborative with great communication skills",
@@ -85,6 +87,20 @@ class JobModel {
       id: 4,
       title: "Marketing Manager",
       requirement:
+          "You have strong React experience combined with an advanced knowledge of HTML, CSS and WC3 standards You have strong JavaScript experience, ideally also some TypeScript or Flow (you can learn on the job)"
+          "You have experience across the full software development lifecycle from requirements through to testing and deployment"
+          "You have strong React experience combined with an advanced knowledge of HTML, CSS and WC3 standards You have strong JavaScript experience, ideally also some TypeScript or Flow (you can learn on the job)"
+          "You have experience across the full software development lifecycle from requirements through to testing and deployment"
+          "You have strong React experience combined with an advanced knowledge of HTML, CSS and WC3 standards You have strong JavaScript experience, ideally also some TypeScript or Flow (you can learn on the job)"
+          "You have experience across the full software development lifecycle from requirements through to testing and deployment"
+          "You have strong React experience combined with an advanced knowledge of HTML, CSS and WC3 standards You have strong JavaScript experience, ideally also some TypeScript or Flow (you can learn on the job)"
+          "You have experience across the full software development lifecycle from requirements through to testing and deployment"
+          "You have strong React experience combined with an advanced knowledge of HTML, CSS and WC3 standards You have strong JavaScript experience, ideally also some TypeScript or Flow (you can learn on the job)"
+          "You have experience across the full software development lifecycle from requirements through to testing and deployment"
+          "You have strong React experience combined with an advanced knowledge of HTML, CSS and WC3 standards You have strong JavaScript experience, ideally also some TypeScript or Flow (you can learn on the job)"
+          "You have experience across the full software development lifecycle from requirements through to testing and deployment"
+           "You have strong React experience combined with an advanced knowledge of HTML, CSS and WC3 standards You have strong JavaScript experience, ideally also some TypeScript or Flow (you can learn on the job)"
+          "You have experience across the full software development lifecycle from requirements through to testing and deployment"
           "You have strong React experience combined with an advanced knowledge of HTML, CSS and WC3 standards You have strong JavaScript experience, ideally also some TypeScript or Flow (you can learn on the job)"
           "You have experience across the full software development lifecycle from requirements through to testing and deployment"
           "Ideally you will have an interest and desire to work with functional programming languages e.g. Elm (the backend team also use Rust and Elixir), you can gain exposure across the full stack"

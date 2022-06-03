@@ -254,7 +254,7 @@ class JobCard extends StatelessWidget {
                     pageBuilder: (context, animation, secondaryAnimation) {
                       return FadeTransition(
                         opacity: animation,
-                        child: const CustomVideoPlayer(),
+                        child: const CustomVideoPlayer(sourceUrl: 'http://192.168.116.39:5000/static/uploads/history.mp4',),
                       );
                     },
                   ),

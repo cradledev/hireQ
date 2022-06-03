@@ -200,8 +200,8 @@ class _MessageTalentBoard extends State<MessageTalentBoard> {
             color: Colors.white,
           ),
           backgroundColor: primaryColor,
-          leadingAction: () {
-          },
+          // leadingAction: () {
+          // },
           leadingFlag: true,
           actionEvent: () {},
           actionFlag: true,
@@ -336,23 +336,23 @@ class _MessageTalentBoard extends State<MessageTalentBoard> {
                                   children: [
                                     InkWell(
                                       onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          PageRouteBuilder(
-                                            transitionDuration: const Duration(
-                                                milliseconds: 500),
-                                            pageBuilder: (context, animation,
-                                                secondaryAnimation) {
-                                              return FadeTransition(
-                                                opacity: animation,
-                                                child: JobDetailBoard(
-                                                  data:
-                                                      JobModel.dumpListData[3],
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        );
+                                        // Navigator.push(
+                                        //   context,
+                                        //   PageRouteBuilder(
+                                        //     transitionDuration: const Duration(
+                                        //         milliseconds: 500),
+                                        //     pageBuilder: (context, animation,
+                                        //         secondaryAnimation) {
+                                        //       return FadeTransition(
+                                        //         opacity: animation,
+                                        //         child: JobDetailBoard(
+                                        //           data:
+                                        //               JobModel.dumpListData[3],
+                                        //         ),
+                                        //       );
+                                        //     },
+                                        //   ),
+                                        // );
                                       },
                                       child: Row(
                                         mainAxisAlignment:

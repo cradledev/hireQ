@@ -44,8 +44,8 @@ class _AppliedQTalentScreen extends State<AppliedQTalentScreen> {
             color: Colors.white,
           ),
           backgroundColor: primaryColor,
-          leadingAction: () {
-          },
+          // leadingAction: () {
+          // },
           leadingFlag: true,
           actionEvent: () {},
           actionFlag: true,
@@ -131,22 +131,22 @@ class _AppliedQTalentScreen extends State<AppliedQTalentScreen> {
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            transitionDuration:
-                                const Duration(milliseconds: 500),
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) {
-                              return FadeTransition(
-                                opacity: animation,
-                                child: JobDetailBoard(
-                                  data: JobModel.dumpListData[3],
-                                ),
-                              );
-                            },
-                          ),
-                        );
+                        // Navigator.push(
+                        //   context,
+                        //   PageRouteBuilder(
+                        //     transitionDuration:
+                        //         const Duration(milliseconds: 500),
+                        //     pageBuilder:
+                        //         (context, animation, secondaryAnimation) {
+                        //       return FadeTransition(
+                        //         opacity: animation,
+                        //         child: JobDetailBoard(
+                        //           data: JobModel.dumpListData[3],
+                        //         ),
+                        //       );
+                        //     },
+                        //   ),
+                        // );
                       },
                       child: Container(
                         margin: const EdgeInsets.only(bottom: 10),

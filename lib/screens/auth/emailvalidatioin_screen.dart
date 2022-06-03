@@ -63,7 +63,7 @@ class _EmailValidationScreenState extends State<EmailValidationScreen> {
         'type': widget.type
       };
       var res = await appState.post(
-          Uri.parse(appState.endpoint + "users/verify"), jsonEncode(payload));
+          Uri.parse(appState.endpoint + "/users/verify"), jsonEncode(payload));
       if (res.statusCode == 200) {
         var body = jsonDecode(res.body);
         
@@ -118,7 +118,7 @@ class _EmailValidationScreenState extends State<EmailValidationScreen> {
         'type': widget.type
       };
       var res = await appState.post(
-          Uri.parse(appState.endpoint + "users/resend"), jsonEncode(payload));
+          Uri.parse(appState.endpoint + "/users/resend"), jsonEncode(payload));
       if (res.statusCode == 200) {
         var body = jsonDecode(res.body);
         if (body['status'] == "success") {

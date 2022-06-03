@@ -22,7 +22,7 @@ class ThemeHelper {
           borderRadius: BorderRadius.circular(10.0),
           borderSide: const BorderSide(color: Colors.red, width: 2.0)),
       focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(100.0),
+          borderRadius: BorderRadius.circular(10.0),
           borderSide: const BorderSide(color: Colors.red, width: 2.0)),
     );
   }
@@ -52,16 +52,16 @@ class ThemeHelper {
       boxShadow: const [
         BoxShadow(color: Colors.black26, offset: Offset(0, 4), blurRadius: 5.0)
       ],
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        stops: const [0.0, 1.0],
-        colors: [
-          c1,
-          c2,
-        ],
-      ),
-      color: Colors.deepPurple.shade300,
+      // gradient: LinearGradient(
+      //   begin: Alignment.topLeft,
+      //   end: Alignment.bottomRight,
+      //   stops: const [0.0, 1.0],
+      //   colors: [
+      //     c1,
+      //     c2,
+      //   ],
+      // ),
+      color: primaryColor,
       borderRadius: BorderRadius.circular(30),
     );
   }

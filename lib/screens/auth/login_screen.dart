@@ -33,6 +33,11 @@ class _LoginScreen extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
+    onInit();
+  }
+
+  // custom init func
+  void onInit() {
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
     setState(() {
@@ -53,7 +58,7 @@ class _LoginScreen extends State<LoginScreen> {
           'password': _passwordController.text
         };
         var res = await appState.post(
-            Uri.parse(appState.endpoint + "users/login"), jsonEncode(payload));
+            Uri.parse(appState.endpoint + "/users/login"), jsonEncode(payload));
         setState(() {
           isLoading = false;
         });
@@ -75,33 +80,21 @@ class _LoginScreen extends State<LoginScreen> {
           );
         } else {
           var body = jsonDecode(res.body);
-          appState.notifyToastDanger(context: context, message: body['error']);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.red,
+            content: Text(body['error']),
+          ));
         }
       } catch (e) {
-        appState.notifyToastDanger(
-            context: context, message: "Unknown error is occured.");
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          backgroundColor: Colors.red,
+          content: Text("Unknown Error is occured."),
+        ));
         setState(() {
           isLoading = false;
         });
       }
     }
-    // Future.delayed(const Duration(seconds: 2), () {
-    //   setState(() {
-    //     isLoading = false;
-    //   });
-    // });
-    // Navigator.pushReplacement(
-    //   context,
-    //   PageRouteBuilder(
-    //     transitionDuration: const Duration(milliseconds: 800),
-    //     pageBuilder: (context, animation, secondaryAnimation) {
-    //       return FadeTransition(
-    //         opacity: animation,
-    //         child: const LobbyScreen(indexTab: 0),
-    //       );
-    //     },
-    //   ),
-    // );
   }
 
   @override

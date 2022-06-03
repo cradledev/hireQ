@@ -1,5 +1,6 @@
-import 'dart:convert';
 
+import 'package:hire_q/models/company_model.dart';
+import 'package:hire_q/models/profile_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
@@ -8,7 +9,9 @@ import 'package:flutter/material.dart';
 
 class AppState extends ChangeNotifier {
   // end point url
-  final String _endpoint = 'http://192.168.116.39:5000/api/v1/';
+  final String _endpoint = 'http://192.168.116.39:5000/api/v1';
+  // hosting address
+  final String _hostAddress = 'http://192.168.116.39:5000';
   // is talent? flag
   bool _talentSwipeUp = false;
   bool _isTalent = true;
@@ -16,12 +19,20 @@ class AppState extends ChangeNotifier {
   String _entryType = "talent";
   // user data
   Map _user;
+  // Company, Talent data of authenticated user
+  CompanyModel _authorizedCompany;
+  // Authorized user profile model both taletn and company
+  ProfileModel _authorizedProfile;
+
   //get
   get talentSwipeUp => _talentSwipeUp;
   get isTalent => _isTalent;
   get user => _user;
   get endpoint => _endpoint;
   get entryType => _entryType;
+  get company => _authorizedCompany;
+  get profile => _authorizedProfile;
+  get hostAddress => _hostAddress;
   // set
   set talentSwipeUp(value) {
     _talentSwipeUp = value;
@@ -43,6 +54,14 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  set company(value) {
+    _authorizedCompany = value;
+    notifyListeners();
+  }
+  set profile(value) {
+    _authorizedProfile = value;
+    notifyListeners();
+  }
   void notifyToast({context, message}) {
     ToastContext().init(context);
     Toast.show(message, duration: Toast.lengthLong, gravity: Toast.center);

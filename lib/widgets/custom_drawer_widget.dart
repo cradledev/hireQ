@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:hire_q/helpers/constants.dart';
 import 'package:hire_q/screens/home/home_screen.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
+import 'package:hire_q/screens/profile/edit/profile_company_edit.dart';
+import 'package:hire_q/screens/profile/setting/setting_company_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'package:hire_q/models/navigation_item.dart';
@@ -33,19 +35,35 @@ class CustomDrawerWidget extends StatelessWidget {
               padding: padding,
               child: Column(
                 children: [
-                  const ListTile(
-                    contentPadding: EdgeInsets.fromLTRB(5, 0, 0, 0),
-                    title: Text(
-                      "Auth",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  // const ListTile(
+                  //   contentPadding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                  //   title: Text(
+                  //     "Auth",
+                  //     style: TextStyle(
+                  //       color: Colors.white,
+                  //       fontSize: 18,
+                  //       fontWeight: FontWeight.bold,
+                  //     ),
+                  //   ),
+                  // ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Column(
+                      children: [
+                        appState.user != null
+                            ? buildMenuItem(context,
+                                item: NavigationItem.setting,
+                                text: 'Setting',
+                                icon: Icons.settings)
+                            : const SizedBox(
+                                height: 0,
+                              )
+                      ],
                     ),
                   ),
+                  const Divider(color: Colors.white70),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 5, 0),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Column(
                       children: [
                         appState.user == null
@@ -60,8 +78,7 @@ class CustomDrawerWidget extends StatelessWidget {
                       ],
                     ),
                   ),
-
-                  // const Divider(color: Colors.white70),
+                  const Divider(color: Colors.white70),
                   // const ListTile(
                   //   contentPadding: EdgeInsets.fromLTRB(5, 0, 0, 0),
                   //   title: Text("Spreading the brightness",
@@ -130,7 +147,7 @@ class CustomDrawerWidget extends StatelessWidget {
           children: <Widget>[
             // CircleAvatar(
             //   radius: 20,
-            //   backgroundImage: AssetImage('assets/avatar1.jpg'),
+            //   backgroundImage: NetworkImage('https://via.placeholder.com/150'),
             // ),
             Expanded(
               child: Row(
@@ -207,6 +224,20 @@ class CustomDrawerWidget extends StatelessWidget {
             ),
             (route) => false);
         break;
+      case NavigationItem.setting:
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            transitionDuration: const Duration(microseconds: 800),
+            pageBuilder: (context, animation, secondaryAnimation) {
+              return FadeTransition(
+                opacity: animation,
+                child: const SettingCompanyScreen(),
+              );
+            },
+          ),
+        );
+        break;
       case NavigationItem.header:
         Navigator.pushAndRemoveUntil(
             context,
@@ -244,21 +275,36 @@ class CustomDrawerWidget extends StatelessWidget {
           padding: padding.add(const EdgeInsets.symmetric(vertical: 40)),
           child: Row(
             children: [
-              // CircleAvatar(radius: 30, backgroundImage: NetworkImage(urlImage)),
+              CircleAvatar(
+                radius: 30,
+                backgroundImage:
+                    NetworkImage('https://via.placeholder.com/150'),
+              ),
               const SizedBox(width: 20),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    appState.user != null ? appState.user['email'] : "",
-                    style: const TextStyle(fontSize: 20, color: Colors.white),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    appState.user != null ? appState.user['type'] : "",
-                    style: const TextStyle(fontSize: 14, color: Colors.white),
-                  ),
-                ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Column(
+                      children: [
+                        Text(
+                          appState.user != null ? appState.user['email'] : "",
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                            height: 1.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      appState.user != null ? appState.user['type'] : "",
+                      style: const TextStyle(fontSize: 14, color: Colors.white),
+                    ),
+                  ],
+                ),
               ),
               // const Spacer(),
               // const CircleAvatar(

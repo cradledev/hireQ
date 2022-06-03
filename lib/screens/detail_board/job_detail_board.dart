@@ -1,28 +1,41 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hire_q/helpers/constants.dart';
+import 'package:hire_q/models/company_job_model.dart';
 import 'package:hire_q/models/job_model.dart';
+import 'package:hire_q/provider/index.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
 
 import 'package:hire_q/widgets/common_widget.dart';
 import 'package:hire_q/widgets/custom_drawer_widget.dart';
+import 'package:provider/provider.dart';
 
 class JobDetailBoard extends StatefulWidget {
   const JobDetailBoard({Key key, this.data}) : super(key: key);
-  final JobModel data;
+  final CompanyJobModel data;
   @override
   _JobDetailBoard createState() => _JobDetailBoard();
 }
 
 class _JobDetailBoard extends State<JobDetailBoard> {
+  // AppState setting
+  AppState appState;
   int currentPage = 3;
   // search text controller
   TextEditingController _searchTextController;
   @override
   void initState() {
     super.initState();
+    onInit();
+  }
+
+  // custom init function
+  void onInit() {
+    appState = Provider.of<AppState>(context, listen: false);
   }
 
   @override
@@ -44,8 +57,8 @@ class _JobDetailBoard extends State<JobDetailBoard> {
             color: Colors.white,
           ),
           backgroundColor: primaryColor,
-          leadingAction: () {
-          },
+          // leadingAction: () {
+          // },
           leadingFlag: true,
           actionEvent: () {},
           actionFlag: true,
@@ -133,7 +146,7 @@ class _JobDetailBoard extends State<JobDetailBoard> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      widget.data.companyName,
+                      widget.data.company_name,
                       style:
                           const TextStyle(color: Colors.black87, fontSize: 28),
                     ),
@@ -142,7 +155,8 @@ class _JobDetailBoard extends State<JobDetailBoard> {
                       child: Hero(
                         tag: 'company_logo' + widget.data.id.toString(),
                         child: CachedNetworkImage(
-                          imageUrl: widget.data.logo,
+                          imageUrl:
+                              appState.hostAddress + widget.data.company_logo,
                           progressIndicatorBuilder:
                               (context, url, downloadProgress) {
                             return Center(
@@ -190,7 +204,7 @@ class _JobDetailBoard extends State<JobDetailBoard> {
                               width: 10,
                             ),
                             Text(
-                              widget.data.country,
+                              jsonDecode(widget.data.region)['city'],
                               style: const TextStyle(
                                   fontSize: 18, color: Colors.grey),
                             ),
@@ -212,7 +226,7 @@ class _JobDetailBoard extends State<JobDetailBoard> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 10),
                               child: Text(
-                                widget.data.requirement,
+                                widget.data.description,
                                 style: const TextStyle(
                                     fontSize: 18, color: Colors.grey),
                               ),

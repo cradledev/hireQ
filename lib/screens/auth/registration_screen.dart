@@ -52,7 +52,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           'type': appState.entryType
         };
         var res = await appState.post(
-            Uri.parse(appState.endpoint + "users/"), jsonEncode(payload));
+            Uri.parse(appState.endpoint + "/users/"), jsonEncode(payload));
         setState(() {
           isLoading = false;
         });

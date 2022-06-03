@@ -60,11 +60,15 @@ dependencies:
   uuid: ^3.0.6
   flutter_chat_ui: ^1.5.8
 
+  dropdown_button2: ^1.4.0
+
   csc_picker: ^0.2.6
   intl_phone_field: ^3.1.0
 
   flick_video_player:
   video_player:
+
+  infinite_scroll_pagination: ^3.1.0
 
 dev_dependencies:
   flutter_test:

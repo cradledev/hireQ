@@ -35,7 +35,7 @@ class JobDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final resizeNotifier = ValueNotifier(false);
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding?.instance?.addPostFrameCallback((timeStamp) {
       if (!resizeNotifier.value) resizeNotifier.value = true;
     });
     return Scaffold(

@@ -47,7 +47,7 @@ class _LobbyScreen extends State<LobbyScreen> {
   }
 
   List<Widget> _buildScreens() {
-    if (widget.indexTab == 0 || widget.indexTab == 1) {
+    if (_appState.user == null) {
       return [
         const JobScreen(),
         const TalentScreen(),
@@ -84,8 +84,8 @@ class _LobbyScreen extends State<LobbyScreen> {
           color: Colors.white,
         ),
         backgroundColor: primaryColor,
-        leadingAction: () {
-        },
+        // leadingAction: () {
+        // },
         leadingFlag: true,
         actionEvent: () {},
         actionFlag: true,
