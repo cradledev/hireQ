@@ -1,13 +1,10 @@
 import 'dart:convert';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hire_q/helpers/constants.dart';
-import 'package:hire_q/models/company_job_model.dart';
 import 'package:hire_q/models/talent_model.dart';
 import 'package:hire_q/provider/index.dart';
-import 'package:hire_q/screens/video_player/video_player.dart';
 import 'package:hire_q/widgets/common_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -58,7 +55,8 @@ class _TalentCardState extends State<TalentCard> with TickerProviderStateMixin {
         fit: StackFit.expand,
         children: <Widget>[
           ImageGradientOverlay(
-            imageUrl:
+            imageUrl: widget.talentData == null ? 
+                'https://via.placeholder.com/150' : widget.talentData.talent_logo.isEmpty ? 'https://via.placeholder.com/150' : 
                 Provider.of<AppState>(context, listen: false).hostAddress +
                     widget.talentData.talent_logo,
           ),
@@ -195,7 +193,8 @@ class _TalentCardState extends State<TalentCard> with TickerProviderStateMixin {
         fit: StackFit.expand,
         children: <Widget>[
           ImageGradientOverlay(
-            imageUrl:
+            imageUrl: widget.talentData == null ? 
+                'https://via.placeholder.com/150' : widget.talentData.talent_logo.isEmpty ? 'https://via.placeholder.com/150' : 
                 Provider.of<AppState>(context, listen: false).hostAddress +
                     widget.talentData.talent_logo,
           ),
@@ -294,6 +293,7 @@ class _TalentCardState extends State<TalentCard> with TickerProviderStateMixin {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 15, vertical: 8),
                                 color : Colors.white,
+                                width: MediaQuery.of(context).size.width,
                                 child: Text(
                                   widget.talentData.current_jobDescription.isNotEmpty
                                       ? widget.talentData.current_jobDescription
