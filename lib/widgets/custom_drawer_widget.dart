@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hire_q/helpers/constants.dart';
@@ -290,38 +291,67 @@ class CustomDrawerWidget extends StatelessWidget {
         onTap: () => selectItem(context, NavigationItem.header),
         child: Container(
           padding: padding.add(const EdgeInsets.symmetric(vertical: 40)),
-          child: Row(
+          child: Column(
             children: [
-              CircleAvatar(
-                radius: 30,
-                backgroundImage:
-                    NetworkImage('https://via.placeholder.com/150'),
+              Consumer<AppState>(
+                builder: (context, _pAppState, child) {
+                  return CircleAvatar(
+                    radius: 60,
+                    backgroundColor: Colors.grey.shade200,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(55),
+                      child: CachedNetworkImage(
+                        width: 110,
+                        height: 110,
+                        imageUrl: _pAppState.profile == null
+                            ? 'https://via.placeholder.com/150'
+                            : ((_pAppState.profile).avator == null ||
+                                    (_pAppState.profile).avator == "")
+                                ? 'https://via.placeholder.com/150'
+                                : _pAppState.hostAddress +
+                                    (_pAppState.profile).avator,
+                        progressIndicatorBuilder:
+                            (context, url, downloadProgress) {
+                          return Center(
+                            child: SizedBox(
+                              width: 30,
+                              height: 30,
+                              child: CircularProgressIndicator(
+                                  value: downloadProgress.progress),
+                            ),
+                          );
+                        },
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  );
+                },
               ),
-              const SizedBox(width: 20),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Column(
-                      children: [
-                        Text(
-                          appState.user != null ? appState.user['email'] : "",
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            color: Colors.white,
-                            height: 1.5,
-                          ),
+              const SizedBox(height: 20),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Column(
+                    children: [
+                      Text(
+                        appState.user != null ? appState.user['email'] : "",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
+                          height: 1.5,
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      appState.user != null ? appState.user['type'] : "",
-                      style: const TextStyle(fontSize: 14, color: Colors.white),
-                    ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    appState.user != null ? appState.user['type'] : "",
+                    style: const TextStyle(fontSize: 14, color: Colors.white),
+                  ),
+                ],
               ),
               // const Spacer(),
               // const CircleAvatar(

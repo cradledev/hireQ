@@ -89,6 +89,9 @@ class _ProfileCompanyAddJobScreenState
   void initState() {
     super.initState();
     _onInit();
+    Future.delayed(const Duration(microseconds: 500), () {
+
+    });
   }
 
   void _onInit() {
@@ -116,7 +119,13 @@ class _ProfileCompanyAddJobScreenState
       countryValue = _region['country'];
       stateValue = _region['state'];
       cityValue = _region['city'];
-      selectedEducationValue = (widget.selectedJob).education;
+      if (educationItems.contains((widget.selectedJob).education) ) {
+        selectedEducationValue = (widget.selectedJob).education;
+      }
+      //  else {
+
+      // }
+      // selectedEducationValue = (widget.selectedJob).education;
 
       roles.addAll(_roles.map((e) => e.toString()).toList());
     }
@@ -750,7 +759,7 @@ class _ProfileCompanyAddJobScreenState
                                                       backgroundColor:
                                                           Colors.orange,
                                                       content:
-                                                          Text("Text is empty"),
+                                                          Text("Role Text is empty"),
                                                     ));
                                                   }
                                                 });

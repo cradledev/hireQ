@@ -26,6 +26,9 @@ class AppState extends ChangeNotifier {
 
   // Authorized user profile model both taletn and company
   ProfileModel _authorizedProfile;
+
+  // talent video list
+  List _talentVideoList;
   
 
   //get
@@ -38,6 +41,7 @@ class AppState extends ChangeNotifier {
   get talent => _authorizedTalent;
   get profile => _authorizedProfile;
   get hostAddress => _hostAddress;
+  get talentVideoList => _talentVideoList;
   // set
   set talentSwipeUp(value) {
     _talentSwipeUp = value;
@@ -73,11 +77,17 @@ class AppState extends ChangeNotifier {
     _authorizedProfile = value;
     notifyListeners();
   }
+
+  set talentVideoList(value) {
+    _talentVideoList = value;
+    notifyListeners();
+  }
   void removeAllState() {
     user = null;
     company = null;
     talent = null;
     profile = null;
+    talentVideoList = null;
   }
   void notifyToast({context, message}) {
     ToastContext().init(context);

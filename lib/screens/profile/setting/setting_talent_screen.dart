@@ -47,7 +47,7 @@ class _SettingTalentScreenState extends State<SettingTalentScreen> {
 
   // address values setting
   final GlobalKey<CSCPickerState> _cscPickerKey = GlobalKey();
-  String countryValue = "USA";
+  String countryValue = "United States";
   String stateValue = "";
   String cityValue = "";
 
@@ -75,15 +75,18 @@ class _SettingTalentScreenState extends State<SettingTalentScreen> {
   @override
   void initState() {
     super.initState();
-    _onInit();
-  }
-
-  void _onInit() {
     setState(() {
       isLoading = false;
     });
     appState = Provider.of<AppState>(context, listen: false);
     api = APIClient();
+    Future.delayed(const Duration(microseconds: 500), () {
+      _onInit();
+    });
+  }
+
+  void _onInit() {
+    
 
     // text controller instance
     firstnameController = TextEditingController();

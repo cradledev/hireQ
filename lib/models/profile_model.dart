@@ -22,23 +22,17 @@ class ProfileModel {
     this.type
   });
   factory ProfileModel.fromJson(Map<String, dynamic> json) {
-    String _job = "";
-    String _workHistory = "";
-    if (json['job'] != null) {
-      _job = jsonEncode(json['job']);
-    }
-    if (json['work_history'] != null) {
-      _workHistory = jsonEncode(json['work_history']);
-    }
+    List _job = json['job'] as List;
+    List _workHistory = json['work_history'] as List;
     return ProfileModel(
       id: json['id'],
-      avator: json['avator'] ?? "",
-      user_id: json['user_id'] ?? "",
-      resume: json['resume'] ?? "",
-      video_id: json['video_id'] ?? "",
-      video: json['video'] ?? "",
-      job: _job,
-      work_history: _workHistory,
+      avator: json['avator'],
+      user_id: json['user_id'],
+      resume: json['resume'],
+      video_id: json['video_id'],
+      video: json['video'],
+      job: _job.isEmpty ? null : jsonEncode(_job),
+      work_history: _workHistory.isEmpty ? null : jsonEncode(_workHistory),
       type : json['type'] ?? ""
     );
   }

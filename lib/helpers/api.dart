@@ -92,7 +92,7 @@ class APIClient {
       throw Exception("Unknow Error.");
     }
   }
-  // ===================== company profile =================
+  // ===================== Company, Talent profile =================
 
   // get profile model for authenticated company or talent
   Future<http.Response> getProfile({userId, token}) async {
@@ -112,6 +112,20 @@ class APIClient {
       header['api-token'] = token;
       var response = await http.put(
           Uri.parse(endpoint + "/profiles/update/" + id.toString()),
+          body: payloads,
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception("Unknow Error.");
+    }
+  }
+
+  // crate profile 
+  Future<http.Response> createProfile({token, payloads}) async {
+    try {
+      header['api-token'] = token;
+      var response = await http.post(
+          Uri.parse(endpoint + "/profiles/"),
           body: payloads,
           headers: header);
       return response;
@@ -233,6 +247,49 @@ class APIClient {
       return responsed;
     } catch (e) {
       throw Exception("Unknow Error.");
+    }
+  }
+
+  // ===================== Video part ===================
+
+  // get video by primary id
+  Future<http.Response> getVideoById({id, token}) async {
+    try {
+      header['api-token'] = token;
+      var response = await http.get(
+          Uri.parse(endpoint + "/videos/" + id.toString()),
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception("Unknown Error.");
+    }
+  }
+  // create video row 
+  Future<http.Response> createVideoRow({token, payloads}) async {
+    try {
+      header['api-token'] = token;
+      var response = await http.post(
+          Uri.parse(endpoint + "/videos/"),
+          body: payloads,
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception("Unknown Error.");
+    }
+  }
+
+  // update video row
+  // create video row 
+  Future<http.Response> updateVideoRow({id, token, payloads}) async {
+    try {
+      header['api-token'] = token;
+      var response = await http.put(
+          Uri.parse(endpoint + "/videos/update/" + id.toString()),
+          body: payloads,
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception("Unknown Error.");
     }
   }
 }

@@ -610,7 +610,7 @@ class _JobCardState extends State<JobCard> with TickerProviderStateMixin {
         ? ScaleTransition(
             scale: CurvedAnimation(
               parent: _controller,
-              curve: const Interval(0.0, 0.3, curve: Curves.linear),
+              curve: const Interval(0.0, 0.8, curve: Curves.linear),
             ),
             child: widgetJobDetailInfo(context))
         : widgetJobShortInfo(context);

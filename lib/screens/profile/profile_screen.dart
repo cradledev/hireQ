@@ -11,6 +11,7 @@ import 'package:hire_q/provider/index.dart';
 import 'package:hire_q/screens/appliedq/applied_q_talent_screen.dart';
 import 'package:hire_q/screens/home/home_screen.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
+import 'package:hire_q/screens/profile/edit/profile_talent_addvideo_screen.dart';
 import 'package:hire_q/screens/profile/edit/profile_talent_edit.dart';
 import 'package:hire_q/screens/videoview/video_view_screen.dart';
 import 'package:hire_q/widgets/common_widget.dart';
@@ -52,7 +53,7 @@ class _ProfileScreen extends State<ProfileScreen> {
     const Color(0xffe17055),
     const Color(0xff6c5ce7)
   ];
-  
+
   @override
   void initState() {
     super.initState();
@@ -79,7 +80,7 @@ class _ProfileScreen extends State<ProfileScreen> {
           ),
         );
       });
-      return ;
+      return;
     }
     api = APIClient();
     print(1);
@@ -95,13 +96,17 @@ class _ProfileScreen extends State<ProfileScreen> {
       var res = await api.getTalentByUser(
           userId: appState.user['id'], token: appState.user['jwt_token']);
       if (res.statusCode == 200) {
-        appState.talent =
-            TalentModel.fromJson(jsonDecode(res.body.toString()));
+        appState.talent = TalentModel.fromJson(jsonDecode(res.body.toString()));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          backgroundColor: Colors.red,
+          content: Text("Something went wrong."),
+        ));
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         backgroundColor: Colors.red,
-        content: Text(e.message),
+        content: Text("Unknown Error."),
       ));
     }
   }
@@ -112,7 +117,6 @@ class _ProfileScreen extends State<ProfileScreen> {
           userId: appState.user['id'], token: appState.user['jwt_token']);
       var body = jsonDecode(res.body.toString());
       if (res.statusCode == 200) {
-        print(body);
         appState.profile = ProfileModel.fromJson(body);
       }
       if (res.statusCode == 400) {
@@ -128,6 +132,7 @@ class _ProfileScreen extends State<ProfileScreen> {
       ));
     }
   }
+
   @override
   void dispose() {
     super.dispose();
@@ -325,31 +330,56 @@ class _ProfileScreen extends State<ProfileScreen> {
                                         builder: (context, _pAppState, child) {
                                       return Column(
                                         children: [
-                                          CircleAvatar(
-                                            radius: 50.0,
-                                            backgroundImage: _pAppState.profile ==
-                                                    null
-                                                ? const NetworkImage(
-                                                    'https://via.placeholder.com/150')
-                                                : ((_pAppState.profile).avator ==
-                                                            null ||
-                                                        (_pAppState.profile)
-                                                                .avator ==
-                                                            "")
-                                                    ? const NetworkImage(
-                                                        'https://via.placeholder.com/150')
-                                                    : NetworkImage(
-                                                        _pAppState.hostAddress +
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(50),
+                                            child: CircleAvatar(
+                                              radius: 50.0,
+                                              child: CachedNetworkImage(
+                                                width: 100,
+                                                height: 100,
+                                                imageUrl: _pAppState.profile ==
+                                                        null
+                                                    ? 'https://via.placeholder.com/150'
+                                                    : ((_pAppState.profile)
+                                                                    .avator ==
+                                                                null ||
                                                             (_pAppState.profile)
-                                                                .avator),
-                                            backgroundColor: Colors.transparent,
+                                                                    .avator ==
+                                                                "")
+                                                        ? 'https://via.placeholder.com/150'
+                                                        : _pAppState
+                                                                .hostAddress +
+                                                            (_pAppState.profile)
+                                                                .avator,
+                                                progressIndicatorBuilder:
+                                                    (context, url,
+                                                        downloadProgress) {
+                                                  return Center(
+                                                    child: SizedBox(
+                                                      width: 30,
+                                                      height: 30,
+                                                      child: CircularProgressIndicator(
+                                                          value:
+                                                              downloadProgress
+                                                                  .progress),
+                                                    ),
+                                                  );
+                                                },
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        const Icon(Icons.error),
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 vertical: 5),
                                             child: Text(
-                                              _pAppState.talent == null ? "":
-                                              '@${(_pAppState.talent).current_jobTitle}',
+                                              _pAppState.talent == null
+                                                  ? ""
+                                                  : '@${(_pAppState.talent).current_jobTitle}',
                                               style: const TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 18,
@@ -359,15 +389,19 @@ class _ProfileScreen extends State<ProfileScreen> {
                                           Padding(
                                             padding: EdgeInsets.zero,
                                             child: Text(
-                                              _pAppState.talent != null ?
-                                              (_pAppState.talent).first_name + " " + (_pAppState.talent).last_name: "",
+                                              _pAppState.talent != null
+                                                  ? (_pAppState.talent)
+                                                          .first_name +
+                                                      " " +
+                                                      (_pAppState.talent)
+                                                          .last_name
+                                                  : "",
                                               style: const TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 18,
                                               ),
                                             ),
                                           ),
-                                          
                                         ],
                                       );
                                     }),
@@ -387,7 +421,8 @@ class _ProfileScreen extends State<ProfileScreen> {
                                             secondaryAnimation) {
                                           return FadeTransition(
                                             opacity: animation,
-                                            child: const ProfileTalentEditScreen(),
+                                            child:
+                                                const ProfileTalentEditScreen(),
                                           );
                                         },
                                       ),
@@ -409,7 +444,20 @@ class _ProfileScreen extends State<ProfileScreen> {
                       children: [
                         InkWell(
                           onTap: () {
-                            
+                            Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  transitionDuration:
+                                      const Duration(milliseconds: 500),
+                                  pageBuilder:
+                                      (context, animation, secondaryAnimation) {
+                                    return FadeTransition(
+                                      opacity: animation,
+                                      child: const ProfileTalentAddvideoScreen(),
+                                    );
+                                  },
+                                ),
+                              );
                           },
                           child: Container(
                             margin: const EdgeInsets.only(
@@ -448,7 +496,22 @@ class _ProfileScreen extends State<ProfileScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration:
+                                const Duration(milliseconds: 500),
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) {
+                              return FadeTransition(
+                                opacity: animation,
+                                child: const ProfileTalentAddvideoScreen(),
+                              );
+                            },
+                          ),
+                        );
+                      },
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: const [
@@ -515,7 +578,22 @@ class _ProfileScreen extends State<ProfileScreen> {
                       ),
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration:
+                                const Duration(milliseconds: 500),
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) {
+                              return FadeTransition(
+                                opacity: animation,
+                                child: const ProfileTalentEditScreen(),
+                              );
+                            },
+                          ),
+                        );
+                      },
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: const [
@@ -729,96 +807,115 @@ class _ProfileScreen extends State<ProfileScreen> {
                   ],
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        "High Level Information",
-                        style: TextStyle(color: primaryColor, fontSize: 22),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(
-                          bottom: 10, left: 10, right: 10),
-                      child: Card(
-                        color: const Color(0xffC8D3D5),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                        child: const ListTile(
-                          title: Text(
-                            "Location",
-                            style: TextStyle(color: primaryColor),
-                          ),
-                          subtitle: Text(
-                            "Jeddah",
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(
-                          bottom: 10, left: 10, right: 10),
-                      child: Card(
-                        color: const Color(0xffC8D3D5),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                        child: const ListTile(
-                          title: Text(
-                            "Current Role",
-                            style: TextStyle(color: primaryColor),
-                          ),
-                          subtitle: Text(
-                            "Recruitment Manager",
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(
-                          bottom: 10, left: 10, right: 10),
-                      child: Card(
-                        color: const Color(0xffC8D3D5),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                        child: const ListTile(
-                          title: Text(
-                            "Years of Experience",
-                            style: TextStyle(color: primaryColor),
-                          ),
-                          subtitle: Text(
-                            "10 Years",
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(
-                          bottom: 10, left: 10, right: 10),
-                      child: Card(
-                        color: const Color(0xffC8D3D5),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                        child: const ListTile(
-                          title: Text(
-                            "Education",
-                            style: TextStyle(color: primaryColor),
-                          ),
-                          subtitle: Text(
-                            "UBT",
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  "High Level Information",
+                  style: TextStyle(color: primaryColor, fontSize: 22),
                 ),
+              ),
+              Consumer<AppState>(
+                builder: (context, _pAppState, child) {
+                  return _pAppState.talent == null
+                      ? const Text("No High Level Information.")
+                      : Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.only(
+                                    bottom: 10, left: 10, right: 10),
+                                child: Card(
+                                  color: const Color(0xffC8D3D5),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                  child: ListTile(
+                                    title: const Text(
+                                      "Location",
+                                      style: TextStyle(color: primaryColor),
+                                    ),
+                                    subtitle: Text(
+                                      jsonDecode((_pAppState.talent).region)[
+                                              'state'] +
+                                          ", " +
+                                          jsonDecode((_pAppState.talent)
+                                              .region)['city'],
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(
+                                    bottom: 10, left: 10, right: 10),
+                                child: Card(
+                                  color: const Color(0xffC8D3D5),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                  child: ListTile(
+                                    title: const Text(
+                                      "Current Role",
+                                      style: TextStyle(color: primaryColor),
+                                    ),
+                                    subtitle: Text(
+                                      _pAppState.talent == null
+                                          ? ""
+                                          : (_pAppState.talent)
+                                              .current_jobTitle,
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(
+                                    bottom: 10, left: 10, right: 10),
+                                child: Card(
+                                  color: const Color(0xffC8D3D5),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                  child: ListTile(
+                                    title: const Text(
+                                      "Years of Experience",
+                                      style: TextStyle(color: primaryColor),
+                                    ),
+                                    subtitle: Text(
+                                      _pAppState.talent == null
+                                          ? ""
+                                          : (_pAppState.talent)
+                                              .current_jobTitle,
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(
+                                    bottom: 10, left: 10, right: 10),
+                                child: Card(
+                                  color: const Color(0xffC8D3D5),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                  child: ListTile(
+                                    title: const Text(
+                                      "Education",
+                                      style: TextStyle(color: primaryColor),
+                                    ),
+                                    subtitle: Text(
+                                      _pAppState.talent == null
+                                          ? ""
+                                          : (_pAppState.talent)
+                                              .current_jobTitle,
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                },
               ),
               const SizedBox(
                 height: 100,

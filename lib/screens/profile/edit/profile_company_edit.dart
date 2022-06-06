@@ -44,6 +44,7 @@ class _ProfileCompanyEdit extends State<ProfileCompanyEdit> {
     appState = Provider.of<AppState>(context, listen: false);
     api = APIClient();
     _picker = ImagePicker();
+    print((appState.profile).toMap());
   }
 
   @override
@@ -104,37 +105,73 @@ class _ProfileCompanyEdit extends State<ProfileCompanyEdit> {
       if (res.statusCode == 200) {
         if (body['status'] == "success") {
           ProfileModel _tmpProfile = appState.profile;
-          if (type == "image") {
-            Map payloads = {
-              "avator": body['url'],
-              "user_id": _tmpProfile.user_id,
-              "resume": _tmpProfile.resume,
-              "video_id": _tmpProfile.video_id,
-              "video": _tmpProfile.video,
-              "job": _tmpProfile.job.isEmpty ? [] : jsonDecode(_tmpProfile.job),
-              "work_history": _tmpProfile.work_history.isEmpty
-                  ? []
-                  : jsonDecode(_tmpProfile.work_history),
-              "type": _tmpProfile.type
-            };
-            print(payloads);
-            onProfileUpdate(_tmpProfile.id, jsonEncode(payloads));
-          }
-          if (type == "video") {
-            Map payloads = {
-              "avator": _tmpProfile.avator,
-              "user_id": _tmpProfile.user_id,
-              "resume": _tmpProfile.resume,
-              "video_id": _tmpProfile.video_id,
-              "video": body['url'],
-              "job": _tmpProfile.job.isEmpty ? [] : jsonDecode(_tmpProfile.job),
-              "work_history": _tmpProfile.work_history.isEmpty
-                  ? []
-                  : jsonDecode(_tmpProfile.work_history),
-              "type": _tmpProfile.type
-            };
-            print(payloads);
-            onProfileUpdate(_tmpProfile.id, jsonEncode(payloads));
+          if (_tmpProfile != null) {
+            if (type == "image") {
+              Map payloads = {
+                "avator": body['url'],
+                "user_id": _tmpProfile.user_id,
+                "resume": _tmpProfile.resume,
+                "video_id": _tmpProfile.video_id,
+                "video": _tmpProfile.video,
+                "job":
+                    _tmpProfile.job.isEmpty ? [] : jsonDecode(_tmpProfile.job),
+                "work_history": _tmpProfile.work_history.isEmpty
+                    ? []
+                    : jsonDecode(_tmpProfile.work_history),
+                "type": _tmpProfile.type
+              };
+              print(payloads);
+              onProfileUpdate(_tmpProfile.id, jsonEncode(payloads));
+            }
+            if (type == "video") {
+              Map payloads = {
+                "avator": _tmpProfile.avator,
+                "user_id": _tmpProfile.user_id,
+                "resume": _tmpProfile.resume,
+                "video_id": _tmpProfile.video_id,
+                "video": body['url'],
+                "job":
+                    _tmpProfile.job.isEmpty ? [] : jsonDecode(_tmpProfile.job),
+                "work_history": _tmpProfile.work_history.isEmpty
+                    ? []
+                    : jsonDecode(_tmpProfile.work_history),
+                "type": _tmpProfile.type
+              };
+              print(payloads);
+              onProfileUpdate(_tmpProfile.id, jsonEncode(payloads));
+            }
+          } else {
+            // if (type == "image") {
+            //   Map payloads = {
+            //     "avator": body['url'],
+            //     "user_id": appState.user['id'],
+            //     "resume": _tmpProfile?.resume,
+            //     "video_id": _tmpProfile?.video_id,
+            //     "video": _tmpProfile?.video,
+            //     "job": [],
+            //     "work_history": [],
+            //     "type": appState.user['type']
+            //   };
+            //   print(payloads);
+            //   onCreateProfile(jsonEncode(payloads));
+            // }
+            // if (type == "video") {
+            //   Map payloads = {
+            //     "avator": "",
+            //     "user_id": appState.user['id'],
+            //     "resume": _tmpProfile?.resume,
+            //     "video_id": _tmpProfile?.video_id,
+            //     "video": body['url'],
+            //     "job":
+            //         _tmpProfile.job.isEmpty ? [] : jsonDecode(_tmpProfile.job),
+            //     "work_history": _tmpProfile.work_history.isEmpty
+            //         ? []
+            //         : jsonDecode(_tmpProfile.work_history),
+            //     "type": _tmpProfile.type
+            //   };
+            //   print(payloads);
+            //   onCreateProfile(jsonEncode(payloads));
+            // }
           }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -161,6 +198,39 @@ class _ProfileCompanyEdit extends State<ProfileCompanyEdit> {
     try {
       var res = await api.updateProfile(
           id: _id, token: appState.user['jwt_token'], payloads: _payloads);
+      var body = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        if (body['status'] == "success") {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Success"),
+            backgroundColor: Colors.green,
+          ));
+          appState.profile = ProfileModel.fromJson(body);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Something went wrong. Please try again later."),
+            backgroundColor: Colors.red,
+          ));
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Something went wrong. Please try again later."),
+          backgroundColor: Colors.red,
+        ));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Unknown error on updating profile."),
+        backgroundColor: Colors.red,
+      ));
+    }
+  }
+
+  // create profile
+  void onCreateProfile(_payloads) async {
+    try {
+      var res = await api.createProfile(
+          token: appState.user['jwt_token'], payloads: _payloads);
       var body = jsonDecode(res.body);
       if (res.statusCode == 200) {
         if (body['status'] == "success") {
