@@ -10,6 +10,9 @@ class TalentModel {
   String current_jobTitle;
   String current_jobDescription;
   String company;
+  String talent_logo;
+  int video_id;
+  String resume;
 
   TalentModel({
     this.id,
@@ -20,7 +23,10 @@ class TalentModel {
     this.region,
     this.current_jobTitle,
     this.current_jobDescription,
-    this.company
+    this.company,
+    this.talent_logo,
+    this.video_id,
+    this.resume
   });
   factory TalentModel.fromJson(Map<String, dynamic> json) {
     String _region = "";
@@ -41,8 +47,27 @@ class TalentModel {
       current_jobTitle: json['current_jobTitle'] ?? "",
       current_jobDescription: json['current_jobDescription'] ?? "",
       company: json['company'] ?? "",
-
+      talent_logo : json['talent_logo'] ?? "",
+      video_id: json['video_id'],
+      resume: json['resume'] ?? ""
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      "id": id,
+      "user_id": user_id,
+      "first_name": first_name,
+      "last_name": last_name,
+      "region": region,
+      "phone_number": phone_number,
+      "current_jobTitle": current_jobTitle,
+      "current_jobDescription": current_jobDescription,
+      "company": company,
+      "talent_logo": talent_logo,
+      "video_id": video_id,
+      "resume" : resume
+    };
   }
 }
 

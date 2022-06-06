@@ -44,6 +44,7 @@ class _SettingTalentScreenState extends State<SettingTalentScreen> {
   TextEditingController lastnameController;
   TextEditingController currentJobTitleController;
   TextEditingController companyController;
+   TextEditingController descriptionController;
 
   // address values setting
   final GlobalKey<CSCPickerState> _cscPickerKey = GlobalKey();
@@ -80,9 +81,7 @@ class _SettingTalentScreenState extends State<SettingTalentScreen> {
     });
     appState = Provider.of<AppState>(context, listen: false);
     api = APIClient();
-    Future.delayed(const Duration(microseconds: 500), () {
-      _onInit();
-    });
+    _onInit();
   }
 
   void _onInit() {
@@ -93,6 +92,7 @@ class _SettingTalentScreenState extends State<SettingTalentScreen> {
     lastnameController = TextEditingController();
     currentJobTitleController = TextEditingController();
     companyController = TextEditingController();
+    descriptionController = TextEditingController();
     // init talent data if exist
     if (appState.talent != null) {
       // phone number init
@@ -110,6 +110,8 @@ class _SettingTalentScreenState extends State<SettingTalentScreen> {
       currentJobTitleController.text = (appState.talent).current_jobTitle;
       firstnameController.text = (appState.talent).first_name;
       lastnameController.text = (appState.talent).last_name;
+      descriptionController.text = (appState.talent).current_jobDescription;
+
     } 
   }
 
@@ -171,6 +173,7 @@ class _SettingTalentScreenState extends State<SettingTalentScreen> {
                 "state": stateValue
               },
               "current_jobTitle": currentJobTitleController.text,
+              "current_jobDescription" : descriptionController.text,
               "company": companyController.text
             };
             
@@ -529,6 +532,28 @@ class _SettingTalentScreenState extends State<SettingTalentScreen> {
                                         if (value == null ||
                                             value.trim().isEmpty) {
                                           return "Please enter Company Name";
+                                        }
+                                        // Return null if the entered password is valid
+                                        return null;
+                                      }),
+                                  decoration:
+                                      ThemeHelper().inputBoxDecorationShaddow(),
+                                ),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                Container(
+                                  child: TextFormField(
+                                      controller: descriptionController,
+                                      keyboardType: TextInputType.multiline,
+                                      maxLines: null,
+                                      decoration: ThemeHelper()
+                                          .textInputDecoration('Description',
+                                              'Enter Description.'),
+                                      validator: (value) {
+                                        if (value == null ||
+                                            value.trim().isEmpty) {
+                                          return "Please enter Description.";
                                         }
                                         // Return null if the entered password is valid
                                         return null;

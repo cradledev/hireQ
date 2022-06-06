@@ -89,7 +89,7 @@ class _ProfileCompanyAddJobScreenState
   void initState() {
     super.initState();
     _onInit();
-    Future.delayed(const Duration(microseconds: 500), () {
+    Future.delayed(const Duration(microseconds: 600), () {
 
     });
   }

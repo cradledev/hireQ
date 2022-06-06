@@ -22,7 +22,7 @@ class JobScreen extends StatefulWidget {
 class _JobScreen extends State<JobScreen> {
   // scroll page controller for infinite scroll
   PagingController<int, CompanyJobModel> _pagingController;
-  static const PageSize = 50;
+  static const PageSize = 10;
 
   // APPSTATE setting
   AppState appState;
@@ -173,12 +173,14 @@ class _JobScreen extends State<JobScreen> {
                       Map payloads = {
                         'talent_id': appState.user['id'],
                         'job_id': job.id,
+                        'company_id' : job.company_id
                       };
                       print(payloads);
                       try {
                         var res = await api.applyCompanyJob(
                             token: appState.user['jwt_token'],
                             payloads: jsonEncode(payloads));
+                        print(res.body);
                         if (res.statusCode == 200) {
                           // var body = jsonDecode(res.body);
                           ScaffoldMessenger.of(context)

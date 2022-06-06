@@ -292,4 +292,18 @@ class APIClient {
       throw Exception("Unknown Error.");
     }
   }
+
+  // ================== Talent board data part ===============
+
+  // get talent board data 
+  Future<http.Response> getTalentsWithPagination({pageNum, pageLength}) async {
+    try {
+      var response = await http.get(
+         Uri.parse(endpoint + "/talents/talents_all/" + pageNum.toString() + "/" + pageLength.toString()),
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception("Unkown Error.");
+    }
+  }
 }

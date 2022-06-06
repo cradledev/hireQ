@@ -51,14 +51,16 @@ class _SettingCompanyScreen extends State<SettingCompanyScreen> {
   @override
   void initState() {
     super.initState();
-    onInit();
-  }
-
-  void onInit() {
     appState = Provider.of<AppState>(context, listen: false);
     api = APIClient();
     companyNameController = TextEditingController();
     accountManageerNameController = TextEditingController();
+    onInit();
+    
+  }
+
+  void onInit() {
+    
     if (appState.company != null) {
       // phone number init
       var _phoneDict = jsonDecode((appState.company).phone_number);

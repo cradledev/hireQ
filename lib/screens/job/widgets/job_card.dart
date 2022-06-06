@@ -337,29 +337,6 @@ class _JobCardState extends State<JobCard> with TickerProviderStateMixin {
     return SafeArea(
       child: Stack(
         children: <Widget>[
-          Consumer<AppState>(
-            builder: (context, value, child) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.5,
-                    height: MediaQuery.of(context).size.width * 0.5,
-                    alignment: Alignment.center,
-                    child: Padding(
-                      padding: EdgeInsets.zero,
-                      child: Image.asset(
-                        value.talentSwipeUp
-                            ? 'assets/icons/up.png'
-                            : 'assets/icons/down.png',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
           Container(
             padding: EdgeInsets.zero,
             decoration: BoxDecoration(
