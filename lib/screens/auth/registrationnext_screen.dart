@@ -8,14 +8,17 @@ import 'package:hire_q/screens/lobby/lobby_screen.dart';
 import 'package:hire_q/widgets/theme_helper.dart';
 import 'package:provider/provider.dart';
 
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
+
 import 'package:csc_picker/csc_picker.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 
 import 'widgets/header_widget.dart';
 
 class RegisterNextScreen extends StatefulWidget {
-  const RegisterNextScreen({Key key}) : super(key: key);
-
+  const RegisterNextScreen({Key key, this.useruid}) : super(key: key);
+  final String useruid;
   @override
   State<StatefulWidget> createState() {
     return _RegisterNextScreenState();
@@ -132,6 +135,7 @@ class _RegisterNextScreenState extends State<RegisterNextScreen> {
               'user_id': appState.user['id'],
               'first_name': firstnameController.text,
               'last_name': lastnameController.text,
+              'uuid': widget.useruid,
               "phone_number": {
                 "phoneNumber": phoneNumber,
                 "initialCountryCode": initialCountryCode,
@@ -155,6 +159,14 @@ class _RegisterNextScreenState extends State<RegisterNextScreen> {
             });
             var body = jsonDecode(res.body);
             if (res.statusCode == 200) {
+              await FirebaseChatCore.instance.createUserInFirestore(
+                types.User(
+                  firstName: firstnameController.text,
+                  id: widget.useruid,
+                  imageUrl: '',
+                  lastName: lastnameController.text,
+                ),
+              );
               if (body['status'] == "success") {
                 showDialog(
                   context: context,

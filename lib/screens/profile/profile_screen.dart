@@ -16,6 +16,9 @@ import 'package:hire_q/screens/profile/edit/profile_talent_edit.dart';
 import 'package:hire_q/screens/videoview/video_view_screen.dart';
 import 'package:hire_q/widgets/common_widget.dart';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:hire_q/screens/jobsq/jobs_q_talent_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -54,12 +57,19 @@ class _ProfileScreen extends State<ProfileScreen> {
     const Color(0xff6c5ce7)
   ];
 
+  firebaseinitial() async {
+    FirebaseAuth.instance.authStateChanges().listen((User user) {
+    appState.setLocalStorage(key: "firebaseuser", value: user);
+  });
+  }
+
   @override
   void initState() {
     super.initState();
     setState(() {
       selectedStep = 2;
     });
+    firebaseinitial();
     onInit();
   }
 

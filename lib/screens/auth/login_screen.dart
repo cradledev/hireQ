@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hire_q/helpers/constants.dart';
 import 'package:hire_q/provider/index.dart';
@@ -65,6 +66,10 @@ class _LoginScreen extends State<LoginScreen> {
         if (res.statusCode == 200) {
           var body = jsonDecode(res.body);
           appState.user = body;
+            await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: _emailController.text,
+            password: _passwordController.text,
+          );
           appState.setLocalStorage(key: 'user', value: jsonEncode(body));
           Navigator.pushReplacement(
             context,

@@ -20,6 +20,9 @@ import 'package:hire_q/screens/videoview/video_view_screen.dart';
 import 'package:hire_q/widgets/common_widget.dart';
 import 'package:provider/provider.dart';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:steps_indicator/steps_indicator.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'dart:math' as math;
@@ -54,9 +57,17 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
     const Color(0xffe17055),
     const Color(0xff6c5ce7)
   ];
+
+  firebaseinitial() async {
+    FirebaseAuth.instance.authStateChanges().listen((User user) {
+    appState.setLocalStorage(key: "firebaseuser", value: user);
+  });
+  }
+
   @override
   void initState() {
     super.initState();
+    firebaseinitial();
     onInit();
   }
 

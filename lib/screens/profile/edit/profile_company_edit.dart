@@ -44,7 +44,7 @@ class _ProfileCompanyEdit extends State<ProfileCompanyEdit> {
     appState = Provider.of<AppState>(context, listen: false);
     api = APIClient();
     _picker = ImagePicker();
-    print((appState.profile).toMap());
+    // print((appState.profile).toMap());
   }
 
   @override

@@ -8,6 +8,10 @@ import 'package:hire_q/widgets/theme_helper.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
+
 import 'widgets/header_widget.dart';
 
 import 'package:provider/provider.dart';
@@ -50,7 +54,7 @@ class _EmailValidationScreenState extends State<EmailValidationScreen> {
     });
   }
 
-  void _init() {
+  void _init() async {
     appState = Provider.of<AppState>(context, listen: false);
   }
 
@@ -70,6 +74,19 @@ class _EmailValidationScreenState extends State<EmailValidationScreen> {
         if (body['status'] == "success") {
           appState.user = body;
           appState.setLocalStorage(key: 'user', value: jsonEncode(body));
+          final credential =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email:  widget.email,
+            password: widget.password,
+          );
+          await FirebaseChatCore.instance.createUserInFirestore(
+            types.User(
+              firstName: "",
+              id: credential.user.uid,
+              imageUrl: '',
+              lastName: "",
+            ),
+          );
          
           if (appState.entryType == "talent") {
             Navigator.pushReplacement(
@@ -79,7 +96,7 @@ class _EmailValidationScreenState extends State<EmailValidationScreen> {
                   pageBuilder: (context, animation, secondaryAnimation) {
                     return FadeTransition(
                       opacity: animation,
-                      child: const RegisterNextScreen(),
+                      child:  RegisterNextScreen(useruid: credential.user.uid),
                     );
                   },
                 ));
@@ -91,7 +108,7 @@ class _EmailValidationScreenState extends State<EmailValidationScreen> {
                   pageBuilder: (context, animation, secondaryAnimation) {
                     return FadeTransition(
                       opacity: animation,
-                      child: const RegisterCompanyScreen(),
+                      child: RegisterCompanyScreen(useruid: credential.user.uid),
                     );
                   },
                 ));

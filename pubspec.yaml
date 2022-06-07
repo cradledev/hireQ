@@ -59,6 +59,10 @@ dependencies:
   open_file: ^3.2.1
   uuid: ^3.0.6
   flutter_chat_ui: ^1.5.8
+  firebase_auth: ^3.3.13
+  firebase_core: ^1.14.0
+  firebase_storage: ^10.2.12
+  flutter_firebase_chat_core: ^1.5.4
 
   dropdown_button2: ^1.4.0
 

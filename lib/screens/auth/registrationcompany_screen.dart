@@ -8,13 +8,17 @@ import 'package:hire_q/screens/lobby/lobby_screen.dart';
 import 'package:hire_q/widgets/theme_helper.dart';
 import 'package:provider/provider.dart';
 
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
+
 import 'package:csc_picker/csc_picker.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 
 import 'widgets/header_widget.dart';
 
 class RegisterCompanyScreen extends StatefulWidget {
-  const RegisterCompanyScreen({Key key}) : super(key: key);
+  const RegisterCompanyScreen({Key key, this.useruid}) : super(key: key);
+  final String useruid;
 
   @override
   State<StatefulWidget> createState() {
@@ -114,6 +118,7 @@ class _RegisterCompanyScreenState extends State<RegisterCompanyScreen> {
           try {
             Map payloads = {
               'user_id': appState.user['id'],
+              'uuid':widget.useruid,
               'account_manager_name': accountManageerNameController.text,
               'name': companyNameController.text,
               "phone_number": {
@@ -138,6 +143,14 @@ class _RegisterCompanyScreenState extends State<RegisterCompanyScreen> {
             });
             var body = jsonDecode(res.body);
             if (res.statusCode == 200) {
+              await FirebaseChatCore.instance.createUserInFirestore(
+                types.User(
+                  firstName: companyNameController.text,
+                  id: widget.useruid,
+                  imageUrl: '',
+                  lastName: '',
+                ),
+              );              
               if (body['status'] == "success") {
                 showDialog(
                   context: context,

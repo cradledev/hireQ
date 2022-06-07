@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:hire_q/helpers/constants.dart';
 import 'package:hire_q/provider/index.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
@@ -24,6 +25,10 @@ class _SplashStartScreen extends State<SplashStartScreen>
   startTime() async {
     var _duration = const Duration(seconds: 6);
     return Timer(_duration, navigationPage);
+  }
+
+  firebaseinitial() async {
+    await Firebase.initializeApp();
   }
 
   void navigationPage() async {
@@ -58,6 +63,7 @@ class _SplashStartScreen extends State<SplashStartScreen>
     appState = Provider.of<AppState>(context, listen: false);
     animation.addListener(() => setState(() {}));
     animationController.forward();
+    firebaseinitial();
     startTime();
   }
 
