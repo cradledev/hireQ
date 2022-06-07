@@ -95,6 +95,7 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
       if (res.statusCode == 200) {
         appState.company =
             CompanyModel.fromJson(jsonDecode(res.body.toString()));
+        onGetCurrentCompayJobs(appState.company.id);
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -111,7 +112,7 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
       var body = jsonDecode(res.body.toString());
       if (res.statusCode == 200) {
         appState.profile = ProfileModel.fromJson(body);
-        onGetCurrentCompayJobs(body['id']);
+        
       }
       if (res.statusCode == 400) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(

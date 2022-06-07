@@ -141,37 +141,37 @@ class _ProfileCompanyEdit extends State<ProfileCompanyEdit> {
               onProfileUpdate(_tmpProfile.id, jsonEncode(payloads));
             }
           } else {
-            // if (type == "image") {
-            //   Map payloads = {
-            //     "avator": body['url'],
-            //     "user_id": appState.user['id'],
-            //     "resume": _tmpProfile?.resume,
-            //     "video_id": _tmpProfile?.video_id,
-            //     "video": _tmpProfile?.video,
-            //     "job": [],
-            //     "work_history": [],
-            //     "type": appState.user['type']
-            //   };
-            //   print(payloads);
-            //   onCreateProfile(jsonEncode(payloads));
-            // }
-            // if (type == "video") {
-            //   Map payloads = {
-            //     "avator": "",
-            //     "user_id": appState.user['id'],
-            //     "resume": _tmpProfile?.resume,
-            //     "video_id": _tmpProfile?.video_id,
-            //     "video": body['url'],
-            //     "job":
-            //         _tmpProfile.job.isEmpty ? [] : jsonDecode(_tmpProfile.job),
-            //     "work_history": _tmpProfile.work_history.isEmpty
-            //         ? []
-            //         : jsonDecode(_tmpProfile.work_history),
-            //     "type": _tmpProfile.type
-            //   };
-            //   print(payloads);
-            //   onCreateProfile(jsonEncode(payloads));
-            // }
+            if (type == "image") {
+              Map payloads = {
+                "avator": body['url'],
+                "user_id": appState.user['id'],
+                "resume": _tmpProfile?.resume,
+                "video_id": _tmpProfile?.video_id,
+                "video": _tmpProfile?.video,
+                "job": [],
+                "work_history": [],
+                "type": appState.user['type']
+              };
+              print(payloads);
+              onCreateProfile(jsonEncode(payloads));
+            }
+            if (type == "video") {
+              Map payloads = {
+                "avator": "",
+                "user_id": appState.user['id'],
+                "resume": _tmpProfile?.resume,
+                "video_id": _tmpProfile?.video_id,
+                "video": body['url'],
+                "job":
+                    _tmpProfile.job.isEmpty ? [] : jsonDecode(_tmpProfile.job),
+                "work_history": _tmpProfile.work_history.isEmpty
+                    ? []
+                    : jsonDecode(_tmpProfile.work_history),
+                "type": _tmpProfile.type
+              };
+              print(payloads);
+              onCreateProfile(jsonEncode(payloads));
+            }
           }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
