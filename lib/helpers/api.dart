@@ -187,6 +187,17 @@ class APIClient {
   }
 
   // get applied job in company
+  Future<http.Response> getAppliedJobsByUserId({token, pageNum, pageLength}) async {
+    try {
+      header['api-token'] = token;
+      var response = await http.get(
+          Uri.parse(endpoint + "/appliedjobs/jobs_by_user/" + pageNum.toString() + "/" + pageLength.toString()),
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception("Unknow Error.");
+    }
+  }
 
   // ================ company job board part ===================
 
@@ -279,7 +290,6 @@ class APIClient {
   }
 
   // update video row
-  // create video row 
   Future<http.Response> updateVideoRow({id, token, payloads}) async {
     try {
       header['api-token'] = token;

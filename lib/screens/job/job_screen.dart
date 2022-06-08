@@ -22,7 +22,7 @@ class JobScreen extends StatefulWidget {
 class _JobScreen extends State<JobScreen> {
   // scroll page controller for infinite scroll
   PagingController<int, CompanyJobModel> _pagingController;
-  static const PageSize = 10;
+  static const PageSize = 4;
 
   // APPSTATE setting
   AppState appState;
@@ -172,7 +172,7 @@ class _JobScreen extends State<JobScreen> {
                       ));
                       return false;
                     }
-                    return true;
+                    return false;
                   } else {
                     if (direction == DismissDirection.up) {
                       Map payloads = {

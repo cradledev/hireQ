@@ -23,7 +23,7 @@ class TalentScreen extends StatefulWidget {
 class _TalentScreen extends State<TalentScreen> {
   // scroll page controller for infinite scroll
   PagingController<int, TalentModel> _pagingController;
-  static const PageSize = 10;
+  static const PageSize = 3;
 
   // import provider
   AppState appState;
@@ -49,12 +49,6 @@ class _TalentScreen extends State<TalentScreen> {
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
-    try {
-      var res = await api.getTalentsWithPagination(pageLength: 5, pageNum: 1);
-      var body = jsonDecode(res.body);
-    } catch (e) {
-      print(e);
-    }
   }
 
   // fetch job data with pagination

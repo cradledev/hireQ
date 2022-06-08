@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hire_q/helpers/constants.dart';
 import 'package:hire_q/models/company_job_model.dart';
-import 'package:hire_q/models/job_model.dart';
 import 'package:hire_q/provider/index.dart';
 import 'package:hire_q/screens/detail_board/consider_talent_list_board.dart';
 import 'package:hire_q/screens/detail_board/job_detail_board.dart';
