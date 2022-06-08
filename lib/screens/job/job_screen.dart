@@ -191,6 +191,7 @@ class _JobScreen extends State<JobScreen> {
                             ),
                             backgroundColor: Colors.green,
                           ));
+                          return true;
                         } else {
                           ScaffoldMessenger.of(context)
                               .showSnackBar(const SnackBar(
@@ -213,8 +214,9 @@ class _JobScreen extends State<JobScreen> {
                         ));
                         return false;
                       }
+                    } else {
+                      return true;
                     }
-                    return true;
                   }
                   return false;
                 },

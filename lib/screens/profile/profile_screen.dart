@@ -100,7 +100,7 @@ class _ProfileScreen extends State<ProfileScreen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           backgroundColor: Colors.red,
-          content: Text("Something went wrong."),
+          content: Text("You have no profile now. Please fill it."),
         ));
       }
     } catch (e) {
