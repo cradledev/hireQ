@@ -66,17 +66,20 @@ class _EmailValidationScreenState extends State<EmailValidationScreen> {
         'password': widget.password,
         'type': widget.type
       };
+      setState(() {
+        isLoading = true;
+      });
       var res = await appState.post(
           Uri.parse(appState.endpoint + "/users/verify"), jsonEncode(payload));
       if (res.statusCode == 200) {
         var body = jsonDecode(res.body);
-        
+
         if (body['status'] == "success") {
           appState.user = body;
           appState.setLocalStorage(key: 'user', value: jsonEncode(body));
           final credential =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email:  widget.email,
+              await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: widget.email,
             password: widget.password,
           );
           await FirebaseChatCore.instance.createUserInFirestore(
@@ -87,7 +90,9 @@ class _EmailValidationScreenState extends State<EmailValidationScreen> {
               lastName: "",
             ),
           );
-         
+          setState(() {
+            isLoading = false;
+          });
           if (appState.entryType == "talent") {
             Navigator.pushReplacement(
                 context,
@@ -96,7 +101,7 @@ class _EmailValidationScreenState extends State<EmailValidationScreen> {
                   pageBuilder: (context, animation, secondaryAnimation) {
                     return FadeTransition(
                       opacity: animation,
-                      child:  RegisterNextScreen(useruid: credential.user.uid),
+                      child: RegisterNextScreen(useruid: credential.user.uid),
                     );
                   },
                 ));
@@ -108,13 +113,21 @@ class _EmailValidationScreenState extends State<EmailValidationScreen> {
                   pageBuilder: (context, animation, secondaryAnimation) {
                     return FadeTransition(
                       opacity: animation,
-                      child: RegisterCompanyScreen(useruid: credential.user.uid),
+                      child:
+                          RegisterCompanyScreen(useruid: credential.user.uid),
                     );
                   },
                 ));
           }
+        } else {
+          setState(() {
+            isLoading = false;
+          });
         }
       } else {
+        setState(() {
+          isLoading = false;
+        });
         var body = jsonDecode(res.body);
         appState.notifyToastDanger(context: context, message: body['error']);
       }
@@ -149,13 +162,13 @@ class _EmailValidationScreenState extends State<EmailValidationScreen> {
         }
       } else {
         // var body = jsonDecode(res.body);
-         showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return ThemeHelper().alartDialog("Error",
-                  "Failed resending verification.", context);
-            },
-          );
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return ThemeHelper().alartDialog(
+                "Error", "Failed resending verification.", context);
+          },
+        );
       }
     } catch (e) {
       appState.notifyToastDanger(

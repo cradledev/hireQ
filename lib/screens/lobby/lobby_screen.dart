@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,6 +17,9 @@ import 'package:hire_q/widgets/custom_drawer_widget.dart';
 import 'package:provider/provider.dart';
 
 import 'package:hire_q/provider/index.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
 class LobbyScreen extends StatefulWidget {
   const LobbyScreen({Key key, this.indexTab, this.tabString}) : super(key: key);
@@ -38,6 +43,16 @@ class _LobbyScreen extends State<LobbyScreen> {
     currentPage = widget.indexTab;
     _searchTextController = TextEditingController();
     _appState = Provider.of<AppState>(context, listen: false);
+    onInit();
+  }
+
+  // custom init
+  void onInit() async {
+    if (_appState.user != null) {
+      FirebaseAuth.instance.authStateChanges().listen((User user) {
+        _appState.setLocalStorage(key: "firebaseuser", value: user.uid);
+      });
+    }
   }
 
   @override

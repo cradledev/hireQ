@@ -89,9 +89,7 @@ class _ProfileCompanyAddJobScreenState
   void initState() {
     super.initState();
     _onInit();
-    Future.delayed(const Duration(microseconds: 600), () {
-
-    });
+    Future.delayed(const Duration(microseconds: 600), () {});
   }
 
   void _onInit() {
@@ -119,7 +117,7 @@ class _ProfileCompanyAddJobScreenState
       countryValue = _region['country'];
       stateValue = _region['state'];
       cityValue = _region['city'];
-      if (educationItems.contains((widget.selectedJob).education) ) {
+      if (educationItems.contains((widget.selectedJob).education)) {
         selectedEducationValue = (widget.selectedJob).education;
       }
       //  else {
@@ -180,7 +178,7 @@ class _ProfileCompanyAddJobScreenState
               "experience_year": yearsOfExperienceController.text,
               "region": {
                 "country": countryValue,
-                "city" : cityValue ?? "no city",
+                "city": cityValue ?? "no city",
                 "state": stateValue
               },
               "salary": salaryController.text,
@@ -194,7 +192,7 @@ class _ProfileCompanyAddJobScreenState
             print(payloads);
             try {
               var res = await api.updateCompanyJob(
-                  id : (widget.selectedJob).id,
+                  id: (widget.selectedJob).id,
                   token: appState.user['jwt_token'],
                   payloads: jsonEncode(payloads));
               setState(() {
@@ -241,7 +239,7 @@ class _ProfileCompanyAddJobScreenState
               "experience_year": yearsOfExperienceController.text,
               "region": {
                 "country": countryValue,
-                "city" : cityValue ?? "no city",
+                "city": cityValue ?? "no city",
                 "state": stateValue
               },
               "salary": salaryController.text,
@@ -758,8 +756,8 @@ class _ProfileCompanyAddJobScreenState
                                                             const SnackBar(
                                                       backgroundColor:
                                                           Colors.orange,
-                                                      content:
-                                                          Text("Role Text is empty"),
+                                                      content: Text(
+                                                          "Role Text is empty"),
                                                     ));
                                                   }
                                                 });
@@ -782,50 +780,99 @@ class _ProfileCompanyAddJobScreenState
                                     )
                                   ],
                                 ),
-                                // Text(roles.isNotEmpty ? roles.toString() : ""),
-                                Column(
-                                  children: roles.map((item) {
-                                    final index = roles.indexWhere(
-                                        (element) => element == item);
-                                    return GestureDetector(
-                                      onLongPress: () {
-                                        setState(() {
-                                          roles.removeAt(index);
-                                        });
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 8, horizontal: 8),
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        margin: const EdgeInsets.symmetric(
-                                            vertical: 5, horizontal: 20),
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            border: Border.all(
-                                              width: 3,
-                                              color: Colors.white,
-                                            ),
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                              Radius.circular(
-                                                10,
+                                Padding(
+                                  padding: EdgeInsets.zero,
+                                  child: roles.isEmpty
+                                      ? Column(children: const [
+                                          SizedBox(
+                                            height: 30,
+                                          ),
+                                          Text("No Roles Here.")
+                                        ])
+                                      : ListView.builder(
+                                          itemBuilder: (context, index) {
+                                            return Dismissible(
+                                              key: UniqueKey(),
+                                              direction:
+                                                  DismissDirection.horizontal,
+                                              // confirmDismiss:
+                                              //     (DismissDirection direction) async {
+                                              //   roles.removeAt(index);
+                                              //   return true;
+                                              // },
+                                              onDismissed: (direction) {
+                                                setState(() {
+                                                  roles.removeAt(index);
+                                                });
+                                              },
+                                              background: Container(
+                                                alignment: Alignment.centerLeft,
+                                                padding: const EdgeInsets.only(
+                                                    left: 20.0),
+                                                color: Colors.red,
+                                                child: const Icon(Icons.delete,
+                                                    color: Colors.white),
                                               ),
-                                            ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                offset: const Offset(1, 3),
-                                                color: Colors.black.withOpacity(
-                                                  0.3,
+                                              secondaryBackground: Container(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                padding: const EdgeInsets.only(
+                                                    right: 20.0),
+                                                color: Colors.redAccent,
+                                                child: const Icon(Icons.delete,
+                                                    color: Colors.white),
+                                              ),
+                                              child: ListTile(
+                                                title: Container(
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
+                                                      vertical: 8,
+                                                      horizontal: 8),
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  margin: const EdgeInsets
+                                                          .symmetric(
+                                                      vertical: 5,
+                                                      horizontal: 20),
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      border: Border.all(
+                                                        width: 3,
+                                                        color: Colors.white,
+                                                      ),
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                              .all(
+                                                        Radius.circular(
+                                                          10,
+                                                        ),
+                                                      ),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          offset: const Offset(
+                                                              1, 3),
+                                                          color: Colors.black
+                                                              .withOpacity(
+                                                            0.3,
+                                                          ),
+                                                          blurRadius: 20,
+                                                        ),
+                                                      ]),
+                                                  child: Text(roles[index]),
                                                 ),
-                                                blurRadius: 20,
                                               ),
-                                            ]),
-                                        child: Text(item),
-                                      ),
-                                    );
-                                  }).toList(),
+                                            );
+                                          },
+                                          itemCount: roles.length,
+                                          shrinkWrap: true,
+                                          physics:
+                                              const AlwaysScrollableScrollPhysics(),
+                                          // padding: EdgeInsets.all(5),
+                                          scrollDirection: Axis.vertical,
+                                        ),
                                 ),
+                                // Text(roles.isNotEmpty ? roles.toString() : ""),
                                 const SizedBox(
                                   height: 30,
                                 ),

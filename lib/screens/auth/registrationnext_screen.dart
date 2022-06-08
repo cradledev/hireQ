@@ -104,8 +104,7 @@ class _RegisterNextScreenState extends State<RegisterNextScreen> {
   }
 
   bool _onValidationRegion() {
-    if (countryValue.isNotEmpty &&
-        stateValue.isNotEmpty) {
+    if (countryValue.isNotEmpty && stateValue.isNotEmpty) {
       return true;
     } else {
       return false;
@@ -143,7 +142,7 @@ class _RegisterNextScreenState extends State<RegisterNextScreen> {
               },
               "region": {
                 "country": countryValue,
-                "city" : cityValue ?? "no city",
+                "city": cityValue ?? "no city",
                 "state": stateValue
               },
               "current_jobTitle": currentJobTitleController.text,
@@ -154,9 +153,7 @@ class _RegisterNextScreenState extends State<RegisterNextScreen> {
             var res = await appState.postWithToken(
                 Uri.parse(appState.endpoint + "/talents/"),
                 jsonEncode(payloads));
-            setState(() {
-              isLoading = false;
-            });
+
             var body = jsonDecode(res.body);
             if (res.statusCode == 200) {
               await FirebaseChatCore.instance.createUserInFirestore(
@@ -167,55 +164,39 @@ class _RegisterNextScreenState extends State<RegisterNextScreen> {
                   lastName: lastnameController.text,
                 ),
               );
-              if (body['status'] == "success") {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return ThemeHelper()
-                        .alartDialog("Success", "Success.", context);
-                  },
-                );
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    PageRouteBuilder(
-                      transitionDuration: const Duration(microseconds: 800),
-                      pageBuilder: (context, animation, secondaryAnimation) {
-                        return FadeTransition(
-                          opacity: animation,
-                          child: const LobbyScreen(indexTab: 3),
-                        );
-                      },
-                    ),
-                    (route) => false);
-              } else {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return ThemeHelper().alartDialog("warning",
-                        "Something went wrong, Please try again it.", context);
-                  },
-                );
-              }
+              setState(() {
+                isLoading = false;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text("Successfully registered."),
+                backgroundColor: Colors.red,
+              ));
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  PageRouteBuilder(
+                    transitionDuration: const Duration(microseconds: 800),
+                    pageBuilder: (context, animation, secondaryAnimation) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: const LobbyScreen(indexTab: 3),
+                      );
+                    },
+                  ),
+                  (route) => false);
             } else {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return ThemeHelper()
-                      .alartDialog("Error", body['error'], context);
-                },
-              );
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(body['error']),
+                backgroundColor: Colors.red,
+              ));
             }
           } catch (e) {
             setState(() {
               isLoading = false;
             });
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return ThemeHelper()
-                    .alartDialog("Error", "Unknown error is occured.", context);
-              },
-            );
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Unkown error is occured."),
+              backgroundColor: Colors.red,
+            ));
           }
         }
       }
@@ -239,351 +220,370 @@ class _RegisterNextScreenState extends State<RegisterNextScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: EdgeInsets.zero,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: EdgeInsets.zero,
-              height: 200,
-              child: const HeaderWidget(
-                  200, false, Icons.person_add_alt_1_rounded),
-            ),
-            const Text(
-              'Sign up',
-              style: TextStyle(
-                  fontSize: 40,
-                  color: primaryColor,
-                  fontWeight: FontWeight.bold),
-            ),
-            Expanded(
-              child: PageView(
-                physics: const ClampingScrollPhysics(),
-                controller: _pageController,
-                onPageChanged: (int page) {
-                  WidgetsBinding.instance?.focusManager?.primaryFocus
-                      ?.unfocus();
-                  _checkValidation();
-                  if (isValid == false && _currentPage == 0) {
-                    // _pageController.jumpTo(0);
-                    _pageController.jumpToPage(0);
-                  } else {
-                    setState(() {
-                      _currentPage = page;
-                    });
-                  }
-                },
-                children: <Widget>[
-                  SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Form(
-                            key: _formKey,
-                            child: Column(
-                              children: [
-                                const SizedBox(
-                                  height: 30,
-                                ),
-                                Container(
-                                  child: TextFormField(
-                                      controller: firstnameController,
-                                      decoration: ThemeHelper()
-                                          .textInputDecoration('First Name',
-                                              'Enter your first name'),
-                                      validator: (value) {
-                                        if (value == null ||
-                                            value.trim().isEmpty) {
-                                          return "Please enter First Name";
-                                        }
-                                        // Return null if the entered password is valid
-                                        return null;
-                                      }),
-                                  decoration:
-                                      ThemeHelper().inputBoxDecorationShaddow(),
-                                ),
-                                const SizedBox(
-                                  height: 30,
-                                ),
-                                Container(
-                                  child: TextFormField(
-                                      controller: lastnameController,
-                                      decoration: ThemeHelper()
-                                          .textInputDecoration('Last Name',
-                                              'Enter your last name'),
-                                      validator: (value) {
-                                        if (value == null ||
-                                            value.trim().isEmpty) {
-                                          return "Please enter Last Name";
-                                        }
-                                        // Return null if the entered password is valid
-                                        return null;
-                                      }),
-                                  decoration:
-                                      ThemeHelper().inputBoxDecorationShaddow(),
-                                ),
-                                const SizedBox(height: 30.0),
-                                Column(
-                                  children: [
-                                    CSCPicker(
-                                      key: _cscPickerKey,
-                                      layout: Layout.vertical,
+      body: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.zero,
+          height: MediaQuery.of(context).size.height,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Expanded(
+                child: PageView(
+                  physics: const ClampingScrollPhysics(),
+                  controller: _pageController,
+                  onPageChanged: (int page) {
+                    WidgetsBinding.instance?.focusManager?.primaryFocus
+                        ?.unfocus();
+                    _checkValidation();
+                    if (isValid == false && _currentPage == 0) {
+                      // _pageController.jumpTo(0);
+                      _pageController.jumpToPage(0);
+                    } else {
+                      setState(() {
+                        _currentPage = page;
+                      });
+                    }
+                  },
+                  children: <Widget>[
+                    SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.zero,
+                            height: 200,
+                            child: const HeaderWidget(
+                                200, false, Icons.person_add_alt_1_rounded),
+                          ),
+                          const Text(
+                            'Sign up',
+                            style: TextStyle(
+                                fontSize: 40,
+                                color: primaryColor,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Form(
+                              key: _formKey,
+                              child: Column(
+                                children: [
+                                  const SizedBox(
+                                    height: 30,
+                                  ),
+                                  Container(
+                                    child: TextFormField(
+                                        controller: firstnameController,
+                                        decoration: ThemeHelper()
+                                            .textInputDecoration('First Name',
+                                                'Enter your first name'),
+                                        validator: (value) {
+                                          if (value == null ||
+                                              value.trim().isEmpty) {
+                                            return "Please enter First Name";
+                                          }
+                                          // Return null if the entered password is valid
+                                          return null;
+                                        }),
+                                    decoration: ThemeHelper()
+                                        .inputBoxDecorationShaddow(),
+                                  ),
+                                  const SizedBox(
+                                    height: 30,
+                                  ),
+                                  Container(
+                                    child: TextFormField(
+                                        controller: lastnameController,
+                                        decoration: ThemeHelper()
+                                            .textInputDecoration('Last Name',
+                                                'Enter your last name'),
+                                        validator: (value) {
+                                          if (value == null ||
+                                              value.trim().isEmpty) {
+                                            return "Please enter Last Name";
+                                          }
+                                          // Return null if the entered password is valid
+                                          return null;
+                                        }),
+                                    decoration: ThemeHelper()
+                                        .inputBoxDecorationShaddow(),
+                                  ),
+                                  const SizedBox(height: 30.0),
+                                  Column(
+                                    children: [
+                                      CSCPicker(
+                                        key: _cscPickerKey,
+                                        layout: Layout.vertical,
 
-                                      ///Enable disable state dropdown [OPTIONAL PARAMETER]
-                                      showStates: true,
+                                        ///Enable disable state dropdown [OPTIONAL PARAMETER]
+                                        showStates: true,
 
-                                      /// Enable disable city drop down [OPTIONAL PARAMETER]
-                                      showCities: true,
+                                        /// Enable disable city drop down [OPTIONAL PARAMETER]
+                                        showCities: true,
 
-                                      ///Enable (get flag with country name) / Disable (Disable flag) / ShowInDropdownOnly (display flag in dropdown only) [OPTIONAL PARAMETER]
-                                      flagState: CountryFlag.DISABLE,
+                                        ///Enable (get flag with country name) / Disable (Disable flag) / ShowInDropdownOnly (display flag in dropdown only) [OPTIONAL PARAMETER]
+                                        flagState: CountryFlag.DISABLE,
 
-                                      ///Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER] (USE with disabledDropdownDecoration)
-                                      dropdownDecoration: BoxDecoration(
+                                        ///Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER] (USE with disabledDropdownDecoration)
+                                        dropdownDecoration: BoxDecoration(
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(10)),
+                                            color: Colors.white,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.7),
+                                                blurRadius: 20,
+                                                offset: const Offset(0, 5),
+                                              )
+                                            ],
+                                            border: Border.all(
+                                                color: Colors.grey.shade300,
+                                                width: 1)),
+
+                                        ///Disabled Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER]  (USE with disabled dropdownDecoration)
+                                        disabledDropdownDecoration:
+                                            BoxDecoration(
                                           borderRadius: const BorderRadius.all(
                                               Radius.circular(10)),
-                                          color: Colors.white,
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color:
-                                                  Colors.black.withOpacity(0.7),
-                                              blurRadius: 20,
-                                              offset: const Offset(0, 5),
-                                            )
-                                          ],
+                                          color: Colors.grey.shade300,
                                           border: Border.all(
                                               color: Colors.grey.shade300,
-                                              width: 1)),
+                                              width: 1),
+                                        ),
 
-                                      ///Disabled Dropdown box decoration to style your dropdown selector [OPTIONAL PARAMETER]  (USE with disabled dropdownDecoration)
-                                      disabledDropdownDecoration: BoxDecoration(
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(10)),
-                                        color: Colors.grey.shade300,
-                                        border: Border.all(
-                                            color: Colors.grey.shade300,
-                                            width: 1),
-                                      ),
+                                        ///placeholders for dropdown search field
+                                        countrySearchPlaceholder: "Country",
+                                        stateSearchPlaceholder: "State",
+                                        citySearchPlaceholder: "City",
 
-                                      ///placeholders for dropdown search field
-                                      countrySearchPlaceholder: "Country",
-                                      stateSearchPlaceholder: "State",
-                                      citySearchPlaceholder: "City",
+                                        ///labels for dropdown
+                                        countryDropdownLabel: "*Country",
+                                        stateDropdownLabel: "*State",
+                                        cityDropdownLabel: "*City",
 
-                                      ///labels for dropdown
-                                      countryDropdownLabel: "*Country",
-                                      stateDropdownLabel: "*State",
-                                      cityDropdownLabel: "*City",
+                                        ///Default Country
+                                        //defaultCountry: DefaultCountry.India,
 
-                                      ///Default Country
-                                      //defaultCountry: DefaultCountry.India,
+                                        ///Disable country dropdown (Note: use it with default country)
+                                        //disableCountry: true,
 
-                                      ///Disable country dropdown (Note: use it with default country)
-                                      //disableCountry: true,
-
-                                      ///selected item style [OPTIONAL PARAMETER]
-                                      selectedItemStyle: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                      ),
-
-                                      ///DropdownDialog Heading style [OPTIONAL PARAMETER]
-                                      dropdownHeadingStyle: const TextStyle(
+                                        ///selected item style [OPTIONAL PARAMETER]
+                                        selectedItemStyle: const TextStyle(
                                           color: Colors.black,
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold),
+                                          fontSize: 14,
+                                        ),
 
-                                      ///DropdownDialog Item style [OPTIONAL PARAMETER]
-                                      dropdownItemStyle: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 14,
+                                        ///DropdownDialog Heading style [OPTIONAL PARAMETER]
+                                        dropdownHeadingStyle: const TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold),
+
+                                        ///DropdownDialog Item style [OPTIONAL PARAMETER]
+                                        dropdownItemStyle: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                        ),
+
+                                        ///Dialog box radius [OPTIONAL PARAMETER]
+                                        dropdownDialogRadius: 10.0,
+
+                                        ///Search bar radius [OPTIONAL PARAMETER]
+                                        searchBarRadius: 10.0,
+
+                                        ///triggers once country selected in dropdown
+                                        onCountryChanged: (value) {
+                                          setState(() {
+                                            ///store value in country variable
+                                            countryValue = value;
+                                          });
+                                        },
+
+                                        ///triggers once state selected in dropdown
+                                        onStateChanged: (value) {
+                                          setState(() {
+                                            ///store value in state variable
+                                            stateValue = value;
+                                          });
+                                        },
+
+                                        ///triggers once city selected in dropdown
+                                        onCityChanged: (value) {
+                                          setState(() {
+                                            ///store value in city variable
+                                            cityValue = value;
+                                          });
+                                        },
+                                        currentCountry: countryValue,
+                                        currentCity: cityValue,
+                                        currentState: stateValue,
                                       ),
-
-                                      ///Dialog box radius [OPTIONAL PARAMETER]
-                                      dropdownDialogRadius: 10.0,
-
-                                      ///Search bar radius [OPTIONAL PARAMETER]
-                                      searchBarRadius: 10.0,
-
-                                      ///triggers once country selected in dropdown
-                                      onCountryChanged: (value) {
-                                        setState(() {
-                                          ///store value in country variable
-                                          countryValue = value;
-                                        });
-                                      },
-
-                                      ///triggers once state selected in dropdown
-                                      onStateChanged: (value) {
-                                        setState(() {
-                                          ///store value in state variable
-                                          stateValue = value;
-                                        });
-                                      },
-
-                                      ///triggers once city selected in dropdown
-                                      onCityChanged: (value) {
-                                        setState(() {
-                                          ///store value in city variable
-                                          cityValue = value;
-                                        });
-                                      },
-                                      currentCountry: countryValue,
-                                      currentCity: cityValue,
-                                      currentState: stateValue,
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 30.0),
-                                Container(
-                                  child: IntlPhoneField(
-                                    decoration: ThemeHelper()
-                                        .textInputDecoration('Phone Number',
-                                            'Enter your phone number.'),
-                                    onChanged: (phone) {
-                                      // print(phone.number);
-                                      // print(phone.completeNumber);
-                                      setState(() {
-                                        phoneNumber = phone.completeNumber;
-                                        displayPhoneNumber = phone.number;
-                                      });
-                                    },
-                                    initialValue: displayPhoneNumber,
-                                    initialCountryCode: initialCountryCode,
-                                    onCountryChanged: (country) {
-                                      setState(() {
-                                        initialCountryCode = country.code;
-                                      });
-                                      // print(country.code);
-                                      // print('Country changed to: ' +
-                                      //     country.name);
-                                    },
-                                  ),
-                                  decoration: BoxDecoration(
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.4),
-                                        blurRadius: 20,
-                                        offset: const Offset(0, 3),
-                                      )
                                     ],
                                   ),
-                                ),
-                                const SizedBox(height: 15.0),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Form(
-                            key: _formKey1,
-                            child: Column(
-                              children: [
-                                const SizedBox(
-                                  height: 30,
-                                ),
-                                Container(
-                                  child: TextFormField(
-                                      controller: currentJobTitleController,
+                                  const SizedBox(height: 30.0),
+                                  Container(
+                                    child: IntlPhoneField(
                                       decoration: ThemeHelper()
-                                          .textInputDecoration(
-                                              'Current Job Title',
-                                              'Enter your Job Title'),
-                                      validator: (value) {
-                                        if (value == null ||
-                                            value.trim().isEmpty) {
-                                          return "Please enter Current Job Title";
-                                        }
-                                        // Return null if the entered password is valid
-                                        return null;
-                                      }),
-                                  decoration:
-                                      ThemeHelper().inputBoxDecorationShaddow(),
-                                ),
-                                const SizedBox(
-                                  height: 30,
-                                ),
-                                Container(
-                                  child: TextFormField(
-                                      controller: companyController,
-                                      decoration: ThemeHelper()
-                                          .textInputDecoration(
-                                              'Company', 'Enter your Company'),
-                                      validator: (value) {
-                                        if (value == null ||
-                                            value.trim().isEmpty) {
-                                          return "Please enter Company Name";
-                                        }
-                                        // Return null if the entered password is valid
-                                        return null;
-                                      }),
-                                  decoration:
-                                      ThemeHelper().inputBoxDecorationShaddow(),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: _buildPageIndicator(),
-                  ),
-                  Container(
-                    decoration: ThemeHelper().buttonBoxDecoration(context),
-                    child: ElevatedButton(
-                      style: ThemeHelper().buttonStyle(),
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(40, 10, 40, 10),
-                        child: isLoading ?? false
-                            ? const CircularProgressIndicator(
-                                backgroundColor: Colors.transparent,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                    Color(0xff283488)),
-                                strokeWidth: 2,
-                              )
-                            : Text(
-                                (_currentPage != _numPages - 1)
-                                    ? "Next"
-                                    : "Finish",
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
+                                          .textInputDecoration('Phone Number',
+                                              'Enter your phone number.'),
+                                      onChanged: (phone) {
+                                        // print(phone.number);
+                                        // print(phone.completeNumber);
+                                        setState(() {
+                                          phoneNumber = phone.completeNumber;
+                                          displayPhoneNumber = phone.number;
+                                        });
+                                      },
+                                      initialValue: displayPhoneNumber,
+                                      initialCountryCode: initialCountryCode,
+                                      onCountryChanged: (country) {
+                                        setState(() {
+                                          initialCountryCode = country.code;
+                                        });
+                                        // print(country.code);
+                                        // print('Country changed to: ' +
+                                        //     country.name);
+                                      },
+                                    ),
+                                    decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.4),
+                                          blurRadius: 20,
+                                          offset: const Offset(0, 3),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 15.0),
+                                ],
                               ),
+                            ),
+                          ),
+                        ],
                       ),
-                      onPressed: isLoading ?? false
-                          ? null
-                          : () {
-                              _onNextPage();
-                            },
                     ),
-                  )
-                ],
+                    SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.zero,
+                            height: 200,
+                            child: const HeaderWidget(
+                                200, false, Icons.person_add_alt_1_rounded),
+                          ),
+                          const Text(
+                            'Sign up',
+                            style: TextStyle(
+                                fontSize: 40,
+                                color: primaryColor,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Form(
+                              key: _formKey1,
+                              child: Column(
+                                children: [
+                                  const SizedBox(
+                                    height: 30,
+                                  ),
+                                  Container(
+                                    child: TextFormField(
+                                        controller: currentJobTitleController,
+                                        decoration: ThemeHelper()
+                                            .textInputDecoration(
+                                                'Current Job Title',
+                                                'Enter your Job Title'),
+                                        validator: (value) {
+                                          if (value == null ||
+                                              value.trim().isEmpty) {
+                                            return "Please enter Current Job Title";
+                                          }
+                                          // Return null if the entered password is valid
+                                          return null;
+                                        }),
+                                    decoration: ThemeHelper()
+                                        .inputBoxDecorationShaddow(),
+                                  ),
+                                  const SizedBox(
+                                    height: 30,
+                                  ),
+                                  Container(
+                                    child: TextFormField(
+                                        controller: companyController,
+                                        decoration: ThemeHelper()
+                                            .textInputDecoration('Company',
+                                                'Enter your Company'),
+                                        validator: (value) {
+                                          if (value == null ||
+                                              value.trim().isEmpty) {
+                                            return "Please enter Company Name";
+                                          }
+                                          // Return null if the entered password is valid
+                                          return null;
+                                        }),
+                                    decoration: ThemeHelper()
+                                        .inputBoxDecorationShaddow(),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
-            ),
-          ],
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: _buildPageIndicator(),
+                    ),
+                    Container(
+                      decoration: ThemeHelper().buttonBoxDecoration(context),
+                      child: ElevatedButton(
+                        style: ThemeHelper().buttonStyle(),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(40, 10, 40, 10),
+                          child: isLoading ?? false
+                              ? const CircularProgressIndicator(
+                                  backgroundColor: Colors.transparent,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Color(0xff283488)),
+                                  strokeWidth: 2,
+                                )
+                              : Text(
+                                  (_currentPage != _numPages - 1)
+                                      ? "Next"
+                                      : "Finish",
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                        ),
+                        onPressed: isLoading ?? false
+                            ? null
+                            : () {
+                                _onNextPage();
+                              },
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

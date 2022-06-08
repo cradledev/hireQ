@@ -3,6 +3,10 @@ import 'dart:convert';
 import 'package:csc_picker/csc_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
+
 import 'package:hire_q/helpers/api.dart';
 import 'package:hire_q/helpers/constants.dart';
 import 'package:hire_q/models/company_model.dart';
@@ -48,6 +52,9 @@ class _SettingCompanyScreen extends State<SettingCompanyScreen> {
   TextEditingController accountManageerNameController;
   // api service setting
   APIClient api;
+
+  // firebase auth user uid
+  String currentFirebaseUserUid;
   @override
   void initState() {
     super.initState();
@@ -56,11 +63,9 @@ class _SettingCompanyScreen extends State<SettingCompanyScreen> {
     companyNameController = TextEditingController();
     accountManageerNameController = TextEditingController();
     onInit();
-    
   }
 
-  void onInit() {
-    
+  void onInit() async {
     if (appState.company != null) {
       // phone number init
       var _phoneDict = jsonDecode((appState.company).phone_number);
@@ -77,6 +82,9 @@ class _SettingCompanyScreen extends State<SettingCompanyScreen> {
       accountManageerNameController.text =
           (appState.company).account_manager_name;
     }
+    String _tmpFirebaseUser = await appState.getLocalStorage('firebaseuser');
+    currentFirebaseUserUid =
+        _tmpFirebaseUser.isNotEmpty ? _tmpFirebaseUser : null;
   }
 
   void _checkValidation() {
@@ -138,19 +146,36 @@ class _SettingCompanyScreen extends State<SettingCompanyScreen> {
                 token: appState.user['jwt_token'],
                 payloads: jsonEncode(payloads));
           }
+
+          if (res.statusCode == 200) {
+            var result = jsonDecode(res.body);
+            // String _tmpAvatorUrl = "";
+            // if (appState.profile != null) {
+            //   if (appState.profile.avator != null) {
+            //     _tmpAvatorUrl = appState.profile.avator;
+            //   }
+            // }
+            await FirebaseChatCore.instance.createUserInFirestore(
+              types.User(
+                firstName: companyNameController.text,
+                id: currentFirebaseUserUid,
+                imageUrl: "",
+                lastName: '',
+              ),
+            );
+            setState(() {
+              isLoading = false;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              backgroundColor: Colors.green,
+              content: Text("Successfully saved."),
+            ));
+            appState.company = CompanyModel.fromJson(result);
+            Navigator.of(context).pop();
+          }
           setState(() {
             isLoading = false;
           });
-          if (res.statusCode == 200) {
-            var result = jsonDecode(res.body);
-            if (result['status'] == "success") {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                backgroundColor: Colors.green,
-                content: Text("Successfully saved."),
-              ));
-              appState.company = CompanyModel.fromJson(result);
-            }
-          }
         } catch (e) {
           setState(() {
             isLoading = false;
@@ -220,10 +245,10 @@ class _SettingCompanyScreen extends State<SettingCompanyScreen> {
                             radius: 70,
                             backgroundImage: NetworkImage(
                               appState.profile == null
-                                  ? "https://images.pexels.com/photos/2422915/pexels-photo-2422915.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+                                  ? "https://via.placeholder.com/150"
                                   : ((appState.profile).avator == null ||
                                           (appState.profile).avator == "")
-                                      ? "https://images.pexels.com/photos/2422915/pexels-photo-2422915.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+                                      ? "https://via.placeholder.com/150"
                                       : appState.hostAddress +
                                           (appState.profile).avator,
                             ),

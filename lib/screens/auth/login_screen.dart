@@ -60,16 +60,17 @@ class _LoginScreen extends State<LoginScreen> {
         };
         var res = await appState.post(
             Uri.parse(appState.endpoint + "/users/login"), jsonEncode(payload));
-        setState(() {
-          isLoading = false;
-        });
+
         if (res.statusCode == 200) {
           var body = jsonDecode(res.body);
           appState.user = body;
-            await FirebaseAuth.instance.signInWithEmailAndPassword(
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
             email: _emailController.text,
             password: _passwordController.text,
           );
+          setState(() {
+            isLoading = false;
+          });
           appState.setLocalStorage(key: 'user', value: jsonEncode(body));
           Navigator.pushReplacement(
             context,
@@ -84,6 +85,9 @@ class _LoginScreen extends State<LoginScreen> {
             ),
           );
         } else {
+          setState(() {
+            isLoading = false;
+          });
           var body = jsonDecode(res.body);
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             backgroundColor: Colors.red,

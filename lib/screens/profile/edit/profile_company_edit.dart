@@ -482,31 +482,40 @@ class _ProfileCompanyEdit extends State<ProfileCompanyEdit> {
                       children: [
                         InkWell(
                           onTap: () {
-                            if ((appState.profile).video != "") {
-                              Navigator.push(
-                                context,
-                                PageRouteBuilder(
-                                  transitionDuration:
-                                      const Duration(microseconds: 800),
-                                  pageBuilder:
-                                      (context, animation, secondaryAnimation) {
-                                    return FadeTransition(
-                                      opacity: animation,
-                                      child: CustomVideoPlayer(
-                                        sourceUrl: appState.hostAddress +
-                                            (appState.profile).video,
-                                      ),
-                                    );
-                                  },
-                                ),
-                              );
+                            if (appState.profile != null) {
+                              if ((appState.profile)?.video != null) {
+                                Navigator.push(
+                                  context,
+                                  PageRouteBuilder(
+                                    transitionDuration:
+                                        const Duration(microseconds: 800),
+                                    pageBuilder: (context, animation,
+                                        secondaryAnimation) {
+                                      return FadeTransition(
+                                        opacity: animation,
+                                        child: CustomVideoPlayer(
+                                          sourceUrl: appState.hostAddress +
+                                              (appState.profile)?.video,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                  content: Text(
+                                      "Your company has no video data. Please Upload Video."),
+                                  backgroundColor: Colors.red,
+                                ));
+                              }
                             } else {
                               ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                content: Text(
-                                    "Your company has nothing for Video. Please Upload Video."),
-                                backgroundColor: Colors.red,
-                              ));
+                                    .showSnackBar(const SnackBar(
+                                  content: Text(
+                                      "Your company has nothing about your company at all. Please fill it."),
+                                  backgroundColor: Colors.red,
+                                ));
                             }
                           },
                           child: Consumer<AppState>(

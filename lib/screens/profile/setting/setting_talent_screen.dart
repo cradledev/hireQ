@@ -2,11 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
+
 import 'package:hire_q/helpers/api.dart';
 import 'package:hire_q/helpers/constants.dart';
 import 'package:hire_q/models/talent_model.dart';
 import 'package:hire_q/provider/index.dart';
-import 'package:hire_q/screens/lobby/lobby_screen.dart';
 import 'package:hire_q/widgets/common_widget.dart';
 import 'package:hire_q/widgets/custom_drawer_widget.dart';
 import 'package:hire_q/widgets/theme_helper.dart';
@@ -44,7 +47,7 @@ class _SettingTalentScreenState extends State<SettingTalentScreen> {
   TextEditingController lastnameController;
   TextEditingController currentJobTitleController;
   TextEditingController companyController;
-   TextEditingController descriptionController;
+  TextEditingController descriptionController;
 
   // address values setting
   final GlobalKey<CSCPickerState> _cscPickerKey = GlobalKey();
@@ -63,6 +66,9 @@ class _SettingTalentScreenState extends State<SettingTalentScreen> {
   // validation flag setting
   bool isValid = false;
   bool isValid1 = false;
+
+  // current auth firebase user uid
+  String currentFirebaseUserUid;
 
   List<Widget> _buildPageIndicator() {
     List<Widget> list = [];
@@ -84,9 +90,7 @@ class _SettingTalentScreenState extends State<SettingTalentScreen> {
     _onInit();
   }
 
-  void _onInit() {
-    
-
+  void _onInit() async {
     // text controller instance
     firstnameController = TextEditingController();
     lastnameController = TextEditingController();
@@ -111,8 +115,11 @@ class _SettingTalentScreenState extends State<SettingTalentScreen> {
       firstnameController.text = (appState.talent).first_name;
       lastnameController.text = (appState.talent).last_name;
       descriptionController.text = (appState.talent).current_jobDescription;
+    }
 
-    } 
+    String _tmpFirebaseUser = await appState.getLocalStorage('firebaseuser');
+    currentFirebaseUserUid =
+        _tmpFirebaseUser.isNotEmpty ? _tmpFirebaseUser : null;
   }
 
   void _checkValidation() {
@@ -169,38 +176,60 @@ class _SettingTalentScreenState extends State<SettingTalentScreen> {
               },
               "region": {
                 "country": countryValue,
-                "city" : cityValue ?? "no city",
+                "city": cityValue ?? "no city",
                 "state": stateValue
               },
               "current_jobTitle": currentJobTitleController.text,
-              "current_jobDescription" : descriptionController.text,
+              "current_jobDescription": descriptionController.text,
               "company": companyController.text
             };
-            
+
             print(payloads);
             var res;
             if (appState.talent != null) {
-              res = await api.updateTalentInfo(token : appState.user['jwt_token'], talentId : (appState.talent).id, payloads : jsonEncode(payloads));
+              res = await api.updateTalentInfo(
+                  token: appState.user['jwt_token'],
+                  talentId: (appState.talent).id,
+                  payloads: jsonEncode(payloads));
             } else {
-              res = await api.createTalentInfo(token : appState.user['jwt_token'], payloads : jsonEncode(payloads));
+              res = await api.createTalentInfo(
+                  token: appState.user['jwt_token'],
+                  payloads: jsonEncode(payloads));
             }
-            
-            setState(() {
-              isLoading = false;
-            });
+
             if (res.statusCode == 200) {
+              // String _tmpAvatorUrl = "";
+              // if (appState.profile != null) {
+              //   if (appState.profile.avator != null) {
+              //     _tmpAvatorUrl = appState.profile.avator;
+              //   }
+              // }
+              await FirebaseChatCore.instance.createUserInFirestore(
+                types.User(
+                  firstName: firstnameController.text,
+                  id: currentFirebaseUserUid,
+                  imageUrl: "",
+                  lastName: lastnameController.text,
+                ),
+              );
+              setState(() {
+                isLoading = false;
+              });
               var body = jsonDecode(res.body);
               if (body['status'] == "success") {
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text("Successfully saved."),
-                backgroundColor: Colors.green));
+                    content: Text("Successfully saved."),
+                    backgroundColor: Colors.green));
                 appState.talent = TalentModel.fromJson(body);
                 Navigator.of(context).pop();
               }
             } else {
+              setState(() {
+                isLoading = false;
+              });
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text("Something went wrong. Please try again it."),
-                backgroundColor: Colors.red));
+                  content: Text("Something went wrong. Please try again it."),
+                  backgroundColor: Colors.red));
             }
           } catch (e) {
             setState(() {
