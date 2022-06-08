@@ -222,7 +222,7 @@ class _JobScreen extends State<JobScreen> {
                 },
                 onDismissed: (DismissDirection direction) {
                   // print("dismissed");
-                  _pagingController.itemList.removeAt(index);
+                  // _pagingController.itemList.removeAt(index);
                 },
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 0),
