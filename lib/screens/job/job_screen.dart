@@ -54,12 +54,17 @@ class _JobScreen extends State<JobScreen> {
     try {
       var res;
       if (appState.user == null) {
-        res = await api.getCompanyJobs(pageNum: pageKey + 1, pageLength: PageSize);
+        res = await api.getCompanyJobs(
+            pageNum: pageKey + 1, pageLength: PageSize);
       } else {
         if (appState.user['type'] == "company") {
-          res = await api.getCompanyJobs(pageNum: pageKey + 1, pageLength: PageSize);
+          res = await api.getCompanyJobs(
+              pageNum: pageKey + 1, pageLength: PageSize);
         } else {
-          res = await api.getCompanyJobsByUserId(pageNum: pageKey + 1, pageLength: PageSize, token: appState.user['jwt_token']);
+          res = await api.getCompanyJobsByUserId(
+              pageNum: pageKey + 1,
+              pageLength: PageSize,
+              token: appState.user['jwt_token']);
         }
       }
       if (res.statusCode == 200) {
@@ -173,7 +178,7 @@ class _JobScreen extends State<JobScreen> {
                       Map payloads = {
                         'talent_id': appState.user['id'],
                         'job_id': job.id,
-                        'company_id' : job.company_id
+                        'company_id': job.company_id
                       };
                       print(payloads);
                       try {
@@ -191,6 +196,9 @@ class _JobScreen extends State<JobScreen> {
                             ),
                             backgroundColor: Colors.green,
                           ));
+                          setState(() {
+                            _pagingController.itemList.removeAt(index);
+                          });
                           return true;
                         } else {
                           ScaffoldMessenger.of(context)
@@ -215,6 +223,9 @@ class _JobScreen extends State<JobScreen> {
                         return false;
                       }
                     } else {
+                      setState(() {
+                        _pagingController.itemList.removeAt(index);
+                      });
                       return true;
                     }
                   }
