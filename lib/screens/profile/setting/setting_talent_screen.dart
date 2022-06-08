@@ -139,7 +139,7 @@ class _SettingTalentScreenState extends State<SettingTalentScreen> {
   }
 
   bool _onValidationRegion() {
-    if (countryValue.isNotEmpty && stateValue.isNotEmpty) {
+    if (countryValue.isNotEmpty) {
       return true;
     } else {
       return false;

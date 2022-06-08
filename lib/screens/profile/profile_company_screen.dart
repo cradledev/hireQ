@@ -102,7 +102,6 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
       var body = jsonDecode(res.body.toString());
       if (res.statusCode == 200) {
         appState.profile = ProfileModel.fromJson(body);
-        
       }
       if (res.statusCode == 400) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -123,6 +122,7 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
       var res = await api.getCurrentCompanyJobs(
           companyId: _p_companyId, token: appState.user['jwt_token']);
       var body = jsonDecode(res.body.toString());
+      print(body);
       if (res.statusCode == 200) {
         if ((body as List).isNotEmpty) {
           jobProvider.currentCompanyJobs = (body as List)

@@ -146,7 +146,7 @@ class _ProfileCompanyAddJobScreenState
   }
 
   bool _onValidationRegion() {
-    if (countryValue.isNotEmpty && stateValue.isNotEmpty && roles.isNotEmpty) {
+    if (countryValue.isNotEmpty && roles.isNotEmpty) {
       return true;
     } else {
       return false;

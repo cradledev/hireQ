@@ -198,6 +198,7 @@ class CustomDrawerWidget extends StatelessWidget {
     switch (item) {
       case NavigationItem.logout:
         appState.setLocalStorage(key: "user", value: "");
+        appState.setLocalStorage(key: "firebaseuser", value: "");
         appState.removeAllState();
         Navigator.pushAndRemoveUntil(
             context,

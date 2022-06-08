@@ -95,9 +95,7 @@ class _SettingCompanyScreen extends State<SettingCompanyScreen> {
   }
 
   bool _onValidationRegion() {
-    if (countryValue.isNotEmpty &&
-        stateValue.isNotEmpty &&
-        cityValue.isNotEmpty) {
+    if (countryValue.isNotEmpty) {
       return true;
     } else {
       return false;

@@ -104,7 +104,7 @@ class _RegisterNextScreenState extends State<RegisterNextScreen> {
   }
 
   bool _onValidationRegion() {
-    if (countryValue.isNotEmpty && stateValue.isNotEmpty) {
+    if (countryValue.isNotEmpty) {
       return true;
     } else {
       return false;
