@@ -5,8 +5,7 @@ import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hire_q/helpers/constants.dart';
-import 'package:hire_q/models/company_job_model.dart';
-import 'package:hire_q/models/job_model.dart';
+import 'package:hire_q/models/applied_job_model.dart';
 import 'package:hire_q/provider/index.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
 
@@ -16,7 +15,7 @@ import 'package:provider/provider.dart';
 
 class JobDetailBoard extends StatefulWidget {
   const JobDetailBoard({Key key, this.data}) : super(key: key);
-  final CompanyJobModel data;
+  final AppliedJobModel data;
   @override
   _JobDetailBoard createState() => _JobDetailBoard();
 }
@@ -175,14 +174,15 @@ class _JobDetailBoard extends State<JobDetailBoard> {
                                           width: 64,
                                           height: 64,
                                           child: CachedNetworkImage(
-                                            imageUrl: Provider.of<AppState>(
-                                                        context,
-                                                        listen: false)
-                                                    .hostAddress +
-                                                widget.data.company_logo,
-                                            progressIndicatorBuilder:
-                                                (context, url,
-                                                    downloadProgress) {
+                                            imageUrl: widget
+                                                    .data.company_logo.isEmpty
+                                                ? 'https://via.placeholder.com/150'
+                                                : Provider.of<AppState>(context,
+                                                            listen: false)
+                                                        .hostAddress +
+                                                    widget.data.company_logo,
+                                            progressIndicatorBuilder: (context,
+                                                url, downloadProgress) {
                                               return Center(
                                                 child: SizedBox(
                                                   width: 30,
@@ -235,12 +235,11 @@ class _JobDetailBoard extends State<JobDetailBoard> {
                                           width: 10,
                                         ),
                                         Text(
-                                          jsonDecode(widget.data.region)[
-                                                  'city'] ??
+                                          jsonDecode(
+                                                  widget.data.region)['city'] ??
                                               "",
                                           style: const TextStyle(
-                                              fontSize: 18,
-                                              color: Colors.grey),
+                                              fontSize: 18, color: Colors.grey),
                                         ),
                                       ],
                                     ),
@@ -251,8 +250,7 @@ class _JobDetailBoard extends State<JobDetailBoard> {
                             Expanded(
                               child: SingleChildScrollView(
                                 child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Padding(
@@ -276,48 +274,48 @@ class _JobDetailBoard extends State<JobDetailBoard> {
                           ],
                         ),
                       ),
-                      Container(
-                        height: 60,
-                        width: MediaQuery.of(context).size.width,
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        alignment: Alignment.center,
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(10),
-                              bottomRight: Radius.circular(10)),
-                          color: primaryColor,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.zero,
-                              child: ImageButton(
-                                  onPressed: () {},
-                                  imageHeight: 40,
-                                  image: "assets/icons/q white.png"),
-                            ),
-                            Center(
-                              child: IconButton(
-                                onPressed: () {
-                                  // _openPage(context, const TalentDetail());
-                                },
-                                icon: const Icon(
-                                    CupertinoIcons.multiply_circle),
-                                color: Colors.red,
-                                iconSize: 30,
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.zero,
-                              child: ImageButton(
-                                  onPressed: () {},
-                                  imageHeight: 35,
-                                  image: "assets/icons/share.png"),
-                            ),
-                          ],
-                        ),
-                      )
+                      // Container(
+                      //   height: 60,
+                      //   width: MediaQuery.of(context).size.width,
+                      //   padding: const EdgeInsets.symmetric(horizontal: 15),
+                      //   alignment: Alignment.center,
+                      //   decoration: const BoxDecoration(
+                      //     borderRadius: BorderRadius.only(
+                      //         bottomLeft: Radius.circular(10),
+                      //         bottomRight: Radius.circular(10)),
+                      //     color: primaryColor,
+                      //   ),
+                      //   child: Row(
+                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //     children: [
+                      //       Padding(
+                      //         padding: EdgeInsets.zero,
+                      //         child: ImageButton(
+                      //             onPressed: () {},
+                      //             imageHeight: 40,
+                      //             image: "assets/icons/q white.png"),
+                      //       ),
+                      //       Center(
+                      //         child: IconButton(
+                      //           onPressed: () {
+                      //             // _openPage(context, const TalentDetail());
+                      //           },
+                      //           icon:
+                      //               const Icon(CupertinoIcons.multiply_circle),
+                      //           color: Colors.red,
+                      //           iconSize: 30,
+                      //         ),
+                      //       ),
+                      //       Padding(
+                      //         padding: EdgeInsets.zero,
+                      //         child: ImageButton(
+                      //             onPressed: () {},
+                      //             imageHeight: 35,
+                      //             image: "assets/icons/share.png"),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // )
                     ],
                   ),
                 ),

@@ -5,10 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hire_q/helpers/api.dart';
 import 'package:hire_q/helpers/constants.dart';
-import 'package:hire_q/models/company_job_model.dart';
 import 'package:hire_q/models/profile_model.dart';
 import 'package:hire_q/provider/index.dart';
-import 'package:hire_q/screens/profile/edit/profile_company_addjob_screen.dart';
 import 'package:hire_q/screens/profile/edit/profile_talent_addvideo_screen.dart';
 import 'package:hire_q/screens/profile/setting/setting_talent_screen.dart';
 import 'package:hire_q/widgets/common_widget.dart';
@@ -632,22 +630,6 @@ class _ProfileTalentEditScreen extends State<ProfileTalentEditScreen> {
                                         fit: BoxFit.cover,
                                       ),
                                     ),
-                                    // child: CircleAvatar(
-                                    //   radius: 70,
-                                    //   backgroundImage: _pAppState.profile ==
-                                    //           null
-                                    //       ? const NetworkImage(
-                                    //           'https://via.placeholder.com/150')
-                                    //       : ((_pAppState.profile).avator ==
-                                    //                   null ||
-                                    //               (_pAppState.profile).avator ==
-                                    //                   "")
-                                    //           ? const NetworkImage(
-                                    //               'https://via.placeholder.com/150')
-                                    //           : NetworkImage(_pAppState
-                                    //                   .hostAddress +
-                                    //               (_pAppState.profile).avator),
-                                    // ),
                                   );
                                 },
                               ),

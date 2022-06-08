@@ -6,6 +6,7 @@ import 'package:hire_q/helpers/api.dart';
 import 'package:hire_q/models/company_job_model.dart';
 import 'package:hire_q/provider/index.dart';
 import 'package:hire_q/screens/home/home_screen.dart';
+import 'package:hire_q/screens/profile/setting/setting_talent_screen.dart';
 
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +23,7 @@ class JobScreen extends StatefulWidget {
 class _JobScreen extends State<JobScreen> {
   // scroll page controller for infinite scroll
   PagingController<int, CompanyJobModel> _pagingController;
-  static const PageSize = 4;
+  static const PageSize = 2;
 
   // APPSTATE setting
   AppState appState;
@@ -88,6 +89,58 @@ class _JobScreen extends State<JobScreen> {
     } catch (error) {
       _pagingController.error = error;
     }
+  }
+
+  // go to talent setting page
+
+  void onGotoTalentSetting(BuildContext context) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Warning!'),
+            content: const Text(
+                "You must provide your information. Please try to fill it."),
+            actions: <Widget>[
+              TextButton(
+                child: const Text(
+                  "CANCEL",
+                  style: TextStyle(color: Colors.white),
+                ),
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.red)),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              TextButton(
+                child: const Text(
+                  "OK",
+                  style: TextStyle(color: Colors.white),
+                ),
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.green)),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Future.delayed(const Duration(microseconds: 1000), () {
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        transitionDuration: const Duration(milliseconds: 800),
+                        pageBuilder: (context, animation, secondaryAnimation) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: const SettingTalentScreen(),
+                          );
+                        },
+                      ),
+                    );
+                  });
+                },
+              ),
+            ],
+          );
+        });
   }
 
   @override
@@ -175,32 +228,45 @@ class _JobScreen extends State<JobScreen> {
                     return false;
                   } else {
                     if (direction == DismissDirection.up) {
-                      Map payloads = {
-                        'talent_id': appState.user['id'],
-                        'job_id': job.id,
-                        'company_id': job.company_id
-                      };
-                      print(payloads);
-                      try {
-                        var res = await api.applyCompanyJob(
-                            token: appState.user['jwt_token'],
-                            payloads: jsonEncode(payloads));
-                        print(res.body);
-                        if (res.statusCode == 200) {
-                          // var body = jsonDecode(res.body);
-                          ScaffoldMessenger.of(context)
-                              .showSnackBar(const SnackBar(
-                            content: Text(
-                              "Successfully applied.",
-                              textAlign: TextAlign.center,
-                            ),
-                            backgroundColor: Colors.green,
-                          ));
-                          setState(() {
-                            _pagingController.itemList.removeAt(index);
-                          });
-                          return true;
-                        } else {
+                      if (appState.talent == null) {
+                        onGotoTalentSetting(context);
+                        return false;
+                      } else {
+                        Map payloads = {
+                          'talent_id': appState.user['id'],
+                          'job_id': job.id,
+                          'company_id': job.company_id
+                        };
+                        try {
+                          var res = await api.applyCompanyJob(
+                              token: appState.user['jwt_token'],
+                              payloads: jsonEncode(payloads));
+                          if (res.statusCode == 200) {
+                            // var body = jsonDecode(res.body);
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text(
+                                "Successfully applied.",
+                                textAlign: TextAlign.center,
+                              ),
+                              backgroundColor: Colors.green,
+                            ));
+                            setState(() {
+                              _pagingController.itemList.removeAt(index);
+                            });
+                            return true;
+                          } else {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text(
+                                "Unknown Error is occured.",
+                                textAlign: TextAlign.center,
+                              ),
+                              backgroundColor: Colors.red,
+                            ));
+                            return false;
+                          }
+                        } catch (e) {
                           ScaffoldMessenger.of(context)
                               .showSnackBar(const SnackBar(
                             content: Text(
@@ -211,16 +277,6 @@ class _JobScreen extends State<JobScreen> {
                           ));
                           return false;
                         }
-                      } catch (e) {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(
-                          content: Text(
-                            "Unknown Error is occured.",
-                            textAlign: TextAlign.center,
-                          ),
-                          backgroundColor: Colors.red,
-                        ));
-                        return false;
                       }
                     } else {
                       setState(() {

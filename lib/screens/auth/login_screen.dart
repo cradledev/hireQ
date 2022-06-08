@@ -237,7 +237,7 @@ class _LoginScreen extends State<LoginScreen> {
                                 //child: Text('Don\'t have an account? Create'),
                                 child: Text.rich(TextSpan(children: [
                                   const TextSpan(
-                                      text: "Don\'t have an account? "),
+                                      text: "Don't have an account? "),
                                   TextSpan(
                                     text: 'signup',
                                     recognizer: TapGestureRecognizer()

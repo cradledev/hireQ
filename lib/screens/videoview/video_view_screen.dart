@@ -238,7 +238,7 @@ class _VideoViewScreen extends State<VideoViewScreen> {
                   },
                   itemCount: 30,
                   shrinkWrap: true,
-                  physics: AlwaysScrollableScrollPhysics(),
+                  physics: const AlwaysScrollableScrollPhysics(),
                   scrollDirection: Axis.vertical,
                 ),
               ),

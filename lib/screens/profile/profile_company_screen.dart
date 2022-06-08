@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hire_q/helpers/api.dart';
 import 'package:hire_q/helpers/constants.dart';
-import 'package:hire_q/models/company_job_model.dart';
+import 'package:hire_q/models/applied_job_model.dart';
 import 'package:hire_q/models/company_model.dart';
 import 'package:hire_q/models/profile_model.dart';
 import 'package:hire_q/provider/index.dart';
@@ -47,6 +47,9 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
   };
   // API service import
   APIClient api;
+
+  // total count of applied talent for company jobs
+  int totalCountOfTalents = 0;
   List<Color> colorList = <Color>[
     const Color(0xfffdcb6e),
     const Color(0xff0984e3),
@@ -68,14 +71,33 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
     // set init state
     setState(() {
       selectedStep = 2;
+      totalCountOfTalents = 0;
     });
     // APIClient instance
     api = APIClient();
     // init get data including company, profile, company jobs
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      onGetCompany();
-      onGetProfile();
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   onGetCompany();
+    //   onGetProfile();
+    // });
+    onGetCompany();
+    onGetProfile();
+  }
+
+  // get total count of talents for this company
+  void onGetTotalCountOfTalentForCompanyJobs() async {
+    try {
+      var res = await api.getTotalCountAppliedTalentsForCompany(
+          companyId: appState.company.id, token: appState.user['jwt_token']);
+      if (res.statusCode == 200) {
+        var body = jsonDecode(res.body);
+        setState(() {
+          totalCountOfTalents = body['count'];
+        });
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   void onGetCompany() async {
@@ -86,6 +108,7 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
         appState.company =
             CompanyModel.fromJson(jsonDecode(res.body.toString()));
         onGetCurrentCompayJobs(appState.company.id);
+        onGetTotalCountOfTalentForCompanyJobs();
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -112,21 +135,21 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         backgroundColor: Colors.red,
-        content: Text("Unknown Error is occured."),
+        content: Text("Unknown1 Error is occured."),
       ));
     }
   }
 
-  void onGetCurrentCompayJobs(_p_companyId) async {
-    try {
-      var res = await api.getCurrentCompanyJobs(
-          companyId: _p_companyId, token: appState.user['jwt_token']);
-      var body = jsonDecode(res.body.toString());
-      print(body);
+  void onGetCurrentCompayJobs(_p_companyId) {
+    api
+        .getCurrentCompanyJobs(
+            companyId: _p_companyId, token: appState.user['jwt_token'])
+        .then((res) {
       if (res.statusCode == 200) {
+        var body = jsonDecode(res.body.toString());
         if ((body as List).isNotEmpty) {
           jobProvider.currentCompanyJobs = (body as List)
-              .map((item) => CompanyJobModel.fromJson(item))
+              .map((item) => AppliedJobModel.fromJson(item))
               .toList();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -141,12 +164,13 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
           content: Text("Something went wrong. Please try again it."),
         ));
       }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        backgroundColor: Colors.red,
-        content: Text("Unknown Error is occured."),
-      ));
-    }
+    }).catchError((error) {
+      print(error);
+      // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      //   backgroundColor: Colors.red,
+      //   content: Text("Unknown Error is occured."),
+      // ));
+    });
   }
 
   // go to company video view page
@@ -187,7 +211,7 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
   }
 
   // go to job detail board page
-  void onGotoJobDetailBoard(CompanyJobModel _pCompanyJob) {
+  void onGotoJobDetailBoard(AppliedJobModel _pCompanyJob) {
     Navigator.push(
       context,
       PageRouteBuilder(
@@ -401,11 +425,13 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
                                         children: [
                                           CircleAvatar(
                                             radius: 50.0,
-                                            backgroundImage: _pAppState.profile ==
+                                            backgroundImage: _pAppState
+                                                        .profile ==
                                                     null
                                                 ? const NetworkImage(
                                                     'https://via.placeholder.com/150')
-                                                : ((_pAppState.profile).avator ==
+                                                : ((_pAppState.profile)
+                                                                .avator ==
                                                             null ||
                                                         (_pAppState.profile)
                                                                 .avator ==
@@ -421,8 +447,9 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
                                           Padding(
                                             padding: EdgeInsets.zero,
                                             child: Text(
-                                              _pAppState.company != null ?
-                                              (_pAppState.company).name : "",
+                                              _pAppState.company != null
+                                                  ? (_pAppState.company).name
+                                                  : "",
                                               style: const TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 18,
@@ -433,8 +460,9 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
                                             padding: const EdgeInsets.symmetric(
                                                 vertical: 5),
                                             child: Text(
-                                              _pAppState.company == null ? "":
-                                              '@${(_pAppState.company).account_manager_name}',
+                                              _pAppState.company == null
+                                                  ? ""
+                                                  : '@${(_pAppState.company).account_manager_name}',
                                               style: const TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 18,
@@ -769,10 +797,10 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
                                 fontSize: 16,
                               ),
                             ),
-                            content: const Text(
-                              "25",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 40),
+                            content: Text(
+                              totalCountOfTalents.toString(),
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 40),
                             ),
                             backgroundColor: secondaryColor,
                             onTap: () {
@@ -849,7 +877,7 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
                     Expanded(
                       child: Consumer<JobsProvider>(
                         builder: (context, pJobProvider, child) {
-                          List<CompanyJobModel> _currentCompanyJobs =
+                          List<AppliedJobModel> _currentCompanyJobs =
                               pJobProvider.currentCompanyJobs;
                           return ListView.builder(
                             itemBuilder: (context, index) {

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:hire_q/helpers/constants.dart';
 import 'package:hire_q/screens/home/home_screen.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
-import 'package:hire_q/screens/profile/edit/profile_company_edit.dart';
 import 'package:hire_q/screens/profile/setting/setting_company_screen.dart';
 import 'package:hire_q/screens/profile/setting/setting_talent_screen.dart';
 import 'package:provider/provider.dart';

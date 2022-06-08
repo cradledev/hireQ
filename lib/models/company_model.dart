@@ -29,7 +29,7 @@ class CompanyModel {
     return CompanyModel(
       id: json['id'],
       name: json['name'] ?? "",
-      user_id: json['user_id'] ?? "",
+      user_id: json['user_id'],
       description: json['description'] ?? "",
       region: _region,
       phone_number: _phoneNumber,

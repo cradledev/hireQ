@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hire_q/helpers/constants.dart';
-import 'package:video_player/video_player.dart';
 // import 'package:hire_q/screens/auth/login_screen.dart';
 
 class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
@@ -394,7 +393,7 @@ class AppbarSearchFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(left: 0, right: 0),
-      padding: EdgeInsets.symmetric(vertical: 5),
+      padding: const EdgeInsets.symmetric(vertical: 5),
       height: 35,
       alignment: Alignment.center,
       decoration: BoxDecoration(

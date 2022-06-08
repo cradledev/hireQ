@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:hire_q/models/company_job_model.dart';
+import 'package:hire_q/models/applied_job_model.dart';
 
 class JobsProvider extends ChangeNotifier {
   // jobs that current company posted (according to the company id)
-  List<CompanyJobModel> _currentCompanyJobs;
+  List<AppliedJobModel> _currentCompanyJobs;
 
   // job list in total (same as contents in job search)
-  List<CompanyJobModel> _jobList;
+  List<AppliedJobModel> _jobList;
   JobsProvider() {
     _currentCompanyJobs = [];
     _jobList = [];
@@ -17,25 +17,25 @@ class JobsProvider extends ChangeNotifier {
 
   get jobList => _jobList;
   // set
-  set currentCompanyJobs(List<CompanyJobModel> value) {
+  set currentCompanyJobs(List<AppliedJobModel> value) {
     _currentCompanyJobs = value;
     notifyListeners();
   }
 
-  set jobList(List<CompanyJobModel> value) {
+  set jobList(List<AppliedJobModel> value) {
     _jobList = value;
     notifyListeners();
   }
 
   // adding current company job
-  void addCurrentCompanyJob(CompanyJobModel item) {
+  void addCurrentCompanyJob(AppliedJobModel item) {
     _currentCompanyJobs.add(item);
     // This call tells the widgets that are listening to this model to rebuild.
     notifyListeners();
   }
 
   // adding job to total job list
-  void addToJobList(CompanyJobModel item) {
+  void addToJobList(AppliedJobModel item) {
     _jobList.add(item);
     notifyListeners();
   }
@@ -54,7 +54,7 @@ class JobsProvider extends ChangeNotifier {
   }
 
   // ========== UPDATE JOB ITEM ==============
-  void updateCuurentCompanyJob(CompanyJobModel item) {
+  void updateCuurentCompanyJob(AppliedJobModel item) {
     final index = currentCompanyJobs.indexWhere((element) => element.id == item.id);
     currentCompanyJobs[index] = item;
     notifyListeners();

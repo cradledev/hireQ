@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hire_q/helpers/api.dart';
 import 'package:hire_q/helpers/constants.dart';
+import 'package:hire_q/models/applied_job_model.dart';
 import 'package:hire_q/models/company_job_model.dart';
 import 'package:hire_q/provider/index.dart';
 import 'package:hire_q/provider/jobs_provider.dart';
@@ -21,7 +22,7 @@ class ProfileCompanyAddJobScreen extends StatefulWidget {
       {Key key, this.editable = false, this.selectedJob})
       : super(key: key);
   final bool editable;
-  final CompanyJobModel selectedJob;
+  final AppliedJobModel selectedJob;
   @override
   State<StatefulWidget> createState() {
     return _ProfileCompanyAddJobScreenState();
@@ -208,7 +209,7 @@ class _ProfileCompanyAddJobScreenState
                     ),
                   );
                   Provider.of<JobsProvider>(context, listen: false)
-                      .updateCuurentCompanyJob(CompanyJobModel.fromJson(body));
+                      .updateCuurentCompanyJob(AppliedJobModel.fromJson(body));
                   Navigator.of(context).pop();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -268,7 +269,7 @@ class _ProfileCompanyAddJobScreenState
                   );
 
                   Provider.of<JobsProvider>(context, listen: false)
-                      .addCurrentCompanyJob(CompanyJobModel.fromJson(body));
+                      .addCurrentCompanyJob(AppliedJobModel.fromJson(body));
                   Navigator.of(context).pop();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

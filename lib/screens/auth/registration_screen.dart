@@ -308,11 +308,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                 const EmailValidationScreen());
                                       },
                                     ));
-                                // // TODO: Add method call to the Google Sign-In authentication
-
-                                // setState(() {
-                                //   _isSigningIn = false;
-                                // });
                               },
                               child: Padding(
                                 padding:

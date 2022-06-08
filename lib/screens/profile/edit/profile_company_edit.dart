@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hire_q/helpers/api.dart';
 import 'package:hire_q/helpers/constants.dart';
+import 'package:hire_q/models/applied_job_model.dart';
 import 'package:hire_q/models/company_job_model.dart';
 import 'package:hire_q/models/profile_model.dart';
 import 'package:hire_q/provider/index.dart';
@@ -292,7 +293,7 @@ class _ProfileCompanyEdit extends State<ProfileCompanyEdit> {
   }
 
   // go to current company job detail page
-  void onDetailOfCurrentCompanyJob(CompanyJobModel _pCurrentJob) {
+  void onDetailOfCurrentCompanyJob(AppliedJobModel _pCurrentJob) {
     Navigator.push(
       context,
       PageRouteBuilder(
@@ -685,7 +686,7 @@ class _ProfileCompanyEdit extends State<ProfileCompanyEdit> {
               Expanded(
                 child: Consumer<JobsProvider>(
                   builder: (context, pJobProvider, child) {
-                    List<CompanyJobModel> _currentCompanyJobs =
+                    List<AppliedJobModel> _currentCompanyJobs =
                         pJobProvider.currentCompanyJobs;
                     return ListView.builder(
                       itemBuilder: (context, index) {

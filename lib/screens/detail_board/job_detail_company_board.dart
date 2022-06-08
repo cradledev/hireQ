@@ -5,7 +5,7 @@ import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hire_q/helpers/constants.dart';
-import 'package:hire_q/models/company_job_model.dart';
+import 'package:hire_q/models/applied_job_model.dart';
 import 'package:hire_q/provider/index.dart';
 import 'package:hire_q/screens/detail_board/consider_talent_list_board.dart';
 import 'package:hire_q/screens/detail_board/job_detail_board.dart';
@@ -17,7 +17,7 @@ import 'package:provider/provider.dart';
 class JobDetailCompanyBoard extends StatefulWidget {
   const JobDetailCompanyBoard({Key key, this.selectedCompanyJob})
       : super(key: key);
-  final CompanyJobModel selectedCompanyJob;
+  final AppliedJobModel selectedCompanyJob;
   @override
   _JobDetailCompanyBoard createState() => _JobDetailCompanyBoard();
 }
@@ -262,7 +262,7 @@ class _JobDetailCompanyBoard extends State<JobDetailCompanyBoard> {
                                 return FadeTransition(
                                   opacity: animation,
                                   child: const ConsiderTalentListBoard(
-                                      title: "Shortlist Talent"),
+                                      type: "shortlist"),
                                 );
                               },
                             ),
@@ -295,9 +295,9 @@ class _JobDetailCompanyBoard extends State<JobDetailCompanyBoard> {
                                       vertical: 15, horizontal: 25),
                                   width: 120,
                                   height: 64,
-                                  child: const Text(
-                                    "15",
-                                    style: TextStyle(
+                                  child: Text(
+                                    widget.selectedCompanyJob?.shortlisttalents_count?.toString() ?? "0",
+                                    style: const TextStyle(
                                       fontSize: 32,
                                       color: Colors.white,
                                     ),
@@ -307,7 +307,7 @@ class _JobDetailCompanyBoard extends State<JobDetailCompanyBoard> {
                                   child: Column(
                                     mainAxisAlignment:
                                         MainAxisAlignment.center,
-                                    children: const [
+                                    children: const[
                                       Text(
                                         "Shortlist",
                                         style: TextStyle(
@@ -340,7 +340,7 @@ class _JobDetailCompanyBoard extends State<JobDetailCompanyBoard> {
                                 return FadeTransition(
                                   opacity: animation,
                                   child: const ConsiderTalentListBoard(
-                                      title: "Applied Talent"),
+                                      type: "applied"),
                                 );
                               },
                             ),
@@ -373,9 +373,9 @@ class _JobDetailCompanyBoard extends State<JobDetailCompanyBoard> {
                                       vertical: 15, horizontal: 25),
                                   width: 120,
                                   height: 64,
-                                  child: const Text(
-                                    "87",
-                                    style: TextStyle(
+                                  child: Text(
+                                    widget.selectedCompanyJob?.appliedtalents_count?.toString() ?? "0",
+                                    style: const TextStyle(
                                       fontSize: 32,
                                       color: Colors.white,
                                     ),

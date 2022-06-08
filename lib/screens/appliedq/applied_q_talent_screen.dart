@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hire_q/helpers/api.dart';
 import 'package:hire_q/helpers/constants.dart';
-import 'package:hire_q/models/company_job_model.dart';
+import 'package:hire_q/models/applied_job_model.dart';
 import 'package:hire_q/provider/index.dart';
 import 'package:hire_q/screens/detail_board/job_detail_board.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
@@ -29,7 +29,7 @@ class _AppliedQTalentScreen extends State<AppliedQTalentScreen> {
   TextEditingController _searchTextController;
 
   // scroll page controller for infinite scroll
-  PagingController<int, CompanyJobModel> _pagingController;
+  PagingController<int, AppliedJobModel> _pagingController;
   static const PageSize = 2;
 
   // APPSTATE setting
@@ -66,8 +66,8 @@ class _AppliedQTalentScreen extends State<AppliedQTalentScreen> {
 
       if (res.statusCode == 200) {
         var body = jsonDecode(res.body);
-        List<CompanyJobModel> newItems = (body as List)
-            .map((element) => CompanyJobModel.fromJson(element))
+        List<AppliedJobModel> newItems = (body as List)
+            .map((element) => AppliedJobModel.fromJson(element))
             .toList();
         final isLastPage = newItems.length < PageSize;
         if (isLastPage) {
@@ -78,7 +78,7 @@ class _AppliedQTalentScreen extends State<AppliedQTalentScreen> {
         }
         setState(() {});
       } else {
-        List<CompanyJobModel> newItems = [];
+        List<AppliedJobModel> newItems = [];
         _pagingController.appendLastPage(newItems);
         setState(() {});
       }
@@ -102,13 +102,14 @@ class _AppliedQTalentScreen extends State<AppliedQTalentScreen> {
       child: Scaffold(
         appBar: CustomAppBar(
           leadingIcon: const Icon(
-            CupertinoIcons.line_horizontal_3,
+            CupertinoIcons.arrow_left,
             size: 40,
             color: Colors.white,
           ),
           backgroundColor: primaryColor,
-          // leadingAction: () {
-          // },
+          leadingAction: () {
+            Navigator.of(context).pop();
+          },
           leadingFlag: true,
           actionEvent: () {},
           actionFlag: true,
@@ -172,20 +173,20 @@ class _AppliedQTalentScreen extends State<AppliedQTalentScreen> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Text(
                       "Applied Q",
                       style: TextStyle(fontSize: 26, color: primaryColor),
                     ),
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(CupertinoIcons.forward),
-                      color: primaryColor,
-                      iconSize: 30,
-                    )
+                    // IconButton(
+                    //   onPressed: () {
+                    //     Navigator.pop(context);
+                    //   },
+                    //   icon: const Icon(CupertinoIcons.forward),
+                    //   color: primaryColor,
+                    //   iconSize: 30,
+                    // )
                   ],
                 ),
               ),
@@ -194,91 +195,110 @@ class _AppliedQTalentScreen extends State<AppliedQTalentScreen> {
                   onRefresh: () => Future.sync(
                     () {
                       _pagingController.refresh();
-                      setState(() {
-                        
-                      });
-                    } ,
+                      setState(() {});
+                    },
                   ),
                   child: PagedListView.separated(
                     pagingController: _pagingController,
                     padding: const EdgeInsets.all(16),
-                    builderDelegate: PagedChildBuilderDelegate<CompanyJobModel>(
+                    builderDelegate: PagedChildBuilderDelegate<AppliedJobModel>(
                       itemBuilder: (context, _perItem, index) {
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 10),
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(3.0),
-                                child: CachedNetworkImage(
-                                  width: 64,
-                                  height: 64,
-                                  imageUrl: _perItem.company_logo == null
-                                      ? "https://via.placeholder.com/150"
-                                      : appState.hostAddress +
-                                          _perItem.company_logo,
-                                  progressIndicatorBuilder:
-                                      (context, url, downloadProgress) {
-                                    return Center(
-                                      child: SizedBox(
-                                        width: 30,
-                                        height: 30,
-                                        child: CircularProgressIndicator(
-                                            value: downloadProgress.progress),
-                                      ),
-                                    );
-                                  },
-                                  errorWidget: (context, url, error) =>
-                                      const Icon(Icons.error),
-                                  fit: BoxFit.cover,
-                                ),
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                transitionDuration:
+                                    const Duration(milliseconds: 800),
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) {
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: JobDetailBoard(data: _perItem),
+                                  );
+                                },
                               ),
-                              Expanded(
-                                child: Container(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 2),
-                                  margin:
-                                      const EdgeInsets.symmetric(horizontal: 5),
-                                  height: 68,
-                                  decoration: const BoxDecoration(
-                                    border: Border(
-                                      bottom: BorderSide(
-                                          width: 1, color: accentColor),
+                            );
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(3.0),
+                                  child: CachedNetworkImage(
+                                    width: 64,
+                                    height: 64,
+                                    imageUrl: _perItem.company_logo == null
+                                        ? "https://via.placeholder.com/150"
+                                        : appState.hostAddress +
+                                            _perItem.company_logo,
+                                    progressIndicatorBuilder:
+                                        (context, url, downloadProgress) {
+                                      return Center(
+                                        child: SizedBox(
+                                          width: 30,
+                                          height: 30,
+                                          child: CircularProgressIndicator(
+                                              value: downloadProgress.progress),
+                                        ),
+                                      );
+                                    },
+                                    errorWidget: (context, url, error) =>
+                                        const Icon(Icons.error),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 2),
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 5),
+                                    height: 68,
+                                    decoration: const BoxDecoration(
+                                      border: Border(
+                                        bottom: BorderSide(
+                                            width: 1, color: accentColor),
+                                      ),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8),
+                                          child: Text(
+                                            _perItem.title.isEmpty
+                                                ? "No Title"
+                                                : _perItem.title,
+                                            style: const TextStyle(
+                                              color: primaryColor,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8),
+                                          child: Text(
+                                            _perItem.company_name ??
+                                                "No Named Company",
+                                            style: const TextStyle(
+                                              color: Colors.black45,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.symmetric(horizontal: 8),
-                                        child: Text(
-                                          _perItem.title.isEmpty ? "No Title" : _perItem.title,
-                                          style: const TextStyle(
-                                            color: primaryColor,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.symmetric(horizontal: 8),
-                                        child: Text(
-                                          _perItem.company_name ??"No Named Company",
-                                          style: const TextStyle(
-                                            color: Colors.black45,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         );
                       },

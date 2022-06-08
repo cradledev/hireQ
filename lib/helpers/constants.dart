@@ -7,8 +7,3 @@ const accentColor = Color(0xff95B2CF);
 const defaultPadding = 16.0;
 const splashBackColor = Color.fromARGB(255, 16, 142, 245);
 
-const TrxnColors = [
-  Colors.amber,
-  Colors.green,
-  Color(0xFFEE2727),
-];

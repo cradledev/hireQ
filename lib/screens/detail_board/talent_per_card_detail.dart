@@ -267,37 +267,3 @@ class TalentPerCardDetail extends StatelessWidget {
     );
   }
 }
-
-class _DragDownIndication extends StatelessWidget {
-  const _DragDownIndication({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Text(
-          'Inicia sesión',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        Text(
-          'Desliza para ir hacia atras',
-          style: TextStyle(
-            height: 2,
-            fontSize: 14,
-            color: Colors.white.withOpacity(.9),
-          ),
-        ),
-        Icon(
-          Icons.keyboard_arrow_down,
-          color: Colors.white.withOpacity(.8),
-          size: 35,
-        ),
-      ],
-    );
-  }
-}

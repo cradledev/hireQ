@@ -11,8 +11,8 @@ import 'package:hire_q/widgets/common_widget.dart';
 import 'package:hire_q/widgets/custom_drawer_widget.dart';
 
 class ConsiderTalentListBoard extends StatefulWidget {
-  const ConsiderTalentListBoard({Key key, this.title}) : super(key: key);
-  final String title;
+  const ConsiderTalentListBoard({Key key, this.type}) : super(key: key);
+  final String type;
   @override
   _ConsiderTalentListBoard createState() => _ConsiderTalentListBoard();
 }
@@ -112,7 +112,7 @@ class _ConsiderTalentListBoard extends State<ConsiderTalentListBoard> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      widget.title,
+                      widget.type == "shortlist" ? "Shortlisted Talents" : "Applied Talents",
                       style: const TextStyle(fontSize: 26, color: primaryColor),
                     ),
                     IconButton(
@@ -227,7 +227,7 @@ class _ConsiderTalentListBoard extends State<ConsiderTalentListBoard> {
                   },
                   itemCount: 15,
                   shrinkWrap: true,
-                  physics: AlwaysScrollableScrollPhysics(),
+                  physics: const AlwaysScrollableScrollPhysics(),
                   scrollDirection: Axis.vertical,
                 ),
               ),

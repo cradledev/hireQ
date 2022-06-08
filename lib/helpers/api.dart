@@ -1,12 +1,11 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class APIClient {
   // REST API Endpoint
   static const endpoint = "http://192.168.116.39:5000/api/v1";
   // Request Header
-  final header = {"content-type": "application/json", "accept": "*/*"};
+  final header = {"content-type": "application/json", "accept": "*/*", "Connection": "Keep-Alive"};
 
   // ================= company model ===================
   // get company model for authenticated company
@@ -226,7 +225,44 @@ class APIClient {
     }
   }
 
+  // get count of applied jobs for authed talent
+  Future<http.Response> getTotalCountAppliedJobsByMe({token}) async {
+    try {
+      header['api-token'] = token;
+      var response = await http.get(
+          Uri.parse(endpoint + "/appliedjobs/jobcount_by_user"),
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception("Unknow Error.");
+    }
+  }
 
+  // get count of talents for company jobs
+  Future<http.Response> getTotalCountAppliedTalentsForCompany({token, companyId}) async {
+    try {
+      header['api-token'] = token;
+      var response = await http.get(
+          Uri.parse(endpoint + "/appliedjobs/talentcount_by_company/" + companyId.toString()),
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception("Unknow Error.");
+    }
+  }
+
+  // get comprehensive applied jobs and talents for self companies (applied talents, shortlisted talents info, etc)
+  Future<http.Response> getComprehensiveJobsInfoForCompanyJobs({token, companyId, pageNum, pageLength}) async {
+    try {
+      header['api-token'] = token;
+      var response = await http.get(
+          Uri.parse(endpoint + "/appliedjobs/job_by_company/" + companyId.toString() + "/" + pageNum.toString() + "/" + pageLength.toString()),
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception("Unknow Error.");
+    }
+  }
 
   // ================= file upload function =================
 

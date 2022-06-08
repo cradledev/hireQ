@@ -46,6 +46,10 @@ class _ProfileScreen extends State<ProfileScreen> {
     "Xamarin": 2,
     "Ionic": 2,
   };
+
+  // count of  applied job
+  int appliedJobsCount;
+
   List<Color> colorList = <Color>[
     const Color(0xfffdcb6e),
     const Color(0xff0984e3),
@@ -59,6 +63,7 @@ class _ProfileScreen extends State<ProfileScreen> {
     super.initState();
     setState(() {
       selectedStep = 2;
+      appliedJobsCount = 0;
     });
     onInit();
   }
@@ -83,11 +88,11 @@ class _ProfileScreen extends State<ProfileScreen> {
       return;
     }
     api = APIClient();
-    print(1);
     // init get data including talent, profile
     WidgetsBinding.instance.addPostFrameCallback((_) {
       onGetTalent();
       onGetProfile();
+      onGetAppliedJobsCount();
     });
   }
 
@@ -133,6 +138,21 @@ class _ProfileScreen extends State<ProfileScreen> {
     }
   }
 
+  // get applied jobs count
+  void onGetAppliedJobsCount() async {
+    try {
+      var res = await api.getTotalCountAppliedJobsByMe(token: appState.user['jwt_token']);
+      if (res.statusCode == 200) {
+        var body = jsonDecode(res.body.toString());
+        setState(() {
+          appliedJobsCount = body['count'];  
+        });
+      } 
+    } catch (e) {
+      print(e);
+      // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Something went wrong")))
+    }
+  }
   @override
   void dispose() {
     super.dispose();
@@ -743,10 +763,10 @@ class _ProfileScreen extends State<ProfileScreen> {
                                 fontSize: 16,
                               ),
                             ),
-                            content: const Text(
-                              "25",
+                            content: Text(
+                              appliedJobsCount.toString(),
                               style:
-                                  TextStyle(color: Colors.white, fontSize: 40),
+                                  const TextStyle(color: Colors.white, fontSize: 40),
                             ),
                             backgroundColor: secondaryColor,
                             onTap: () {
