@@ -50,6 +50,7 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
 
   // total count of applied talent for company jobs
   int totalCountOfTalents = 0;
+  int totalCountOfShortlist = 0;
   List<Color> colorList = <Color>[
     const Color(0xfffdcb6e),
     const Color(0xff0984e3),
@@ -72,6 +73,7 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
     setState(() {
       selectedStep = 2;
       totalCountOfTalents = 0;
+      totalCountOfShortlist = 0;
     });
     // APIClient instance
     api = APIClient();
@@ -91,8 +93,10 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
           companyId: appState.company.id, token: appState.user['jwt_token']);
       if (res.statusCode == 200) {
         var body = jsonDecode(res.body);
+        print(body);
         setState(() {
-          totalCountOfTalents = body['count'];
+          totalCountOfTalents = body['applied_count'];
+          totalCountOfShortlist = body['shortlist_count'];
         });
       }
     } catch (e) {
@@ -140,11 +144,10 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
     }
   }
 
-  void onGetCurrentCompayJobs(_p_companyId) {
-    api
-        .getCurrentCompanyJobs(
-            companyId: _p_companyId, token: appState.user['jwt_token'])
-        .then((res) {
+  void onGetCurrentCompayJobs(_p_companyId) async {
+    try {
+      var res = await api.getCurrentCompanyJobs(
+          companyId: _p_companyId, token: appState.user['jwt_token']);
       if (res.statusCode == 200) {
         var body = jsonDecode(res.body.toString());
         if ((body as List).isNotEmpty) {
@@ -159,18 +162,15 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
         }
       }
       if (res.statusCode == 400) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        var body = jsonDecode(res.body.toString());
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.red,
-          content: Text("Something went wrong. Please try again it."),
+          content: Text(body['error']),
         ));
       }
-    }).catchError((error) {
-      print(error);
-      // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      //   backgroundColor: Colors.red,
-      //   content: Text("Unknown Error is occured."),
-      // ));
-    });
+    } catch (e) {
+      print(e);
+    }
   }
 
   // go to company video view page
@@ -832,10 +832,10 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
                                 fontSize: 16,
                               ),
                             ),
-                            content: const Text(
-                              "5",
-                              style:
-                                  TextStyle(color: primaryColor, fontSize: 40),
+                            content: Text(
+                              totalCountOfShortlist?.toString() ?? "0",
+                              style: const TextStyle(
+                                  color: primaryColor, fontSize: 40),
                             ),
                             backgroundColor: accentColor,
                             onTap: () {

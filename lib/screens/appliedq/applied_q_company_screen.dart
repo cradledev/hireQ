@@ -63,7 +63,6 @@ class _AppliedQCompanyScreen extends State<AppliedQCompanyScreen> {
           pageNum: pageKey + 1,
           pageLength: PageSize,
           token: appState.user['jwt_token']);
-
       if (res.statusCode == 200) {
         var body = jsonDecode(res.body);
         List<AppliedJobModel> newItems = (body as List)
@@ -172,19 +171,24 @@ class _AppliedQCompanyScreen extends State<AppliedQCompanyScreen> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Applied Q",
-                      style: TextStyle(fontSize: 26, color: primaryColor),
-                    ),
                     IconButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      icon: const Icon(CupertinoIcons.forward),
+                      icon: const Icon(CupertinoIcons.arrow_left),
                       color: primaryColor,
                       iconSize: 30,
+                    ),
+                    const Expanded(
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          "Applied Q",
+                          style: TextStyle(fontSize: 26, color: primaryColor),
+                        ),
+                      ),
                     )
                   ],
                 ),

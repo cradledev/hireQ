@@ -198,6 +198,19 @@ class APIClient {
     }
   }
 
+  // get talents either applied or shortlist for current company per job
+  Future<http.Response> getTalentsAppliedForPerJob({token, pageNum, pageLength, jobId}) async {
+    try {
+      header['api-token'] = token;
+      var response = await http.get(
+          Uri.parse(endpoint + "/appliedjobs/talents_by_job/" + jobId.toString() + "/" + pageNum.toString() + "/" + pageLength.toString()),
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception("Unknow Error.");
+    }
+  }
+
   // ================ company job board part ===================
 
   // get the company jobs including pagination  

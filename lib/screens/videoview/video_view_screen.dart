@@ -131,22 +131,22 @@ class _VideoViewScreen extends State<VideoViewScreen> {
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            transitionDuration:
-                                const Duration(milliseconds: 500),
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) {
-                              return FadeTransition(
-                                opacity: animation,
-                                child: TalentDetailBoard(
-                                  data: TalentModel1.dumpListData[1],
-                                ),
-                              );
-                            },
-                          ),
-                        );
+                        // Navigator.push(
+                        //   context,
+                        //   PageRouteBuilder(
+                        //     transitionDuration:
+                        //         const Duration(milliseconds: 500),
+                        //     pageBuilder:
+                        //         (context, animation, secondaryAnimation) {
+                        //       return FadeTransition(
+                        //         opacity: animation,
+                        //         child: TalentDetailBoard(
+                        //           data: TalentModel1.dumpListData[1],
+                        //         ),
+                        //       );
+                        //     },
+                        //   ),
+                        // );
                       },
                       child: Container(
                         margin: const EdgeInsets.only(bottom: 10),

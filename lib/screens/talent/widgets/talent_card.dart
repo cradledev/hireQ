@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hire_q/helpers/constants.dart';
 import 'package:hire_q/models/talent_model.dart';
 import 'package:hire_q/provider/index.dart';
+import 'package:hire_q/screens/profile/edit/profile_talent_addvideo_screen.dart';
 import 'package:hire_q/widgets/common_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -146,22 +147,21 @@ class _TalentCardState extends State<TalentCard> with TickerProviderStateMixin {
             child: InkWell(
               onTap: () {
                 if (widget.talentData.video_id != null) {
-                  // Navigator.push(
-                  //   context,
-                  //   PageRouteBuilder(
-                  //     transitionDuration: const Duration(microseconds: 800),
-                  //     pageBuilder: (context, animation, secondaryAnimation) {
-                  //       return FadeTransition(
-                  //         opacity: animation,
-                  //         child: CustomVideoPlayer(
-                  //           sourceUrl:
-                  //               Provider.of<AppState>(context).hostAddress +
-                  //                   widget.talentData.company_video,
-                  //         ),
-                  //       );
-                  //     },
-                  //   ),
-                  // );
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      transitionDuration: const Duration(microseconds: 800),
+                      pageBuilder: (context, animation, secondaryAnimation) {
+                        return FadeTransition(
+                          opacity: animation,
+                          child: ProfileTalentAddvideoScreen(
+                            isView: true,
+                            videoId: widget.talentData?.video_id,
+                          ),
+                        );
+                      },
+                    ),
+                  );
                   print("object");
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -284,28 +284,31 @@ class _TalentCardState extends State<TalentCard> with TickerProviderStateMixin {
                         ),
                       ),
                       Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 15, vertical: 8),
-                                color : Colors.white,
-                                width: MediaQuery.of(context).size.width,
-                                child: Text(
-                                  widget.talentData.current_jobDescription.isNotEmpty
-                                      ? widget.talentData.current_jobDescription
-                                      : "",
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.black,
-                                    height: 1.5,
+                        child: Container(
+                          color: Colors.white,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15, vertical: 8),
+                                  color : Colors.white,
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Text(
+                                    widget.talentData.current_jobDescription.isNotEmpty
+                                        ? widget.talentData.current_jobDescription
+                                        : "",
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.black,
+                                      height: 1.5,
+                                    ),
                                   ),
-                                ),
-                              )
-                            ],
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),

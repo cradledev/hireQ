@@ -46,6 +46,7 @@ class AppliedJobModel {
       _region = jsonEncode(json['region']);
     }
     return AppliedJobModel(
+      id: json['id'],
       appliedtalents_count : json['appliedtalents_count'],
       company_id : json['company_id'],
       company_logo : json['company_logo'],

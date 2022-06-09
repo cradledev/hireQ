@@ -179,6 +179,7 @@ class _SettingTalentScreenState extends State<SettingTalentScreen> {
                 "city": cityValue ?? "no city",
                 "state": stateValue
               },
+              "uuid" : currentFirebaseUserUid,
               "current_jobTitle": currentJobTitleController.text,
               "current_jobDescription": descriptionController.text,
               "company": companyController.text

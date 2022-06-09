@@ -32,7 +32,7 @@ class ProfileModel {
       video_id: json['video_id'],
       video: json['video'],
       job: _job.isEmpty ? null : jsonEncode(_job),
-      work_history: _workHistory.isEmpty ? null : jsonEncode(_workHistory),
+      work_history: _workHistory.isEmpty ? "" : jsonEncode(_workHistory),
       type : json['type'] ?? ""
     );
   }

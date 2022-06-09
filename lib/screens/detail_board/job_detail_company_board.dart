@@ -39,6 +39,7 @@ class _JobDetailCompanyBoard extends State<JobDetailCompanyBoard> {
   // custom init function
   void onInit() {
     appState = Provider.of<AppState>(context, listen: false);
+    print(widget.selectedCompanyJob.id);
   }
 
   @override
@@ -261,8 +262,8 @@ class _JobDetailCompanyBoard extends State<JobDetailCompanyBoard> {
                                   (context, animation, secondaryAnimation) {
                                 return FadeTransition(
                                   opacity: animation,
-                                  child: const ConsiderTalentListBoard(
-                                      type: "shortlist"),
+                                  child: ConsiderTalentListBoard(
+                                      type: "shortlist", jobId : widget.selectedCompanyJob?.id),
                                 );
                               },
                             ),
@@ -339,8 +340,8 @@ class _JobDetailCompanyBoard extends State<JobDetailCompanyBoard> {
                                   (context, animation, secondaryAnimation) {
                                 return FadeTransition(
                                   opacity: animation,
-                                  child: const ConsiderTalentListBoard(
-                                      type: "applied"),
+                                  child: ConsiderTalentListBoard(
+                                      type: "applied", jobId : widget.selectedCompanyJob?.id ),
                                 );
                               },
                             ),

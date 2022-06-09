@@ -15,8 +15,12 @@ import 'package:inview_notifier_list/inview_notifier_list.dart';
 import 'package:provider/provider.dart';
 
 class ProfileTalentAddvideoScreen extends StatefulWidget {
-  const ProfileTalentAddvideoScreen({Key key}) : super(key: key);
+  const ProfileTalentAddvideoScreen(
+      {Key key, this.isView = false, this.videoId})
+      : super(key: key);
 
+  final bool isView;
+  final int videoId;
   @override
   _ProfileTalentAddvideoScreenState createState() =>
       _ProfileTalentAddvideoScreenState();
@@ -42,57 +46,17 @@ class _ProfileTalentAddvideoScreenState
     api = APIClient();
     _picker = ImagePicker();
     Future.delayed(const Duration(milliseconds: 800), () {
-// Here you can write your code
-
       setState(() {
-        // Here you can write your code for open new view
+        talentVideoList = [];
       });
       onInit();
     });
-    
   }
 
   // custom init function
   void onInit() async {
-    
-    if (appState.profile == null) {
-      talentVideoList = [
-        {
-          "url": "",
-          "sequence": "Q1",
-          "duration": 25,
-          "description":
-              "Your Name, City & Country, Current Title, Your Education"
-        },
-        {
-          "url": "",
-          "sequence": "Q2",
-          "duration": 25,
-          "description": "Quick brief Summary"
-        },
-        {
-          "url": "",
-          "sequence": "Q3",
-          "duration": 65,
-          "description": "Quick Snaps of your previous Experience"
-        },
-        {
-          "url": "",
-          "sequence": "Q4",
-          "duration": 55,
-          "description": "Current Job Roles & Responsibilities"
-        },
-        {
-          "url": "",
-          "sequence": "Q5",
-          "duration": 25,
-          "description": "Languages & Final words"
-        }
-      ];
-      appState.talentVideoList = talentVideoList;
-    } else {
-      ProfileModel _tmpProfile = appState.profile;
-      if (_tmpProfile.video_id == null) {
+    if (widget.isView == false) {
+      if (appState.profile == null) {
         talentVideoList = [
           {
             "url": "",
@@ -128,28 +92,145 @@ class _ProfileTalentAddvideoScreenState
         ];
         appState.talentVideoList = talentVideoList;
       } else {
-        try {
-          var res = await api.getVideoById(
-              id: _tmpProfile.video_id, token: appState.user['jwt_token']);
-          if (res.statusCode == 200) {
-            var body = jsonDecode(res.body);
-            if (body['status'] == "success") {
-              var _videoData = (body['v_data'] as List).map((e) => e).toList();
-              var _q1 = _videoData.firstWhere(
-                  (element) => element['sequence'] == "Q1",
-                  orElse: () => null);
-              var _q2 = _videoData.firstWhere(
-                  (element) => element['sequence'] == "Q2",
-                  orElse: () => null);
-              var _q3 = _videoData.firstWhere(
-                  (element) => element['sequence'] == "Q3",
-                  orElse: () => null);
-              var _q4 = _videoData.firstWhere(
-                  (element) => element['sequence'] == "Q4",
-                  orElse: () => null);
-              var _q5 = _videoData.firstWhere(
-                  (element) => element['sequence'] == "Q5",
-                  orElse: () => null);
+        ProfileModel _tmpProfile = appState.profile;
+        if (_tmpProfile.video_id == null) {
+          talentVideoList = [
+            {
+              "url": "",
+              "sequence": "Q1",
+              "duration": 25,
+              "description":
+                  "Your Name, City & Country, Current Title, Your Education"
+            },
+            {
+              "url": "",
+              "sequence": "Q2",
+              "duration": 25,
+              "description": "Quick brief Summary"
+            },
+            {
+              "url": "",
+              "sequence": "Q3",
+              "duration": 65,
+              "description": "Quick Snaps of your previous Experience"
+            },
+            {
+              "url": "",
+              "sequence": "Q4",
+              "duration": 55,
+              "description": "Current Job Roles & Responsibilities"
+            },
+            {
+              "url": "",
+              "sequence": "Q5",
+              "duration": 25,
+              "description": "Languages & Final words"
+            }
+          ];
+          appState.talentVideoList = talentVideoList;
+        } else {
+          try {
+            var res = await api.getVideoById(
+                id: _tmpProfile.video_id, token: appState.user['jwt_token']);
+            if (res.statusCode == 200) {
+              var body = jsonDecode(res.body);
+              if (body['status'] == "success") {
+                var _videoData =
+                    (body['v_data'] as List).map((e) => e).toList();
+                var _q1 = _videoData.firstWhere(
+                    (element) => element['sequence'] == "Q1",
+                    orElse: () => null);
+                var _q2 = _videoData.firstWhere(
+                    (element) => element['sequence'] == "Q2",
+                    orElse: () => null);
+                var _q3 = _videoData.firstWhere(
+                    (element) => element['sequence'] == "Q3",
+                    orElse: () => null);
+                var _q4 = _videoData.firstWhere(
+                    (element) => element['sequence'] == "Q4",
+                    orElse: () => null);
+                var _q5 = _videoData.firstWhere(
+                    (element) => element['sequence'] == "Q5",
+                    orElse: () => null);
+                talentVideoList = [
+                  {
+                    "url": _q1 == null ? "" : _q1['url'],
+                    "sequence": "Q1",
+                    "duration": 25,
+                    "description":
+                        "Your Name, City & Country, Current Title, Your Education"
+                  },
+                  {
+                    "url": _q2 == null ? "" : _q2['url'],
+                    "sequence": "Q2",
+                    "duration": 25,
+                    "description": "Quick brief Summary"
+                  },
+                  {
+                    "url": _q3 == null ? "" : _q3['url'],
+                    "sequence": "Q3",
+                    "duration": 65,
+                    "description": "Quick Snaps of your previous Experience"
+                  },
+                  {
+                    "url": _q4 == null ? "" : _q4['url'],
+                    "sequence": "Q4",
+                    "duration": 55,
+                    "description": "Current Job Roles & Responsibilities"
+                  },
+                  {
+                    "url": _q5 == null ? "" : _q5['url'],
+                    "sequence": "Q5",
+                    "duration": 25,
+                    "description": "Languages & Final words"
+                  }
+                ];
+                appState.talentVideoList = talentVideoList;
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text("Something went wrong. Please try again it."),
+                  backgroundColor: Colors.red,
+                ));
+              }
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text("Something went wrong. Please try again it."),
+                backgroundColor: Colors.red,
+              ));
+            }
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Unknow erro is occured."),
+              backgroundColor: Colors.red,
+            ));
+          }
+        }
+      }
+    } else {
+      try {
+        var res = await api.getVideoById(
+            id: widget.videoId, token: appState.user['jwt_token']);
+        if (res.statusCode == 200) {
+          var body = jsonDecode(res.body);
+          if (body['status'] == "success") {
+            var _videoData = (body['v_data'] as List).map((e) => e).toList();
+            var _q1 = _videoData.firstWhere(
+                (element) => element['sequence'] == "Q1",
+                orElse: () => null);
+            var _q2 = _videoData.firstWhere(
+                (element) => element['sequence'] == "Q2",
+                orElse: () => null);
+            var _q3 = _videoData.firstWhere(
+                (element) => element['sequence'] == "Q3",
+                orElse: () => null);
+            var _q4 = _videoData.firstWhere(
+                (element) => element['sequence'] == "Q4",
+                orElse: () => null);
+            var _q5 = _videoData.firstWhere(
+                (element) => element['sequence'] == "Q5",
+                orElse: () => null);
+
+            setState(() {
               talentVideoList = [
                 {
                   "url": _q1 == null ? "" : _q1['url'],
@@ -183,25 +264,24 @@ class _ProfileTalentAddvideoScreenState
                   "description": "Languages & Final words"
                 }
               ];
-              appState.talentVideoList = talentVideoList;
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text("Something went wrong. Please try again it."),
-                backgroundColor: Colors.red,
-              ));
-            }
+            });
           } else {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text("Something went wrong. Please try again it."),
               backgroundColor: Colors.red,
             ));
           }
-        } catch (e) {
+        } else {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text("Unknow erro is occured."),
+            content: Text("Something went wrong. Please try again it."),
             backgroundColor: Colors.red,
           ));
         }
+      } catch (e) {
+        // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        //   content: Text("Unknow erro is occured."),
+        //   backgroundColor: Colors.red,
+        // ));
       }
     }
   }
@@ -492,59 +572,88 @@ class _ProfileTalentAddvideoScreenState
         ),
       ),
       drawer: const CustomDrawerWidget(),
-      body: Consumer<AppState>(
-        builder: (context, _pAppState, child) {
-          List tmpTalentVideoList = _pAppState.talentVideoList;
-          print(1);
-          return Stack(
-            fit: StackFit.expand,
-            children: [
-              InViewNotifierList(
-                physics: const ClampingScrollPhysics(),
-                scrollDirection: Axis.vertical,
-                initialInViewIds: const ['0'],
-                isInViewPortCondition: (double deltaTop, double deltaBottom,
-                    double viewPortDimension) {
-                  return deltaTop < (0.3 * viewPortDimension) &&
-                      deltaBottom > (0.3 * viewPortDimension);
-                },
-                itemCount:
-                    tmpTalentVideoList == null ? 5 : tmpTalentVideoList.length,
-                builder: (BuildContext context, int index) {
-                  return Padding(
+      body: widget.isView == true
+          ? buildWidgetForViewForTalent(context)
+          : buildWidgetForAddingVideo(context),
+    );
+  }
+
+  // widget of adding video for talent
+  Widget buildWidgetForAddingVideo(BuildContext context) {
+    return Consumer<AppState>(
+      builder: (context, _pAppState, child) {
+        List tmpTalentVideoList = _pAppState.talentVideoList;
+        print(1);
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            InViewNotifierList(
+              physics: const ClampingScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              initialInViewIds: const ['0'],
+              isInViewPortCondition: (double deltaTop, double deltaBottom,
+                  double viewPortDimension) {
+                return deltaTop < (0.3 * viewPortDimension) &&
+                    deltaBottom > (0.3 * viewPortDimension);
+              },
+              itemCount:
+                  tmpTalentVideoList == null ? 5 : tmpTalentVideoList.length,
+              builder: (BuildContext context, int index) {
+                return Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Container(
+                    // color: Colors.greenAccent,
                     padding: const EdgeInsets.all(20.0),
-                    child: Container(
-                      // color: Colors.greenAccent,
-                      padding: const EdgeInsets.all(20.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(27),
-                        border: Border.all(color: primaryColor, width: 1),
-                        color: Colors.white,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            // aspectRatio: 1 / 16,
-                            height: 200,
-                            // width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(27),
+                      border: Border.all(color: primaryColor, width: 1),
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          // aspectRatio: 1 / 16,
+                          height: 200,
+                          // width: double.infinity,
 
-                            // color: Colors.greenAccent,
+                          // color: Colors.greenAccent,
 
-                            // decoration: BoxDecoration(
-                            //   border: Border.all(
-                            //       color: Colors.greenAccent, width: 1.5),
-                            //   borderRadius: BorderRadius.circular(20),
+                          // decoration: BoxDecoration(
+                          //   border: Border.all(
+                          //       color: Colors.greenAccent, width: 1.5),
+                          //   borderRadius: BorderRadius.circular(20),
 
-                            // ),
+                          // ),
 
-                            child: LayoutBuilder(builder: (BuildContext context,
-                                BoxConstraints constraints) {
-                              return InViewNotifierWidget(
-                                id: '$index',
-                                builder: (BuildContext context, bool isInView,
-                                    Widget child) {
-                                  if (tmpTalentVideoList == null) {
+                          child: LayoutBuilder(builder: (BuildContext context,
+                              BoxConstraints constraints) {
+                            return InViewNotifierWidget(
+                              id: '$index',
+                              builder: (BuildContext context, bool isInView,
+                                  Widget child) {
+                                if (tmpTalentVideoList == null) {
+                                  return Container(
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Colors.black,
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: const [
+                                        Text(
+                                          "No Video Data.",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                } else {
+                                  if (tmpTalentVideoList[index]['url']
+                                      .toString()
+                                      .isEmpty) {
                                     return Container(
                                       width: double.infinity,
                                       decoration: BoxDecoration(
@@ -564,146 +673,247 @@ class _ProfileTalentAddvideoScreenState
                                       ),
                                     );
                                   } else {
-                                    if (tmpTalentVideoList[index]['url']
-                                        .toString()
-                                        .isEmpty) {
-                                      return Container(
-                                        width: double.infinity,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                          color: Colors.black,
-                                        ),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: const [
-                                            Text(
-                                              "No Video Data.",
-                                              style: TextStyle(
-                                                  color: Colors.white),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    } else {
-                                      return VideoPlayerWidget(
-                                          play: isInView,
-                                          // play: false,
-                                          url: appState.hostAddress +
-                                              tmpTalentVideoList[index]['url']);
-                                    }
+                                    return VideoPlayerWidget(
+                                        play: isInView,
+                                        // play: false,
+                                        url: appState.hostAddress +
+                                            tmpTalentVideoList[index]['url']);
                                   }
-                                },
-                              );
-                            }),
+                                }
+                              },
+                            );
+                          }),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          tmpTalentVideoList == null
+                              ? "...loading"
+                              : tmpTalentVideoList[index]['sequence'],
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
-                          const SizedBox(height: 10),
-                          Text(
-                            tmpTalentVideoList == null
-                                ? "...loading"
-                                : tmpTalentVideoList[index]['sequence'],
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          tmpTalentVideoList == null
+                              ? "...loading"
+                              : tmpTalentVideoList[index]['description'],
+                          textAlign: TextAlign.center,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                onTakeVideoByCamera(ImageSource.camera,
+                                    sequence: tmpTalentVideoList[index]
+                                        ['sequence']);
+                              },
+                              child: Container(
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                child: const Padding(
+                                  padding: EdgeInsets.all(2.0),
+                                  child: Icon(Icons.video_camera_front,
+                                      color: primaryColor),
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    width: 3,
+                                    color: Colors.white,
+                                  ),
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(
+                                      50,
+                                    ),
+                                  ),
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      offset: const Offset(2, 4),
+                                      color: Colors.black.withOpacity(
+                                        0.3,
+                                      ),
+                                      blurRadius: 3,
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            tmpTalentVideoList == null
-                                ? "...loading"
-                                : tmpTalentVideoList[index]['description'],
-                            textAlign: TextAlign.center,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  onTakeVideoByCamera(ImageSource.camera,
-                                      sequence: tmpTalentVideoList[index]
-                                          ['sequence']);
-                                },
-                                child: Container(
-                                  margin:
-                                      const EdgeInsets.symmetric(horizontal: 8),
-                                  child: const Padding(
-                                    padding: EdgeInsets.all(2.0),
-                                    child: Icon(Icons.video_camera_front,
-                                        color: primaryColor),
-                                  ),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      width: 3,
-                                      color: Colors.white,
-                                    ),
-                                    borderRadius: const BorderRadius.all(
-                                      Radius.circular(
-                                        50,
-                                      ),
-                                    ),
+                            InkWell(
+                              onTap: () {
+                                onTakeVideoByFile(ImageSource.gallery,
+                                    sequence: tmpTalentVideoList[index]
+                                        ['sequence']);
+                              },
+                              child: Container(
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                child: const Padding(
+                                  padding: EdgeInsets.all(2.0),
+                                  child:
+                                      Icon(Icons.folder, color: primaryColor),
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    width: 3,
                                     color: Colors.white,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        offset: const Offset(2, 4),
-                                        color: Colors.black.withOpacity(
-                                          0.3,
-                                        ),
-                                        blurRadius: 3,
+                                  ),
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(
+                                      50,
+                                    ),
+                                  ),
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      offset: const Offset(2, 4),
+                                      color: Colors.black.withOpacity(
+                                        0.3,
+                                      ),
+                                      blurRadius: 3,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // widget for viewing video for talent
+  Widget buildWidgetForViewForTalent(BuildContext context) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        InViewNotifierList(
+          physics: const ClampingScrollPhysics(),
+          scrollDirection: Axis.vertical,
+          initialInViewIds: const ['0'],
+          isInViewPortCondition:
+              (double deltaTop, double deltaBottom, double viewPortDimension) {
+            return deltaTop < (0.3 * viewPortDimension) &&
+                deltaBottom > (0.3 * viewPortDimension);
+          },
+          itemCount: talentVideoList?.length ?? 5,
+          builder: (BuildContext context, int index) {
+            return Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Container(
+                // color: Colors.greenAccent,
+                padding: const EdgeInsets.all(20.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(27),
+                  border: Border.all(color: primaryColor, width: 1),
+                  color: Colors.white,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      // aspectRatio: 1 / 16,
+                      height: 200,
+                      // width: double.infinity,
+
+                      // color: Colors.greenAccent,
+
+                      // decoration: BoxDecoration(
+                      //   border: Border.all(
+                      //       color: Colors.greenAccent, width: 1.5),
+                      //   borderRadius: BorderRadius.circular(20),
+
+                      // ),
+
+                      child: LayoutBuilder(builder:
+                          (BuildContext context, BoxConstraints constraints) {
+                        return InViewNotifierWidget(
+                          id: '$index',
+                          builder: (BuildContext context, bool isInView,
+                              Widget child) {
+                            if (talentVideoList.isEmpty) {
+                              return Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: Colors.black,
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Text(
+                                      "No Video Data.",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else {
+                              if (talentVideoList[index]['url']
+                                  .toString()
+                                  .isEmpty) {
+                                return Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: Colors.black,
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: const [
+                                      Text(
+                                        "No Video Data.",
+                                        style: TextStyle(color: Colors.white),
                                       ),
                                     ],
                                   ),
-                                ),
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  onTakeVideoByFile(ImageSource.gallery,
-                                      sequence: tmpTalentVideoList[index]
-                                          ['sequence']);
-                                },
-                                child: Container(
-                                  margin:
-                                      const EdgeInsets.symmetric(horizontal: 8),
-                                  child: const Padding(
-                                    padding: EdgeInsets.all(2.0),
-                                    child:
-                                        Icon(Icons.folder, color: primaryColor),
-                                  ),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      width: 3,
-                                      color: Colors.white,
-                                    ),
-                                    borderRadius: const BorderRadius.all(
-                                      Radius.circular(
-                                        50,
-                                      ),
-                                    ),
-                                    color: Colors.white,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        offset: const Offset(2, 4),
-                                        color: Colors.black.withOpacity(
-                                          0.3,
-                                        ),
-                                        blurRadius: 3,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                                );
+                              } else {
+                                return VideoPlayerWidget(
+                                    play: isInView,
+                                    // play: false,
+                                    url: appState.hostAddress +
+                                        talentVideoList[index]['url']);
+                              }
+                            }
+                          },
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      talentVideoList == null
+                          ? "...loading"
+                          : talentVideoList[index]['sequence'],
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  );
-                },
+                    const SizedBox(height: 10),
+                    Text(
+                      talentVideoList == null
+                          ? "...loading"
+                          : talentVideoList[index]['description'],
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
               ),
-            ],
-          );
-        },
-      ),
+            );
+          },
+        ),
+      ],
     );
   }
 }

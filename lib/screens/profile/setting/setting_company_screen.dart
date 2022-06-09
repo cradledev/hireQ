@@ -126,6 +126,7 @@ class _SettingCompanyScreen extends State<SettingCompanyScreen> {
             "initialCountryCode": initialCountryCode,
             "displayPhoneNumber": displayPhoneNumber
           },
+          "uuid" : currentFirebaseUserUid,
           "region": {
             "country": countryValue,
             "city": cityValue ?? "no city",
