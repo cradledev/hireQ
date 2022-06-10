@@ -13,6 +13,8 @@ class TalentModel {
   String talent_logo;
   int video_id;
   String resume;
+  bool is_shortlist;
+  int applied_job_id;
 
   TalentModel({
     this.id,
@@ -26,6 +28,8 @@ class TalentModel {
     this.company,
     this.talent_logo,
     this.video_id,
+    this.is_shortlist,
+    this.applied_job_id,
     this.resume
   });
   factory TalentModel.fromJson(Map<String, dynamic> json) {
@@ -49,7 +53,9 @@ class TalentModel {
       company: json['company'] ?? "",
       talent_logo : json['talent_logo'] ?? "",
       video_id: json['video_id'],
-      resume: json['resume'] ?? ""
+      resume: json['resume'] ?? "",
+      is_shortlist: json['is_shortlist'] ?? false,
+      applied_job_id: json['appliedjob_id']
     );
   }
 

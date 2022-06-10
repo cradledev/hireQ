@@ -7,16 +7,36 @@ class JobsProvider extends ChangeNotifier {
 
   // job list in total (same as contents in job search)
   List<AppliedJobModel> _jobList;
+
+  // job shortlist changed
+  bool _isShortlistChanged = false;
+
+  // selected company job
+  AppliedJobModel _selectedAppliedJob;
   JobsProvider() {
     _currentCompanyJobs = [];
     _jobList = [];
+    _selectedAppliedJob = null;
   }
 
   // get
   get currentCompanyJobs => _currentCompanyJobs;
 
   get jobList => _jobList;
+
+  get isShortlistChanged => _isShortlistChanged;
+
+  get selectedAppliedJob => _selectedAppliedJob;
   // set
+  set isShortlistChanged (bool value) {
+    _isShortlistChanged = value;
+    notifyListeners();
+  }
+
+  set selectedAppliedJob (AppliedJobModel value) {
+    _selectedAppliedJob = value;
+    notifyListeners();
+  }
   set currentCompanyJobs(List<AppliedJobModel> value) {
     _currentCompanyJobs = value;
     notifyListeners();
@@ -27,6 +47,11 @@ class JobsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // reset func
+  void reset() {
+    currentCompanyJobs = [];
+    jobList = [];
+  }
   // adding current company job
   void addCurrentCompanyJob(AppliedJobModel item) {
     _currentCompanyJobs.add(item);

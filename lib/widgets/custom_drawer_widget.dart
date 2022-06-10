@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hire_q/helpers/constants.dart';
+import 'package:hire_q/provider/jobs_provider.dart';
 import 'package:hire_q/screens/home/home_screen.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
 import 'package:hire_q/screens/profile/setting/setting_company_screen.dart';
@@ -194,11 +195,13 @@ class CustomDrawerWidget extends StatelessWidget {
 
   void onGoPage(BuildContext context, NavigationItem item) async {
     AppState appState = Provider.of<AppState>(context, listen: false);
+    JobsProvider jobsProvider = Provider.of<JobsProvider>(context, listen: false);
     switch (item) {
       case NavigationItem.logout:
         appState.setLocalStorage(key: "user", value: "");
         appState.setLocalStorage(key: "firebaseuser", value: "");
         appState.removeAllState();
+        jobsProvider.reset();
         Navigator.pushAndRemoveUntil(
             context,
             PageRouteBuilder(

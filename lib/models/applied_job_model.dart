@@ -69,6 +69,7 @@ class AppliedJobModel {
 
   Map<String, dynamic> toMap() {
     return {
+      "id" : id,
       "appliedtalents_count" : appliedtalents_count,
       "company_id" : company_id,
       "company_logo" : company_logo,

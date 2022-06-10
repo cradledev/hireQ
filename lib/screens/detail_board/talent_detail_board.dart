@@ -1,9 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hire_q/helpers/constants.dart';
 import 'package:hire_q/models/talent_model.dart';
+import 'package:hire_q/screens/detail_board/talent_detail_card.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
 
 import 'package:hire_q/widgets/common_widget.dart';
@@ -39,13 +39,14 @@ class _TalentDetailBoard extends State<TalentDetailBoard> {
       child: Scaffold(
         appBar: CustomAppBar(
           leadingIcon: const Icon(
-            CupertinoIcons.line_horizontal_3,
+            CupertinoIcons.arrow_left,
             size: 40,
             color: Colors.white,
           ),
           backgroundColor: primaryColor,
-          // leadingAction: () {
-          // },
+          leadingAction: () {
+            Navigator.of(context).pop();
+          },
           leadingFlag: true,
           actionEvent: () {},
           actionFlag: true,
@@ -109,16 +110,16 @@ class _TalentDetailBoard extends State<TalentDetailBoard> {
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(CupertinoIcons.arrow_left),
-                      color: primaryColor,
-                      iconSize: 30,
-                    ),
-                    const Expanded(
+                  children: const [
+                    // IconButton(
+                    //   onPressed: () {
+                    //     Navigator.pop(context);
+                    //   },
+                    //   icon: const Icon(CupertinoIcons.arrow_left),
+                    //   color: primaryColor,
+                    //   iconSize: 30,
+                    // ),
+                    Expanded(
                       child: Align(
                         alignment: Alignment.center,
                         child: Text(
@@ -131,9 +132,9 @@ class _TalentDetailBoard extends State<TalentDetailBoard> {
                 ),
               ),
               Container(
-                height: MediaQuery.of(context).size.height * 0.66,
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                child: const Text("data"),
+                height: MediaQuery.of(context).size.height * 0.67,
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: TalentDetailCard(talentData: widget.data),
               ),
             ],
           ),

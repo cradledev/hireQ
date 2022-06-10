@@ -88,6 +88,7 @@ class AppState extends ChangeNotifier {
     talent = null;
     profile = null;
     talentVideoList = null;
+    notifyListeners();
   }
   void notifyToast({context, message}) {
     ToastContext().init(context);

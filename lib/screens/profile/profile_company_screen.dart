@@ -82,18 +82,24 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
     //   onGetCompany();
     //   onGetProfile();
     // });
-    onGetCompany();
+    onGetCompany().then((value) {
+      onGetCurrentCompayJobs(value);
+      onGetTotalCountOfTalentForCompanyJobs(value);
+      setState(() {
+        
+      });
+    });
     onGetProfile();
+    
   }
 
   // get total count of talents for this company
-  void onGetTotalCountOfTalentForCompanyJobs() async {
+  void onGetTotalCountOfTalentForCompanyJobs(_pCompnayId) async {
     try {
       var res = await api.getTotalCountAppliedTalentsForCompany(
-          companyId: appState.company.id, token: appState.user['jwt_token']);
+          companyId: _pCompnayId, token: appState.user['jwt_token']);
       if (res.statusCode == 200) {
         var body = jsonDecode(res.body);
-        print(body);
         setState(() {
           totalCountOfTalents = body['applied_count'];
           totalCountOfShortlist = body['shortlist_count'];
@@ -104,21 +110,26 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
     }
   }
 
-  void onGetCompany() async {
+  Future<int> onGetCompany() async {
+    print(2);
     try {
       var res = await api.getCompany(
           userId: appState.user['id'], token: appState.user['jwt_token']);
       if (res.statusCode == 200) {
+        var body = jsonDecode(res.body.toString());
+        print(2.5);
         appState.company =
-            CompanyModel.fromJson(jsonDecode(res.body.toString()));
-        onGetCurrentCompayJobs(appState.company.id);
-        onGetTotalCountOfTalentForCompanyJobs();
+            CompanyModel.fromJson(body);
+        return body['id'];
+      } else {
+        throw Exception("Unkown Error.");
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        backgroundColor: Colors.red,
-        content: Text(e.message),
-      ));
+      throw Exception("Unkown Error.");
+      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      //   backgroundColor: Colors.red,
+      //   content: Text(e.message),
+      // ));
     }
   }
 
@@ -144,10 +155,11 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
     }
   }
 
-  void onGetCurrentCompayJobs(_p_companyId) async {
+  void onGetCurrentCompayJobs(_pCompnayId) async {
     try {
       var res = await api.getCurrentCompanyJobs(
-          companyId: _p_companyId, token: appState.user['jwt_token']);
+          companyId: _pCompnayId, token: appState.user['jwt_token']);
+      print(5);
       if (res.statusCode == 200) {
         var body = jsonDecode(res.body.toString());
         if ((body as List).isNotEmpty) {

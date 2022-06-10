@@ -8,6 +8,7 @@ import 'package:hire_q/helpers/api.dart';
 import 'package:hire_q/helpers/constants.dart';
 import 'package:hire_q/models/applied_job_model.dart';
 import 'package:hire_q/provider/index.dart';
+import 'package:hire_q/provider/jobs_provider.dart';
 import 'package:hire_q/screens/detail_board/job_detail_company_board.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
 
@@ -32,6 +33,8 @@ class _AppliedQCompanyScreen extends State<AppliedQCompanyScreen> {
   // api setting
   APIClient api;
 
+  // job provider setting
+  JobsProvider jobsProvider;
   // scroll page controller for infinite scroll
   PagingController<int, AppliedJobModel> _pagingController;
   static const PageSize = 2;
@@ -45,6 +48,7 @@ class _AppliedQCompanyScreen extends State<AppliedQCompanyScreen> {
   // custom init func
   void onInit() async {
     appState = Provider.of<AppState>(context, listen: false);
+    jobsProvider = Provider.of<JobsProvider>(context, listen: false);
     api = APIClient();
 
     // The PageController allows us to instruct the PageView to change pages.
@@ -53,10 +57,14 @@ class _AppliedQCompanyScreen extends State<AppliedQCompanyScreen> {
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
+    jobsProvider.addListener(() {
+      _pagingController.refresh();
+    });
   }
 
   // fetch job data with pagination
   Future<void> _fetchPage(int pageKey) async {
+    print(1);
     try {
       var res = await api.getComprehensiveJobsInfoForCompanyJobs(
           companyId: appState.company.id,
@@ -101,13 +109,14 @@ class _AppliedQCompanyScreen extends State<AppliedQCompanyScreen> {
       child: Scaffold(
         appBar: CustomAppBar(
           leadingIcon: const Icon(
-            CupertinoIcons.line_horizontal_3,
+            CupertinoIcons.arrow_left,
             size: 40,
             color: Colors.white,
           ),
           backgroundColor: primaryColor,
-          // leadingAction: () {
-          // },
+          leadingAction: () {
+            Navigator.of(context).pop();
+          },
           leadingFlag: true,
           actionEvent: () {},
           actionFlag: true,
@@ -172,16 +181,16 @@ class _AppliedQCompanyScreen extends State<AppliedQCompanyScreen> {
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(CupertinoIcons.arrow_left),
-                      color: primaryColor,
-                      iconSize: 30,
-                    ),
-                    const Expanded(
+                  children: const [
+                    // IconButton(
+                    //   onPressed: () {
+                    //     Navigator.pop(context);
+                    //   },
+                    //   icon: const Icon(CupertinoIcons.arrow_left),
+                    //   color: primaryColor,
+                    //   iconSize: 30,
+                    // ),
+                    Expanded(
                       child: Align(
                         alignment: Alignment.center,
                         child: Text(
@@ -294,6 +303,7 @@ class _AppliedQCompanyScreen extends State<AppliedQCompanyScreen> {
 
   // when click per item, it goes to detail page including shortlist, applied q counts for per job for self company
   void onGotoDetail(AppliedJobModel _pAppliedJob) {
+    
     Navigator.push(
       context,
       PageRouteBuilder(

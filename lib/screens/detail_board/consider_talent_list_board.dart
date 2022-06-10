@@ -8,6 +8,7 @@ import 'package:hire_q/helpers/api.dart';
 import 'package:hire_q/helpers/constants.dart';
 import 'package:hire_q/models/talent_model.dart';
 import 'package:hire_q/provider/index.dart';
+import 'package:hire_q/provider/jobs_provider.dart';
 import 'package:hire_q/screens/detail_board/talent_detail_board.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
 
@@ -36,6 +37,8 @@ class _ConsiderTalentListBoard extends State<ConsiderTalentListBoard> {
   // API setting
   APIClient api;
 
+  // jobs provider setting
+  JobsProvider jobsProvider;
   // scroll page controller for infinite scroll
   PagingController<int, TalentModel> _pagingController;
   static const PageSize = 2;
@@ -55,6 +58,7 @@ class _ConsiderTalentListBoard extends State<ConsiderTalentListBoard> {
   // custom init function
   void onInit() async {
     appState = Provider.of<AppState>(context, listen: false);
+    jobsProvider = Provider.of<JobsProvider>(context, listen: false);
     api = APIClient();
 
     // The PageController allows us to instruct the PageView to change pages.
@@ -63,6 +67,11 @@ class _ConsiderTalentListBoard extends State<ConsiderTalentListBoard> {
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
+    jobsProvider.addListener(() {
+      if (widget.type == "shortlist") {
+        _pagingController.refresh();
+      }
+    });
     // var res = await api.getTalentsAppliedForPerJob(jobId: widget.jobId, pageLength: 5, pageNum: 1, token: appState.user['jwt_token']);
     // print(res.body);
   }
@@ -70,11 +79,21 @@ class _ConsiderTalentListBoard extends State<ConsiderTalentListBoard> {
   // fetch job data with pagination
   Future<void> _fetchPage(int pageKey) async {
     try {
-      var res = await api.getTalentsAppliedForPerJob(
+      var res;
+      if (widget.type == "shortlist") {
+        res = await api.getTalentsShortlistForPerJob(
+            jobId: widget.jobId,
+            pageLength: PageSize,
+            pageNum: pageKey + 1,
+            token: appState.user['jwt_token']);
+      } else {
+        res = await api.getTalentsAppliedForPerJob(
           jobId: widget.jobId,
           pageLength: PageSize,
           pageNum: pageKey + 1,
           token: appState.user['jwt_token']);
+      }
+
       if (res.statusCode == 200) {
         var body = jsonDecode(res.body);
         List<TalentModel> newItems = (body as List)
@@ -107,14 +126,14 @@ class _ConsiderTalentListBoard extends State<ConsiderTalentListBoard> {
       child: Scaffold(
         appBar: CustomAppBar(
           leadingIcon: const Icon(
-            CupertinoIcons.line_horizontal_3,
+            CupertinoIcons.arrow_left,
             size: 40,
             color: Colors.white,
           ),
           backgroundColor: primaryColor,
-          // leadingAction: () {
-          //   Navigator.of(context).pop();
-          // },
+          leadingAction: () {
+            Navigator.of(context).pop();
+          },
           leadingFlag: true,
           actionEvent: () {},
           actionFlag: true,
@@ -179,14 +198,14 @@ class _ConsiderTalentListBoard extends State<ConsiderTalentListBoard> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(CupertinoIcons.arrow_left),
-                      color: primaryColor,
-                      iconSize: 30,
-                    ),
+                    // IconButton(
+                    //   onPressed: () {
+                    //     Navigator.pop(context);
+                    //   },
+                    //   icon: const Icon(CupertinoIcons.arrow_left),
+                    //   color: primaryColor,
+                    //   iconSize: 30,
+                    // ),
                     Expanded(
                       child: Align(
                         alignment: Alignment.center,

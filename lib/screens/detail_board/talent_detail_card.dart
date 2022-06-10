@@ -1,30 +1,43 @@
 import 'dart:convert';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hire_q/helpers/api.dart';
 import 'package:hire_q/helpers/constants.dart';
 import 'package:hire_q/models/talent_model.dart';
 import 'package:hire_q/provider/index.dart';
+import 'package:hire_q/provider/jobs_provider.dart';
 import 'package:hire_q/screens/profile/edit/profile_talent_addvideo_screen.dart';
 import 'package:hire_q/widgets/common_widget.dart';
 import 'package:provider/provider.dart';
 
 import 'package:hire_q/widgets/image_gradient_overlay.dart';
 
-class TalentCard extends StatefulWidget {
-  const TalentCard({Key key, this.talentData}) : super(key: key);
+class TalentDetailCard extends StatefulWidget {
+  const TalentDetailCard({Key key, this.talentData}) : super(key: key);
   final TalentModel talentData;
-
   @override
-  _TalentCardState createState() => _TalentCardState();
+  _TalentDetailCardState createState() => _TalentDetailCardState();
 }
 
-class _TalentCardState extends State<TalentCard> with TickerProviderStateMixin {
+class _TalentDetailCardState extends State<TalentDetailCard>
+    with TickerProviderStateMixin {
   // animation controller
   AnimationController _controller;
 
+  // App state provider setting
+  AppState appState;
+
+  // Job provider setting
+  JobsProvider jobProvider;
+  // API setting
+  APIClient api;
   // is deatil ?
   bool isDetail = false;
+
+  // is shortlist flag
+  bool isShortlist = false;
   @override
   void initState() {
     super.initState();
@@ -33,18 +46,88 @@ class _TalentCardState extends State<TalentCard> with TickerProviderStateMixin {
 
   // custom init function
   void onInit() {
+    appState = Provider.of<AppState>(context, listen: false);
+    jobProvider = Provider.of<JobsProvider>(context, listen: false);
+    api = APIClient();
     if (mounted) {
       _controller = AnimationController(
         vsync: this,
         duration: const Duration(milliseconds: 250),
       );
     }
+    setState(() {
+      isShortlist = widget.talentData.is_shortlist;
+    });
   }
 
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  // remove talent from shortlist
+  void onRemoveTalentFromShortlist() async {
+    try {
+      Map _payloads = {"shortlist_status": false};
+      var res = await api.updateShortlistStatus(
+          token: appState.user['jwt_token'],
+          appliedJobId: widget.talentData.applied_job_id,
+          payloads: jsonEncode(_payloads));
+      if (res.statusCode == 200) {
+        setState(() {
+          isShortlist = false;
+        });
+        // update state for job shortlist changed
+        bool _isShortlistChanged = jobProvider.isShortlistChanged;
+        jobProvider.isShortlistChanged = !_isShortlistChanged;
+        jobProvider.selectedAppliedJob.shortlisttalents_count = jobProvider.selectedAppliedJob.shortlisttalents_count - 1;
+
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Successfully removed."),
+          backgroundColor: Colors.green,
+        ));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Something went wrong. Please try it again."),
+          backgroundColor: Colors.red,
+        ));
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // add talent to shortlist
+  void onAddTalentToShortlist() async {
+    try {
+      Map _payloads = {"shortlist_status": true};
+      var res = await api.updateShortlistStatus(
+          token: appState.user['jwt_token'],
+          appliedJobId: widget.talentData.applied_job_id,
+          payloads: jsonEncode(_payloads));
+      if (res.statusCode == 200) {
+        setState(() {
+          isShortlist = true;
+        });
+        // update state for job shortlist changed
+        bool _isShortlistChanged = jobProvider.isShortlistChanged;
+        jobProvider.isShortlistChanged = !_isShortlistChanged;
+        jobProvider.selectedAppliedJob.shortlisttalents_count = jobProvider.selectedAppliedJob.shortlisttalents_count + 1;
+
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Successfully added."),
+          backgroundColor: Colors.green,
+        ));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Something went wrong. Please try it again."),
+          backgroundColor: Colors.red,
+        ));
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   // display job short info
@@ -56,10 +139,13 @@ class _TalentCardState extends State<TalentCard> with TickerProviderStateMixin {
         fit: StackFit.expand,
         children: <Widget>[
           ImageGradientOverlay(
-            imageUrl: widget.talentData == null ? 
-                'https://via.placeholder.com/150' : widget.talentData.talent_logo.isEmpty ? 'https://via.placeholder.com/150' : 
-                Provider.of<AppState>(context, listen: false).hostAddress +
-                    widget.talentData.talent_logo,
+            imageUrl: widget.talentData == null
+                ? 'https://via.placeholder.com/150'
+                : widget.talentData.talent_logo.isEmpty
+                    ? 'https://via.placeholder.com/150'
+                    : Provider.of<AppState>(context, listen: false)
+                            .hostAddress +
+                        widget.talentData.talent_logo,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -91,28 +177,28 @@ class _TalentCardState extends State<TalentCard> with TickerProviderStateMixin {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10),
-                                    child: Row(
-                                      children: [
-                                        const Icon(
-                                          CupertinoIcons.location_solid,
-                                          color: Colors.white,
-                                          size: 30.0,
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          jsonDecode(widget.talentData.region)[
-                                                  'city'] ??
-                                              "",
-                                          style: const TextStyle(
-                                              fontSize: 18, color: Colors.grey),
-                                        ),
-                                      ],
-                                    ),
-                                  )
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 10),
+                                  child: Row(
+                                    children: [
+                                      const Icon(
+                                        CupertinoIcons.location_solid,
+                                        color: Colors.white,
+                                        size: 30.0,
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        jsonDecode(widget.talentData.region)[
+                                                'city'] ??
+                                            "",
+                                        style: const TextStyle(
+                                            fontSize: 18, color: Colors.grey),
+                                      ),
+                                    ],
+                                  ),
+                                )
                               ],
                             ),
                           ),
@@ -143,25 +229,8 @@ class _TalentCardState extends State<TalentCard> with TickerProviderStateMixin {
                     ],
                   ),
                 ),
-                Container(
-                  height: 60,
-                  width: MediaQuery.of(context).size.width,
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(10),
-                          bottomRight: Radius.circular(10))),
-                  child: Center(
-                    child: IconButton(
-                      key: UniqueKey(),
-                      onPressed: () {
-                        // _openPage(context, const TalentDetail());
-                      },
-                      icon: const Icon(CupertinoIcons.multiply_circle),
-                      color: Colors.red,
-                      iconSize: 40,
-                    ),
-                  ),
+                const SizedBox(
+                  height: 30,
                 )
               ],
             ),
@@ -216,10 +285,13 @@ class _TalentCardState extends State<TalentCard> with TickerProviderStateMixin {
         fit: StackFit.expand,
         children: <Widget>[
           ImageGradientOverlay(
-            imageUrl: widget.talentData == null ? 
-                'https://via.placeholder.com/150' : widget.talentData.talent_logo.isEmpty ? 'https://via.placeholder.com/150' : 
-                Provider.of<AppState>(context, listen: false).hostAddress +
-                    widget.talentData.talent_logo,
+            imageUrl: widget.talentData == null
+                ? 'https://via.placeholder.com/150'
+                : widget.talentData.talent_logo.isEmpty
+                    ? 'https://via.placeholder.com/150'
+                    : Provider.of<AppState>(context, listen: false)
+                            .hostAddress +
+                        widget.talentData.talent_logo,
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 0),
@@ -317,11 +389,13 @@ class _TalentCardState extends State<TalentCard> with TickerProviderStateMixin {
                                 Container(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 15, vertical: 8),
-                                  color : Colors.white,
+                                  color: Colors.white,
                                   width: MediaQuery.of(context).size.width,
                                   child: Text(
-                                    widget.talentData.current_jobDescription.isNotEmpty
-                                        ? widget.talentData.current_jobDescription
+                                    widget.talentData.current_jobDescription
+                                            .isNotEmpty
+                                        ? widget
+                                            .talentData.current_jobDescription
                                         : "",
                                     style: const TextStyle(
                                       fontSize: 18,
@@ -352,29 +426,64 @@ class _TalentCardState extends State<TalentCard> with TickerProviderStateMixin {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Padding(
-                        padding: EdgeInsets.zero,
-                        child: ImageButton(
-                            onPressed: () {},
-                            imageHeight: 40,
-                            image: "assets/icons/q white.png"),
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(CupertinoIcons.chat_bubble_2_fill),
+                        color: Colors.white,
+                        iconSize: 30,
                       ),
-                      Center(
-                        child: IconButton(
-                          onPressed: () {
-                            // _openPage(context, const TalentDetail());
-                          },
-                          icon: const Icon(CupertinoIcons.multiply_circle),
-                          color: Colors.red,
-                          iconSize: 30,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.zero,
-                        child: ImageButton(
-                            onPressed: () {},
-                            imageHeight: 35,
-                            image: "assets/icons/share.png"),
+                      IconButton(
+                        onPressed: () {
+                          if (isShortlist) {
+                            AwesomeDialog(
+                              context: context,
+                              dialogType: DialogType.QUESTION,
+                              headerAnimationLoop: false,
+                              animType: AnimType.BOTTOMSLIDE,
+                              title: '',
+                              desc:
+                                  'Do you want to Remove this Talent to shortlist?',
+                              buttonsTextStyle:
+                                  const TextStyle(color: Colors.white),
+                              showCloseIcon: true,
+                              btnCancelOnPress: () {},
+                              btnOkOnPress: () {
+                                onRemoveTalentFromShortlist();
+                              },
+                              btnOkColor: primaryColor,
+                              btnCancelColor: secondaryColor,
+                              barrierColor:
+                                  Colors.purple[900]?.withOpacity(0.1),
+                            ).show();
+                          } else {
+                            AwesomeDialog(
+                              context: context,
+                              dialogType: DialogType.QUESTION,
+                              headerAnimationLoop: false,
+                              animType: AnimType.BOTTOMSLIDE,
+                              title: '',
+                              desc:
+                                  'Do you want to add this Talent to shortlist?',
+                              buttonsTextStyle:
+                                  const TextStyle(color: Colors.white),
+                              showCloseIcon: true,
+                              btnCancelOnPress: () {},
+                              btnOkOnPress: () {
+                                onAddTalentToShortlist();
+                              },
+                              btnOkColor: primaryColor,
+                              btnCancelColor: secondaryColor,
+                              barrierColor:
+                                  Colors.purple[900]?.withOpacity(0.1),
+                            ).show();
+                          }
+                        },
+                        // icon: const Icon(CupertinoIcons.delete_solid),
+                        icon: isShortlist
+                            ? const Icon(CupertinoIcons.multiply_circle)
+                            : const Icon(CupertinoIcons.person_add),
+                        color: Colors.white,
+                        iconSize: 30,
                       ),
                     ],
                   ),

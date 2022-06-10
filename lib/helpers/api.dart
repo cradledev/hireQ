@@ -198,12 +198,25 @@ class APIClient {
     }
   }
 
-  // get talents either applied or shortlist for current company per job
+  // get talents either applied for current company per job
   Future<http.Response> getTalentsAppliedForPerJob({token, pageNum, pageLength, jobId}) async {
     try {
       header['api-token'] = token;
       var response = await http.get(
           Uri.parse(endpoint + "/appliedjobs/talents_by_job/" + jobId.toString() + "/" + pageNum.toString() + "/" + pageLength.toString()),
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception("Unknow Error.");
+    }
+  }
+
+  // get talents shortlist for current company per job
+  Future<http.Response> getTalentsShortlistForPerJob({token, pageNum, pageLength, jobId}) async {
+    try {
+      header['api-token'] = token;
+      var response = await http.get(
+          Uri.parse(endpoint + "/appliedjobs/shortlist_talents_by_job/" + jobId.toString() + "/" + pageNum.toString() + "/" + pageLength.toString()),
           headers: header);
       return response;
     } catch (e) {
@@ -359,6 +372,20 @@ class APIClient {
     try {
       var response = await http.get(
          Uri.parse(endpoint + "/talents/talents_all/" + pageNum.toString() + "/" + pageLength.toString()),
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception("Unkown Error.");
+    }
+  }
+
+  // update shortlist status (add Or remove candidate from shortlist)
+  Future<http.Response> updateShortlistStatus({token, payloads, appliedJobId}) async {
+    try {
+      header['api-token'] = token;
+      var response = await http.put(
+         Uri.parse(endpoint + "/appliedjobs/update/" + appliedJobId.toString()),
+         body: payloads,
           headers: header);
       return response;
     } catch (e) {
