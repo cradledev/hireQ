@@ -30,10 +30,6 @@ class _MessageCompanyScreen extends State<MessageCompanyScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      "Message Sent & Received",
-                      style: TextStyle(fontSize: 26, color: primaryColor),
-                    ),
                     IconButton(
                       onPressed: () {
                         Navigator.push(
@@ -51,10 +47,19 @@ class _MessageCompanyScreen extends State<MessageCompanyScreen> {
                           ),
                         );
                       },
-                      icon: const Icon(CupertinoIcons.forward),
+                      icon: const Icon(CupertinoIcons.arrow_left),
                       color: primaryColor,
                       iconSize: 30,
-                    )
+                    ),
+                    const Expanded(
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          "Message Sent & Received",
+                          style: TextStyle(fontSize: 26, color: primaryColor),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

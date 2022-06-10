@@ -15,6 +15,7 @@ class TalentModel {
   String resume;
   bool is_shortlist;
   int applied_job_id;
+  String uuid;
 
   TalentModel({
     this.id,
@@ -30,7 +31,8 @@ class TalentModel {
     this.video_id,
     this.is_shortlist,
     this.applied_job_id,
-    this.resume
+    this.resume,
+    this.uuid
   });
   factory TalentModel.fromJson(Map<String, dynamic> json) {
     String _region = "";
@@ -55,7 +57,8 @@ class TalentModel {
       video_id: json['video_id'],
       resume: json['resume'] ?? "",
       is_shortlist: json['is_shortlist'] ?? false,
-      applied_job_id: json['appliedjob_id']
+      applied_job_id: json['appliedjob_id'],
+      uuid: json['uuid']
     );
   }
 
@@ -72,7 +75,8 @@ class TalentModel {
       "company": company,
       "talent_logo": talent_logo,
       "video_id": video_id,
-      "resume" : resume
+      "resume" : resume,
+      "uuid" : uuid
     };
   }
 }

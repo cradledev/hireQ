@@ -211,7 +211,7 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
         pageBuilder: (context, animation, secondaryAnimation) {
           return FadeTransition(
             opacity: animation,
-            child: JobDetailCompanyBoard(selectedCompanyJob: _pCompanyJob),
+            child: JobDetailCompanyBoard(selectedCompanyJob: _pCompanyJob, sourceFrom: "profile"),
           );
         },
       ),

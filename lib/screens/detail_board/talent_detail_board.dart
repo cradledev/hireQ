@@ -17,9 +17,11 @@ import 'package:hire_q/widgets/custom_drawer_widget.dart';
 import 'package:provider/provider.dart';
 
 class TalentDetailBoard extends StatefulWidget {
-  const TalentDetailBoard({Key key, this.data, this.type}) : super(key: key);
+  const TalentDetailBoard({Key key, this.data, this.type, this.shortlistSourceFrom = "", this.sourceFromDetailCompany = ""}) : super(key: key);
   final TalentModel data;
   final String type;
+  final String shortlistSourceFrom;
+  final String sourceFromDetailCompany;
   @override
   _TalentDetailBoard createState() => _TalentDetailBoard();
 }
@@ -55,6 +57,8 @@ class _TalentDetailBoard extends State<TalentDetailBoard> {
                 child: ConsiderTalentListBoard(
                   type: widget.type,
                   jobId: _selectedAppliedJob.id,
+                  shortlistSourceFrom :  widget.shortlistSourceFrom,
+                  sourceFromDetailCompany : widget.sourceFromDetailCompany
                 ),
               );
             }),

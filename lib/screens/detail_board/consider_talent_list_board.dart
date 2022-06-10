@@ -12,6 +12,7 @@ import 'package:hire_q/provider/index.dart';
 import 'package:hire_q/provider/jobs_provider.dart';
 import 'package:hire_q/screens/detail_board/job_detail_company_board.dart';
 import 'package:hire_q/screens/detail_board/talent_detail_board.dart';
+import 'package:hire_q/screens/jobsq/jobs_q_company_screen.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
 
 import 'package:hire_q/widgets/common_widget.dart';
@@ -20,10 +21,17 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 
 class ConsiderTalentListBoard extends StatefulWidget {
-  const ConsiderTalentListBoard({Key key, this.type, this.jobId})
+  const ConsiderTalentListBoard(
+      {Key key,
+      this.type,
+      this.jobId,
+      this.shortlistSourceFrom = "",
+      this.sourceFromDetailCompany = ""})
       : super(key: key);
   final String type;
   final int jobId;
+  final String sourceFromDetailCompany;
+  final String shortlistSourceFrom;
   @override
   _ConsiderTalentListBoard createState() => _ConsiderTalentListBoard();
 }
@@ -111,21 +119,52 @@ class _ConsiderTalentListBoard extends State<ConsiderTalentListBoard> {
   // go to previous page (job detail company board page)
   void onPreviousPage() async {
     AppliedJobModel _selectedAppliedJob =
-        Provider.of<JobsProvider>(context, listen: false).currentSelectedAppliedJob;
-    Navigator.pushReplacement(
-      context,
-      PageRouteBuilder(
-          transitionDuration: const Duration(microseconds: 800),
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return FadeTransition(
-              opacity: animation,
-              child: JobDetailCompanyBoard(
-                selectedCompanyJob:
-                    _selectedAppliedJob,
-              ),
-            );
-          }),
-    );
+        Provider.of<JobsProvider>(context, listen: false)
+            .currentSelectedAppliedJob;
+    if (widget.shortlistSourceFrom == "profile") {
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+            transitionDuration: const Duration(microseconds: 800),
+            pageBuilder: (context, animation, secondaryAnimation) {
+              return FadeTransition(
+                opacity: animation,
+                child: const JobsQCompanyScreen(),
+              );
+            }),
+      );
+    } else {
+      if (widget.sourceFromDetailCompany == "profile") {
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+              transitionDuration: const Duration(microseconds: 800),
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: JobDetailCompanyBoard(
+                    selectedCompanyJob: _selectedAppliedJob,
+                    sourceFrom: "profile",
+                  ),
+                );
+              }),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+              transitionDuration: const Duration(microseconds: 800),
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: JobDetailCompanyBoard(
+                    selectedCompanyJob: _selectedAppliedJob,
+                  ),
+                );
+              }),
+        );
+      }
+    }
   }
 
   @override
@@ -258,7 +297,13 @@ class _ConsiderTalentListBoard extends State<ConsiderTalentListBoard> {
                                   return FadeTransition(
                                     opacity: animation,
                                     child: TalentDetailBoard(
-                                        data: _perItem, type: widget.type),
+                                      data: _perItem,
+                                      type: widget.type,
+                                      shortlistSourceFrom:
+                                          widget.shortlistSourceFrom,
+                                      sourceFromDetailCompany:
+                                          widget.sourceFromDetailCompany,
+                                    ),
                                   );
                                 },
                               ),

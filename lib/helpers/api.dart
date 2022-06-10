@@ -290,6 +290,19 @@ class APIClient {
     }
   }
 
+  // get comprehensive shortlist job and talents for self companies (shortlisted talents, info, etc)
+  Future<http.Response> getComprehensiveShortlistJobsInfoForCompanyJobs({token, companyId, pageNum, pageLength}) async {
+    try {
+      header['api-token'] = token;
+      var response = await http.get(
+          Uri.parse(endpoint + "/appliedjobs/shortlist_job_by_company/" + companyId.toString() + "/" + pageNum.toString() + "/" + pageLength.toString()),
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception("Unknow Error.");
+    }
+  }
+
   // ================= file upload function =================
 
   // file upload with post method including mutipart request

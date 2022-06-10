@@ -8,6 +8,7 @@ class CompanyModel {
   String region;
   String phone_number;
   String account_manager_name;
+  String uuid;
   CompanyModel({
     this.id,
     this.name,
@@ -15,7 +16,8 @@ class CompanyModel {
     this.description,
     this.region,
     this.phone_number,
-    this.account_manager_name
+    this.account_manager_name,
+    this.uuid
   });
   factory CompanyModel.fromJson(Map<String, dynamic> json) {
     String _region = "";
@@ -33,7 +35,8 @@ class CompanyModel {
       description: json['description'] ?? "",
       region: _region,
       phone_number: _phoneNumber,
-      account_manager_name: json['account_manager_name'] ?? ""
+      account_manager_name: json['account_manager_name'] ?? "",
+      uuid: json['uuid']
     );
   }
    Map<String, dynamic> toMap() {
@@ -44,7 +47,8 @@ class CompanyModel {
       "description": description,
       "region": region,
       "phone_number": phone_number,
-      "account_manager_name": account_manager_name
+      "account_manager_name": account_manager_name,
+      "uuid" : uuid
     };
   }
 }

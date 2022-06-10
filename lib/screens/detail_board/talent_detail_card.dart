@@ -8,6 +8,7 @@ import 'package:hire_q/helpers/constants.dart';
 import 'package:hire_q/models/talent_model.dart';
 import 'package:hire_q/provider/index.dart';
 import 'package:hire_q/provider/jobs_provider.dart';
+import 'package:hire_q/screens/detail_board/message_talent_board.dart';
 import 'package:hire_q/screens/profile/edit/profile_talent_addvideo_screen.dart';
 import 'package:hire_q/widgets/common_widget.dart';
 import 'package:provider/provider.dart';
@@ -505,12 +506,13 @@ class _TalentDetailCardState extends State<TalentDetailCard>
         headerAnimationLoop: false,
         animType: AnimType.BOTTOMSLIDE,
         title: '',
-        desc: 'Are you sure you want to connect with ${widget.talentData.first_name} ?',
+        desc:
+            'Are you sure you want to connect with ${widget.talentData.first_name} ?',
         buttonsTextStyle: const TextStyle(color: Colors.white),
         showCloseIcon: true,
         btnCancelOnPress: () {},
         btnOkOnPress: () {
-          
+          onConnectToTalent();
         },
         btnOkColor: primaryColor,
         btnCancelColor: secondaryColor,
@@ -523,7 +525,8 @@ class _TalentDetailCardState extends State<TalentDetailCard>
         headerAnimationLoop: false,
         animType: AnimType.BOTTOMSLIDE,
         title: '',
-        desc: 'You must add this Talent to shortlist in the first. Are you sure to add this Talent to Shortlist?',
+        desc:
+            'You must add this Talent to shortlist in the first. Are you sure to add this Talent to Shortlist?',
         buttonsTextStyle: const TextStyle(color: Colors.white),
         showCloseIcon: true,
         btnCancelOnPress: () {},
@@ -551,6 +554,25 @@ class _TalentDetailCardState extends State<TalentDetailCard>
       isDetail = true;
     });
     _controller.forward();
+  }
+
+  // connect to talent with message
+  void onConnectToTalent() {
+    print(widget.talentData.toMap());
+    //  widget.talentData = talent detail info including name, uuid, etc (please refer the talent model)
+    
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        transitionDuration: const Duration(microseconds: 800),
+        pageBuilder: ((context, animation, secondaryAnimation) {
+          return FadeTransition(
+            opacity: animation,
+            child: const MessageTalentBoard(),
+          );
+        }),
+      ),
+    );
   }
 
   @override

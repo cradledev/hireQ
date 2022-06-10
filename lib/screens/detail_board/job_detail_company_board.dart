@@ -17,9 +17,11 @@ import 'package:hire_q/widgets/custom_drawer_widget.dart';
 import 'package:provider/provider.dart';
 
 class JobDetailCompanyBoard extends StatefulWidget {
-  const JobDetailCompanyBoard({Key key, this.selectedCompanyJob})
+  const JobDetailCompanyBoard(
+      {Key key, this.selectedCompanyJob, this.sourceFrom = "", })
       : super(key: key);
   final AppliedJobModel selectedCompanyJob;
+  final String sourceFrom;
   @override
   _JobDetailCompanyBoard createState() => _JobDetailCompanyBoard();
 }
@@ -47,6 +49,36 @@ class _JobDetailCompanyBoard extends State<JobDetailCompanyBoard> {
     super.dispose();
   }
 
+  void onPreviousPage() {
+    if (widget.sourceFrom == "profile") {
+      Navigator.pushAndRemoveUntil(
+          context,
+          PageRouteBuilder(
+              transitionDuration: const Duration(microseconds: 800),
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: const LobbyScreen(
+                    indexTab: 3,
+                  ),
+                );
+              }),
+          (route) => false);
+    } else {
+      Navigator.pushAndRemoveUntil(
+          context,
+          PageRouteBuilder(
+              transitionDuration: const Duration(microseconds: 800),
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: const AppliedQCompanyScreen(),
+                );
+              }),
+          (route) => false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -62,17 +94,7 @@ class _JobDetailCompanyBoard extends State<JobDetailCompanyBoard> {
           ),
           backgroundColor: primaryColor,
           leadingAction: () {
-            Navigator.pushAndRemoveUntil(
-                context,
-                PageRouteBuilder(
-                    transitionDuration: const Duration(microseconds: 800),
-                    pageBuilder: (context, animation, secondaryAnimation) {
-                      return FadeTransition(
-                        opacity: animation,
-                        child: const AppliedQCompanyScreen(),
-                      );
-                    }),
-                (route) => false);
+            onPreviousPage();
           },
           leadingFlag: true,
           actionEvent: () {},
@@ -279,6 +301,7 @@ class _JobDetailCompanyBoard extends State<JobDetailCompanyBoard> {
                                     opacity: animation,
                                     child: ConsiderTalentListBoard(
                                         type: "shortlist",
+                                        sourceFromDetailCompany: widget.sourceFrom,
                                         jobId: widget.selectedCompanyJob?.id),
                                   );
                                 },
