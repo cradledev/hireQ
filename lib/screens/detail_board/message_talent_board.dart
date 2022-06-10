@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +13,10 @@ import 'package:hire_q/widgets/custom_drawer_widget.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:open_file/open_file.dart';
-import 'package:uuid/uuid.dart';
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 import 'package:hire_q/helpers/constants.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
@@ -21,12 +24,14 @@ import 'package:hire_q/screens/lobby/lobby_screen.dart';
 import 'package:hire_q/widgets/common_widget.dart';
 
 class MessageTalentBoard extends StatefulWidget {
-  const MessageTalentBoard({Key key}) : super(key: key);
+  const MessageTalentBoard({Key key, this.room}) : super(key: key);
+  final types.Room room;
   @override
   _MessageTalentBoard createState() => _MessageTalentBoard();
 }
 
 class _MessageTalentBoard extends State<MessageTalentBoard> {
+  bool _isAttachmentUploading = false;
   int currentPage = 2;
   // search text controller
   TextEditingController _searchTextController;
@@ -35,7 +40,6 @@ class _MessageTalentBoard extends State<MessageTalentBoard> {
   @override
   void initState() {
     super.initState();
-    _loadMessages();
   }
 
   void _addMessage(types.Message message) {
@@ -95,17 +99,28 @@ class _MessageTalentBoard extends State<MessageTalentBoard> {
     );
 
     if (result != null && result.files.single.path != null) {
-      final message = types.FileMessage(
-        author: _user,
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-        id: const Uuid().v4(),
-        mimeType: lookupMimeType(result.files.single.path),
-        name: result.files.single.name,
-        size: result.files.single.size,
-        uri: result.files.single.path,
-      );
+      _setAttachmentUploading(true);
+      final name = result.files.single.name;
+      final filePath = result.files.single.path;
+      final file = File(filePath);
 
-      _addMessage(message);
+      try {
+        final reference = FirebaseStorage.instance.ref(name);
+        await reference.putFile(file);
+        final uri = await reference.getDownloadURL();
+
+        final message = types.PartialFile(
+          mimeType: lookupMimeType(filePath),
+          name: name,
+          size: result.files.single.size,
+          uri: uri,
+        );
+
+        FirebaseChatCore.instance.sendMessage(message, widget.room.id);
+        _setAttachmentUploading(false);
+      } finally {
+        _setAttachmentUploading(false);
+      }
     }
   }
 
@@ -117,27 +132,55 @@ class _MessageTalentBoard extends State<MessageTalentBoard> {
     );
 
     if (result != null) {
+      _setAttachmentUploading(true);
+      final file = File(result.path);
+      final size = file.lengthSync();
       final bytes = await result.readAsBytes();
       final image = await decodeImageFromList(bytes);
+      final name = result.name;
 
-      final message = types.ImageMessage(
-        author: _user,
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-        height: image.height.toDouble(),
-        id: const Uuid().v4(),
-        name: result.name,
-        size: bytes.length,
-        uri: result.path,
-        width: image.width.toDouble(),
-      );
+      try {
+        final reference = FirebaseStorage.instance.ref(name);
+        await reference.putFile(file);
+        final uri = await reference.getDownloadURL();
 
-      _addMessage(message);
+        final message = types.PartialImage(
+          height: image.height.toDouble(),
+          name: name,
+          size: size,
+          uri: uri,
+          width: image.width.toDouble(),
+        );
+
+        FirebaseChatCore.instance.sendMessage(
+          message,
+          widget.room.id,
+        );
+        _setAttachmentUploading(false);
+      } finally {
+        _setAttachmentUploading(false);
+      }
     }
   }
 
   void _handleMessageTap(BuildContext context, types.Message message) async {
     if (message is types.FileMessage) {
-      await OpenFile.open(message.uri);
+      var localPath = message.uri;
+
+      if (message.uri.startsWith('http')) {
+        final client = http.Client();
+        final request = await client.get(Uri.parse(message.uri));
+        final bytes = request.bodyBytes;
+        final documentsDir = (await getApplicationDocumentsDirectory()).path;
+        localPath = '$documentsDir/${message.name}';
+
+        if (!File(localPath).existsSync()) {
+          final file = File(localPath);
+          await file.writeAsBytes(bytes);
+        }
+      }
+
+      await OpenFile.open(localPath);
     }
   }
 
@@ -145,36 +188,21 @@ class _MessageTalentBoard extends State<MessageTalentBoard> {
     types.TextMessage message,
     types.PreviewData previewData,
   ) {
-    final index = _messages.indexWhere((element) => element.id == message.id);
-    final updatedMessage = _messages[index].copyWith(previewData: previewData);
+    final updatedMessage = message.copyWith(previewData: previewData);
 
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
-      setState(() {
-        _messages[index] = updatedMessage;
-      });
-    });
+    FirebaseChatCore.instance.updateMessage(updatedMessage, widget.room.id);
   }
 
   void _handleSendPressed(types.PartialText message) {
-    final textMessage = types.TextMessage(
-      author: _user,
-      createdAt: DateTime.now().millisecondsSinceEpoch,
-      id: const Uuid().v4(),
-      text: message.text,
+    FirebaseChatCore.instance.sendMessage(
+      message,
+      widget.room.id,
     );
-
-    _addMessage(textMessage);
   }
 
-  void _loadMessages() async {
-    final response = await rootBundle.loadString('assets/messages.json');
-
-    final messages = (jsonDecode(response) as List)
-        .map((e) => types.Message.fromJson(e as Map<String, dynamic>))
-        .toList();
-
+  void _setAttachmentUploading(bool uploading) {
     setState(() {
-      _messages = messages;
+      _isAttachmentUploading = uploading;
     });
   }
 
@@ -269,8 +297,7 @@ class _MessageTalentBoard extends State<MessageTalentBoard> {
                     children: [
                       Container(
                         width: MediaQuery.of(context).size.width,
-                        height:
-                            MediaQuery.of(context).size.height * 0.2,
+                        height: MediaQuery.of(context).size.height * 0.2,
                         padding: EdgeInsets.zero,
                         child: Stack(
                           fit: StackFit.expand,
@@ -305,8 +332,8 @@ class _MessageTalentBoard extends State<MessageTalentBoard> {
                               children: [
                                 Container(
                                   width: MediaQuery.of(context).size.width,
-                                  height: MediaQuery.of(context).size.height *
-                                      0.2,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.2,
                                   padding: EdgeInsets.zero,
                                   child: Column(
                                     crossAxisAlignment:
@@ -398,27 +425,33 @@ class _MessageTalentBoard extends State<MessageTalentBoard> {
                         ),
                       ),
                       Expanded(
-                        child: Column(
-                          children: [
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(0),
-                                child: Chat(
-                                  messages: _messages,
+                        child: StreamBuilder<types.Room>(
+                          initialData: widget.room,
+                          stream:
+                              FirebaseChatCore.instance.room(widget.room.id),
+                          builder: (context, snapshot) {
+                            return StreamBuilder<List<types.Message>>(
+                              initialData: const [],
+                              stream: FirebaseChatCore.instance
+                                  .messages(snapshot.data),
+                              builder: (context, snapshot) {
+                                return Chat(
+                                  isAttachmentUploading: _isAttachmentUploading,
+                                  messages: snapshot.data ?? [],
                                   onAttachmentPressed: _handleAtachmentPressed,
                                   onMessageTap: _handleMessageTap,
                                   onPreviewDataFetched:
                                       _handlePreviewDataFetched,
                                   onSendPressed: _handleSendPressed,
-                                  user: _user,
-                                  theme: const DefaultChatTheme(),
-                                  showUserAvatars: true,
-                                  showUserNames: true,
-                                  disableImageGallery: true,
-                                ),
-                              ),
-                            ),
-                          ],
+                                  user: types.User(
+                                    id: FirebaseChatCore
+                                            .instance.firebaseUser?.uid ??
+                                        '',
+                                  ),
+                                );
+                              },
+                            );
+                          },
                         ),
                       )
                     ],

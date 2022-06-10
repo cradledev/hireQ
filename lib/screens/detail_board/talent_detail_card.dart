@@ -12,6 +12,9 @@ import 'package:hire_q/screens/detail_board/message_talent_board.dart';
 import 'package:hire_q/screens/profile/edit/profile_talent_addvideo_screen.dart';
 import 'package:hire_q/widgets/common_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
+
 
 import 'package:hire_q/widgets/image_gradient_overlay.dart';
 
@@ -557,9 +560,13 @@ class _TalentDetailCardState extends State<TalentDetailCard>
   }
 
   // connect to talent with message
-  void onConnectToTalent() {
-    print(widget.talentData.toMap());
+  void onConnectToTalent() async {
+    types.User otheruser;
+    otheruser = types.User(id: widget.talentData.uuid, firstName: widget.talentData.first_name, lastName: widget.talentData.last_name);
     //  widget.talentData = talent detail info including name, uuid, etc (please refer the talent model)
+
+    final room = await FirebaseChatCore.instance.createRoom(otheruser);
+
     
     Navigator.push(
       context,
@@ -568,7 +575,7 @@ class _TalentDetailCardState extends State<TalentDetailCard>
         pageBuilder: ((context, animation, secondaryAnimation) {
           return FadeTransition(
             opacity: animation,
-            child: const MessageTalentBoard(),
+            child:  MessageTalentBoard(room: room),
           );
         }),
       ),
