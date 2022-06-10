@@ -78,19 +78,15 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
     // APIClient instance
     api = APIClient();
     // init get data including company, profile, company jobs
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   onGetCompany();
-    //   onGetProfile();
-    // });
-    onGetCompany().then((value) {
-      onGetCurrentCompayJobs(value);
-      onGetTotalCountOfTalentForCompanyJobs(value);
-      setState(() {
-        
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      onGetCompany().then((value) {
+        print(value);
+        onGetCurrentCompayJobs(value);
+        onGetTotalCountOfTalentForCompanyJobs(value);
+        setState(() {});
       });
+      onGetProfile();
     });
-    onGetProfile();
-    
   }
 
   // get total count of talents for this company
@@ -111,26 +107,11 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
   }
 
   Future<int> onGetCompany() async {
-    print(2);
-    try {
-      var res = await api.getCompany(
-          userId: appState.user['id'], token: appState.user['jwt_token']);
-      if (res.statusCode == 200) {
-        var body = jsonDecode(res.body.toString());
-        print(2.5);
-        appState.company =
-            CompanyModel.fromJson(body);
-        return body['id'];
-      } else {
-        throw Exception("Unkown Error.");
-      }
-    } catch (e) {
-      throw Exception("Unkown Error.");
-      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      //   backgroundColor: Colors.red,
-      //   content: Text(e.message),
-      // ));
-    }
+    var res = await api.getCompany(
+        userId: appState.user['id'], token: appState.user['jwt_token']);
+    var body = jsonDecode(res.body.toString());
+    appState.company = CompanyModel.fromJson(body);
+    return body['id'];
   }
 
   void onGetProfile() async {
@@ -159,7 +140,6 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
     try {
       var res = await api.getCurrentCompanyJobs(
           companyId: _pCompnayId, token: appState.user['jwt_token']);
-      print(5);
       if (res.statusCode == 200) {
         var body = jsonDecode(res.body.toString());
         if ((body as List).isNotEmpty) {

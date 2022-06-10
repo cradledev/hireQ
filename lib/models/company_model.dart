@@ -36,5 +36,16 @@ class CompanyModel {
       account_manager_name: json['account_manager_name'] ?? ""
     );
   }
+   Map<String, dynamic> toMap() {
+    return {
+      "id": id,
+      "name": name,
+      "user_id": user_id,
+      "description": description,
+      "region": region,
+      "phone_number": phone_number,
+      "account_manager_name": account_manager_name
+    };
+  }
 }
 

@@ -81,7 +81,7 @@ class _ProfileCompanyEdit extends State<ProfileCompanyEdit> {
   void onCreateCompanyVideo(ImageSource source) async {
     //
     final result = await _picker.pickVideo(
-        source: source, maxDuration: const Duration(seconds: 10));
+        source: source, maxDuration: const Duration(seconds: 60));
     if (result != null) {
       onUploadFile(result, type: "video");
     }
@@ -91,7 +91,7 @@ class _ProfileCompanyEdit extends State<ProfileCompanyEdit> {
   void onClickOverVideo(ImageSource source) async {
     //
     final result = await _picker.pickVideo(
-        source: source, maxDuration: const Duration(seconds: 10));
+        source: source, maxDuration: const Duration(seconds: 60));
     if (result != null) {
       onUploadFile(result, type: "video");
     }
@@ -115,7 +115,7 @@ class _ProfileCompanyEdit extends State<ProfileCompanyEdit> {
                 "video_id": _tmpProfile.video_id,
                 "video": _tmpProfile.video,
                 "job":
-                    _tmpProfile.job.isEmpty ? [] : jsonDecode(_tmpProfile.job),
+                    _tmpProfile.job == null ? [] : jsonDecode(_tmpProfile.job),
                 "work_history": _tmpProfile.work_history.isEmpty
                     ? []
                     : jsonDecode(_tmpProfile.work_history),
@@ -132,7 +132,7 @@ class _ProfileCompanyEdit extends State<ProfileCompanyEdit> {
                 "video_id": _tmpProfile.video_id,
                 "video": body['url'],
                 "job":
-                    _tmpProfile.job.isEmpty ? [] : jsonDecode(_tmpProfile.job),
+                    _tmpProfile.job == null ? [] : jsonDecode(_tmpProfile.job),
                 "work_history": _tmpProfile.work_history.isEmpty
                     ? []
                     : jsonDecode(_tmpProfile.work_history),
@@ -164,7 +164,7 @@ class _ProfileCompanyEdit extends State<ProfileCompanyEdit> {
                 "video_id": _tmpProfile?.video_id,
                 "video": body['url'],
                 "job":
-                    _tmpProfile.job.isEmpty ? [] : jsonDecode(_tmpProfile.job),
+                    _tmpProfile.job == null ? [] : jsonDecode(_tmpProfile.job),
                 "work_history": _tmpProfile.work_history.isEmpty
                     ? []
                     : jsonDecode(_tmpProfile.work_history),

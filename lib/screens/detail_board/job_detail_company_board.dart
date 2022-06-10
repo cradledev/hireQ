@@ -30,9 +30,6 @@ class _JobDetailCompanyBoard extends State<JobDetailCompanyBoard> {
 
   // Appstate setting
   AppState appState;
-
-  // job provider setting
-  JobsProvider jobProvider;
   @override
   void initState() {
     super.initState();
@@ -42,8 +39,6 @@ class _JobDetailCompanyBoard extends State<JobDetailCompanyBoard> {
   // custom init function
   void onInit() {
     appState = Provider.of<AppState>(context, listen: false);
-    jobProvider = Provider.of<JobsProvider>(context, listen: false);
-    jobProvider.selectedAppliedJob = widget.selectedCompanyJob;
   }
 
   @override
@@ -303,7 +298,7 @@ class _JobDetailCompanyBoard extends State<JobDetailCompanyBoard> {
                                       width: 120,
                                       height: 64,
                                       child: Text(
-                                        jobProvider?.selectedAppliedJob?.shortlisttalents_count?.toString() ?? "0",
+                                        _jobProvider?.selectedAppliedJob?.shortlisttalents_count?.toString() ?? "0",
                                         style: const TextStyle(
                                           fontSize: 32,
                                           color: Colors.white,

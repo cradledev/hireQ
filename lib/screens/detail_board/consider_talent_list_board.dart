@@ -63,17 +63,9 @@ class _ConsiderTalentListBoard extends State<ConsiderTalentListBoard> {
 
     // The PageController allows us to instruct the PageView to change pages.
     _pagingController = PagingController(firstPageKey: 0);
-
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
-    jobsProvider.addListener(() {
-      if (widget.type == "shortlist") {
-        _pagingController.refresh();
-      }
-    });
-    // var res = await api.getTalentsAppliedForPerJob(jobId: widget.jobId, pageLength: 5, pageNum: 1, token: appState.user['jwt_token']);
-    // print(res.body);
   }
 
   // fetch job data with pagination
@@ -121,6 +113,7 @@ class _ConsiderTalentListBoard extends State<ConsiderTalentListBoard> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
+        print(1);
         return false;
       },
       child: Scaffold(
@@ -235,7 +228,6 @@ class _ConsiderTalentListBoard extends State<ConsiderTalentListBoard> {
                     padding: const EdgeInsets.all(16),
                     builderDelegate: PagedChildBuilderDelegate<TalentModel>(
                       itemBuilder: (context, _perItem, index) {
-                        print(_perItem.talent_logo == null);
                         return InkWell(
                           onTap: () {
                             Navigator.push(

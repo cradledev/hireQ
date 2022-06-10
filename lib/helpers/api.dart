@@ -167,7 +167,7 @@ class APIClient {
           headers: header);
       return response;
     } catch (e) {
-      throw Exception("Unknow Error.");
+      throw Exception(e);
     }
   }
 

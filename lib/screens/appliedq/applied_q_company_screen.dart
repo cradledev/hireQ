@@ -33,8 +33,6 @@ class _AppliedQCompanyScreen extends State<AppliedQCompanyScreen> {
   // api setting
   APIClient api;
 
-  // job provider setting
-  JobsProvider jobsProvider;
   // scroll page controller for infinite scroll
   PagingController<int, AppliedJobModel> _pagingController;
   static const PageSize = 2;
@@ -47,8 +45,8 @@ class _AppliedQCompanyScreen extends State<AppliedQCompanyScreen> {
 
   // custom init func
   void onInit() async {
+    print("applied q screen");
     appState = Provider.of<AppState>(context, listen: false);
-    jobsProvider = Provider.of<JobsProvider>(context, listen: false);
     api = APIClient();
 
     // The PageController allows us to instruct the PageView to change pages.
@@ -57,14 +55,11 @@ class _AppliedQCompanyScreen extends State<AppliedQCompanyScreen> {
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
-    jobsProvider.addListener(() {
-      _pagingController.refresh();
-    });
+    
   }
 
   // fetch job data with pagination
   Future<void> _fetchPage(int pageKey) async {
-    print(1);
     try {
       var res = await api.getComprehensiveJobsInfoForCompanyJobs(
           companyId: appState.company.id,
@@ -303,7 +298,7 @@ class _AppliedQCompanyScreen extends State<AppliedQCompanyScreen> {
 
   // when click per item, it goes to detail page including shortlist, applied q counts for per job for self company
   void onGotoDetail(AppliedJobModel _pAppliedJob) {
-    
+    Provider.of<JobsProvider>(context, listen: false).selectedAppliedJob = _pAppliedJob;
     Navigator.push(
       context,
       PageRouteBuilder(

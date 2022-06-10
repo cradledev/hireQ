@@ -201,7 +201,7 @@ class CustomDrawerWidget extends StatelessWidget {
         appState.setLocalStorage(key: "user", value: "");
         appState.setLocalStorage(key: "firebaseuser", value: "");
         appState.removeAllState();
-        jobsProvider.reset();
+        jobsProvider.removeAll();
         Navigator.pushAndRemoveUntil(
             context,
             PageRouteBuilder(

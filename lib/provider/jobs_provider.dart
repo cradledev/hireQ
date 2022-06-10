@@ -17,6 +17,7 @@ class JobsProvider extends ChangeNotifier {
     _currentCompanyJobs = [];
     _jobList = [];
     _selectedAppliedJob = null;
+    isShortlistChanged = false;
   }
 
   // get
@@ -48,9 +49,11 @@ class JobsProvider extends ChangeNotifier {
   }
 
   // reset func
-  void reset() {
+  void removeAll() {
     currentCompanyJobs = [];
     jobList = [];
+    selectedAppliedJob = null;
+    isShortlistChanged = false;
   }
   // adding current company job
   void addCurrentCompanyJob(AppliedJobModel item) {
