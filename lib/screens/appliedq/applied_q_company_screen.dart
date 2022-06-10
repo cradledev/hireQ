@@ -110,7 +110,18 @@ class _AppliedQCompanyScreen extends State<AppliedQCompanyScreen> {
           ),
           backgroundColor: primaryColor,
           leadingAction: () {
-            Navigator.of(context).pop();
+            Navigator.push(
+              context,
+              PageRouteBuilder(
+                transitionDuration: const Duration(milliseconds: 800),
+                pageBuilder: (context, animation, secondaryAnimation) {
+                  return FadeTransition(
+                    opacity: animation,
+                    child: const LobbyScreen(indexTab: 3),
+                  );
+                },
+              ),
+            );
           },
           leadingFlag: true,
           actionEvent: () {},
@@ -298,7 +309,7 @@ class _AppliedQCompanyScreen extends State<AppliedQCompanyScreen> {
 
   // when click per item, it goes to detail page including shortlist, applied q counts for per job for self company
   void onGotoDetail(AppliedJobModel _pAppliedJob) {
-    Provider.of<JobsProvider>(context, listen: false).selectedAppliedJob = _pAppliedJob;
+    Provider.of<JobsProvider>(context, listen: false).currentSelectedAppliedJob = _pAppliedJob;
     Navigator.push(
       context,
       PageRouteBuilder(

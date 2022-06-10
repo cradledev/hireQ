@@ -79,9 +79,8 @@ class _TalentDetailCardState extends State<TalentDetailCard>
           isShortlist = false;
         });
         // update state for job shortlist changed
-        bool _isShortlistChanged = jobProvider.isShortlistChanged;
-        jobProvider.isShortlistChanged = !_isShortlistChanged;
-        jobProvider.selectedAppliedJob.shortlisttalents_count = jobProvider.selectedAppliedJob.shortlisttalents_count - 1;
+        jobProvider.currentSelectedAppliedJob.shortlisttalents_count =
+            jobProvider.currentSelectedAppliedJob.shortlisttalents_count - 1;
 
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text("Successfully removed."),
@@ -111,9 +110,8 @@ class _TalentDetailCardState extends State<TalentDetailCard>
           isShortlist = true;
         });
         // update state for job shortlist changed
-        bool _isShortlistChanged = jobProvider.isShortlistChanged;
-        jobProvider.isShortlistChanged = !_isShortlistChanged;
-        jobProvider.selectedAppliedJob.shortlisttalents_count = jobProvider.selectedAppliedJob.shortlisttalents_count + 1;
+        jobProvider.currentSelectedAppliedJob.shortlisttalents_count =
+            jobProvider.currentSelectedAppliedJob.shortlisttalents_count + 1;
 
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text("Successfully added."),
@@ -427,7 +425,9 @@ class _TalentDetailCardState extends State<TalentDetailCard>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          onChatMessage();
+                        },
                         icon: const Icon(CupertinoIcons.chat_bubble_2_fill),
                         color: Colors.white,
                         iconSize: 30,
@@ -494,6 +494,47 @@ class _TalentDetailCardState extends State<TalentDetailCard>
         ],
       ),
     );
+  }
+
+  // on chat function
+  void onChatMessage() {
+    if (isShortlist) {
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.QUESTION,
+        headerAnimationLoop: false,
+        animType: AnimType.BOTTOMSLIDE,
+        title: '',
+        desc: 'Are you sure you want to connect with ${widget.talentData.first_name} ?',
+        buttonsTextStyle: const TextStyle(color: Colors.white),
+        showCloseIcon: true,
+        btnCancelOnPress: () {},
+        btnOkOnPress: () {
+          
+        },
+        btnOkColor: primaryColor,
+        btnCancelColor: secondaryColor,
+        barrierColor: Colors.purple[900]?.withOpacity(0.1),
+      ).show();
+    } else {
+      AwesomeDialog(
+        context: context,
+        dialogType: DialogType.INFO,
+        headerAnimationLoop: false,
+        animType: AnimType.BOTTOMSLIDE,
+        title: '',
+        desc: 'You must add this Talent to shortlist in the first. Are you sure to add this Talent to Shortlist?',
+        buttonsTextStyle: const TextStyle(color: Colors.white),
+        showCloseIcon: true,
+        btnCancelOnPress: () {},
+        btnOkOnPress: () {
+          onAddTalentToShortlist();
+        },
+        btnOkColor: primaryColor,
+        btnCancelColor: secondaryColor,
+        barrierColor: Colors.purple[900]?.withOpacity(0.1),
+      ).show();
+    }
   }
   // open job detail board
 

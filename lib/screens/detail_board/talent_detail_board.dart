@@ -1,17 +1,25 @@
+import 'dart:convert';
+
 import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hire_q/helpers/constants.dart';
+import 'package:hire_q/models/applied_job_model.dart';
 import 'package:hire_q/models/talent_model.dart';
+import 'package:hire_q/provider/index.dart';
+import 'package:hire_q/provider/jobs_provider.dart';
+import 'package:hire_q/screens/detail_board/consider_talent_list_board.dart';
 import 'package:hire_q/screens/detail_board/talent_detail_card.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
 
 import 'package:hire_q/widgets/common_widget.dart';
 import 'package:hire_q/widgets/custom_drawer_widget.dart';
+import 'package:provider/provider.dart';
 
 class TalentDetailBoard extends StatefulWidget {
-  const TalentDetailBoard({Key key, this.data}) : super(key: key);
+  const TalentDetailBoard({Key key, this.data, this.type}) : super(key: key);
   final TalentModel data;
+  final String type;
   @override
   _TalentDetailBoard createState() => _TalentDetailBoard();
 }
@@ -20,14 +28,37 @@ class _TalentDetailBoard extends State<TalentDetailBoard> {
   int currentPage = 3;
   // search text controller
   TextEditingController _searchTextController;
+
   @override
   void initState() {
     super.initState();
+    onInit();
   }
 
+  void onInit() {}
   @override
   void dispose() {
     super.dispose();
+  }
+
+  // go to previous page (consider talent list board with selected applied job id)
+  void onPreviousPage() async {
+    AppliedJobModel _selectedAppliedJob =
+        Provider.of<JobsProvider>(context, listen: false).currentSelectedAppliedJob;
+    Navigator.pushAndRemoveUntil(
+        context,
+        PageRouteBuilder(
+            transitionDuration: const Duration(microseconds: 800),
+            pageBuilder: (context, animation, secondaryAnimation) {
+              return FadeTransition(
+                opacity: animation,
+                child: ConsiderTalentListBoard(
+                  type: widget.type,
+                  jobId: _selectedAppliedJob.id,
+                ),
+              );
+            }),
+        (route) => false);
   }
 
   @override
@@ -45,7 +76,7 @@ class _TalentDetailBoard extends State<TalentDetailBoard> {
           ),
           backgroundColor: primaryColor,
           leadingAction: () {
-            Navigator.of(context).pop();
+            onPreviousPage();
           },
           leadingFlag: true,
           actionEvent: () {},

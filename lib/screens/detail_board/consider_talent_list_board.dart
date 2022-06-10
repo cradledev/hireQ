@@ -6,9 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hire_q/helpers/api.dart';
 import 'package:hire_q/helpers/constants.dart';
+import 'package:hire_q/models/applied_job_model.dart';
 import 'package:hire_q/models/talent_model.dart';
 import 'package:hire_q/provider/index.dart';
 import 'package:hire_q/provider/jobs_provider.dart';
+import 'package:hire_q/screens/detail_board/job_detail_company_board.dart';
 import 'package:hire_q/screens/detail_board/talent_detail_board.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
 
@@ -37,8 +39,6 @@ class _ConsiderTalentListBoard extends State<ConsiderTalentListBoard> {
   // API setting
   APIClient api;
 
-  // jobs provider setting
-  JobsProvider jobsProvider;
   // scroll page controller for infinite scroll
   PagingController<int, TalentModel> _pagingController;
   static const PageSize = 2;
@@ -58,7 +58,6 @@ class _ConsiderTalentListBoard extends State<ConsiderTalentListBoard> {
   // custom init function
   void onInit() async {
     appState = Provider.of<AppState>(context, listen: false);
-    jobsProvider = Provider.of<JobsProvider>(context, listen: false);
     api = APIClient();
 
     // The PageController allows us to instruct the PageView to change pages.
@@ -80,10 +79,10 @@ class _ConsiderTalentListBoard extends State<ConsiderTalentListBoard> {
             token: appState.user['jwt_token']);
       } else {
         res = await api.getTalentsAppliedForPerJob(
-          jobId: widget.jobId,
-          pageLength: PageSize,
-          pageNum: pageKey + 1,
-          token: appState.user['jwt_token']);
+            jobId: widget.jobId,
+            pageLength: PageSize,
+            pageNum: pageKey + 1,
+            token: appState.user['jwt_token']);
       }
 
       if (res.statusCode == 200) {
@@ -109,11 +108,30 @@ class _ConsiderTalentListBoard extends State<ConsiderTalentListBoard> {
     }
   }
 
+  // go to previous page (job detail company board page)
+  void onPreviousPage() async {
+    AppliedJobModel _selectedAppliedJob =
+        Provider.of<JobsProvider>(context, listen: false).currentSelectedAppliedJob;
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+          transitionDuration: const Duration(microseconds: 800),
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return FadeTransition(
+              opacity: animation,
+              child: JobDetailCompanyBoard(
+                selectedCompanyJob:
+                    _selectedAppliedJob,
+              ),
+            );
+          }),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        print(1);
         return false;
       },
       child: Scaffold(
@@ -125,7 +143,7 @@ class _ConsiderTalentListBoard extends State<ConsiderTalentListBoard> {
           ),
           backgroundColor: primaryColor,
           leadingAction: () {
-            Navigator.of(context).pop();
+            onPreviousPage();
           },
           leadingFlag: true,
           actionEvent: () {},
@@ -240,8 +258,7 @@ class _ConsiderTalentListBoard extends State<ConsiderTalentListBoard> {
                                   return FadeTransition(
                                     opacity: animation,
                                     child: TalentDetailBoard(
-                                      data: _perItem,
-                                    ),
+                                        data: _perItem, type: widget.type),
                                   );
                                 },
                               ),

@@ -30,7 +30,6 @@ class AppState extends ChangeNotifier {
   // talent video list
   List _talentVideoList;
   
-
   //get
   get talentSwipeUp => _talentSwipeUp;
   get isTalent => _isTalent;

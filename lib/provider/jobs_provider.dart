@@ -8,16 +8,13 @@ class JobsProvider extends ChangeNotifier {
   // job list in total (same as contents in job search)
   List<AppliedJobModel> _jobList;
 
-  // job shortlist changed
-  bool _isShortlistChanged = false;
+  // current selected applied job 
+  AppliedJobModel _currentSelectedAppliedJob;
 
-  // selected company job
-  AppliedJobModel _selectedAppliedJob;
+  // job shortlist changed
   JobsProvider() {
     _currentCompanyJobs = [];
     _jobList = [];
-    _selectedAppliedJob = null;
-    isShortlistChanged = false;
   }
 
   // get
@@ -25,17 +22,10 @@ class JobsProvider extends ChangeNotifier {
 
   get jobList => _jobList;
 
-  get isShortlistChanged => _isShortlistChanged;
+  get currentSelectedAppliedJob => _currentSelectedAppliedJob;
 
-  get selectedAppliedJob => _selectedAppliedJob;
-  // set
-  set isShortlistChanged (bool value) {
-    _isShortlistChanged = value;
-    notifyListeners();
-  }
-
-  set selectedAppliedJob (AppliedJobModel value) {
-    _selectedAppliedJob = value;
+  set currentSelectedAppliedJob(AppliedJobModel value) {
+    _currentSelectedAppliedJob = value;
     notifyListeners();
   }
   set currentCompanyJobs(List<AppliedJobModel> value) {
@@ -52,8 +42,7 @@ class JobsProvider extends ChangeNotifier {
   void removeAll() {
     currentCompanyJobs = [];
     jobList = [];
-    selectedAppliedJob = null;
-    isShortlistChanged = false;
+    currentSelectedAppliedJob = null;
   }
   // adding current company job
   void addCurrentCompanyJob(AppliedJobModel item) {

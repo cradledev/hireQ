@@ -8,6 +8,7 @@ import 'package:hire_q/helpers/constants.dart';
 import 'package:hire_q/models/applied_job_model.dart';
 import 'package:hire_q/provider/index.dart';
 import 'package:hire_q/provider/jobs_provider.dart';
+import 'package:hire_q/screens/appliedq/applied_q_company_screen.dart';
 import 'package:hire_q/screens/detail_board/consider_talent_list_board.dart';
 import 'package:hire_q/screens/detail_board/job_detail_board.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
@@ -61,7 +62,17 @@ class _JobDetailCompanyBoard extends State<JobDetailCompanyBoard> {
           ),
           backgroundColor: primaryColor,
           leadingAction: () {
-            Navigator.of(context).pop();
+            Navigator.pushAndRemoveUntil(
+                context,
+                PageRouteBuilder(
+                    transitionDuration: const Duration(microseconds: 800),
+                    pageBuilder: (context, animation, secondaryAnimation) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: const AppliedQCompanyScreen(),
+                      );
+                    }),
+                (route) => false);
           },
           leadingFlag: true,
           actionEvent: () {},
@@ -215,8 +226,12 @@ class _JobDetailCompanyBoard extends State<JobDetailCompanyBoard> {
                                         width: 10,
                                       ),
                                       Text(
-                                        jsonDecode((widget.selectedCompanyJob)
-                                            .region)['city'],
+                                        widget.selectedCompanyJob.region
+                                                .isNotEmpty
+                                            ? jsonDecode(widget
+                                                .selectedCompanyJob
+                                                .region)['city']
+                                            : "No city",
                                         style: const TextStyle(
                                           fontSize: 18,
                                           color: Colors.white70,
@@ -250,88 +265,90 @@ class _JobDetailCompanyBoard extends State<JobDetailCompanyBoard> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Consumer<JobsProvider>(
-                        builder: (context, _jobProvider, child) {
-                          return InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                PageRouteBuilder(
-                                  transitionDuration:
-                                      const Duration(milliseconds: 800),
-                                  pageBuilder:
-                                      (context, animation, secondaryAnimation) {
-                                    return FadeTransition(
-                                      opacity: animation,
-                                      child: ConsiderTalentListBoard(
-                                          type: "shortlist",
-                                          jobId: widget.selectedCompanyJob?.id),
-                                    );
-                                  },
-                                ),
-                              );
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.only(
-                                  bottom: 10, left: 10, right: 10),
-                              decoration: BoxDecoration(
-                                boxShadow: [
-                                  BoxShadow(
-                                    offset: const Offset(0, 1),
-                                    blurRadius: 5,
-                                    color: Colors.black.withOpacity(0.3),
-                                  ),
-                                ],
+                          builder: (context, _pJobProvider, child) {
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                transitionDuration:
+                                    const Duration(milliseconds: 800),
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) {
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: ConsiderTalentListBoard(
+                                        type: "shortlist",
+                                        jobId: widget.selectedCompanyJob?.id),
+                                  );
+                                },
                               ),
-                              height: MediaQuery.of(context).size.height * 0.15,
-                              child: Card(
-                                color: primaryColor,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12)),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 15, horizontal: 25),
-                                      width: 120,
-                                      height: 64,
-                                      child: Text(
-                                        _jobProvider?.selectedAppliedJob?.shortlisttalents_count?.toString() ?? "0",
-                                        style: const TextStyle(
-                                          fontSize: 32,
-                                          color: Colors.white,
-                                        ),
+                            );
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.only(
+                                bottom: 10, left: 10, right: 10),
+                            decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  offset: const Offset(0, 1),
+                                  blurRadius: 5,
+                                  color: Colors.black.withOpacity(0.3),
+                                ),
+                              ],
+                            ),
+                            height: MediaQuery.of(context).size.height * 0.15,
+                            child: Card(
+                              color: primaryColor,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 15, horizontal: 25),
+                                    width: 120,
+                                    height: 64,
+                                    child: Text(
+                                      _pJobProvider.currentSelectedAppliedJob
+                                              ?.shortlisttalents_count
+                                              ?.toString() ??
+                                          "0",
+                                      style: const TextStyle(
+                                        fontSize: 32,
+                                        color: Colors.white,
                                       ),
                                     ),
-                                    Expanded(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: const [
-                                          Text(
-                                            "Shortlist",
-                                            style: TextStyle(
-                                                fontSize: 32,
-                                                color: Colors.white),
-                                          ),
-                                          Text(
-                                            "Q",
-                                            style: TextStyle(
-                                                fontSize: 32,
-                                                color: Colors.white),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
+                                  ),
+                                  Expanded(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: const [
+                                        Text(
+                                          "Shortlist",
+                                          style: TextStyle(
+                                              fontSize: 32,
+                                              color: Colors.white),
+                                        ),
+                                        Text(
+                                          "Q",
+                                          style: TextStyle(
+                                              fontSize: 32,
+                                              color: Colors.white),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        );
+                      }),
                       InkWell(
                         onTap: () {
                           Navigator.push(
