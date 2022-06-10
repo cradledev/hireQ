@@ -42,6 +42,8 @@ class _RegisterNextScreenState extends State<RegisterNextScreen> {
   TextEditingController lastnameController;
   TextEditingController currentJobTitleController;
   TextEditingController companyController;
+  TextEditingController yearsExperienceController;
+  TextEditingController educationController;
 
   // address values setting
   final GlobalKey<CSCPickerState> _cscPickerKey = GlobalKey();
@@ -85,6 +87,8 @@ class _RegisterNextScreenState extends State<RegisterNextScreen> {
     lastnameController = TextEditingController();
     currentJobTitleController = TextEditingController();
     companyController = TextEditingController();
+    yearsExperienceController = TextEditingController();
+    educationController = TextEditingController();
   }
 
   void _checkValidation() {
@@ -146,7 +150,9 @@ class _RegisterNextScreenState extends State<RegisterNextScreen> {
                 "state": stateValue
               },
               "current_jobTitle": currentJobTitleController.text,
-              "company": companyController.text
+              "company": companyController.text,
+              "years_experience" : yearsExperienceController.text,
+              "education" : educationController.text
             };
 
             print(payloads);
@@ -525,6 +531,34 @@ class _RegisterNextScreenState extends State<RegisterNextScreen> {
                                           // Return null if the entered password is valid
                                           return null;
                                         }),
+                                    decoration: ThemeHelper()
+                                        .inputBoxDecorationShaddow(),
+                                  ),
+                                  const SizedBox(
+                                    height: 30,
+                                  ),
+                                  Container(
+                                    child: TextFormField(
+                                      controller: yearsExperienceController,
+                                      decoration: ThemeHelper()
+                                          .textInputDecoration(
+                                              'Years Of Experience (*optional)',
+                                              'Enter years of your experience.'),
+                                    ),
+                                    decoration: ThemeHelper()
+                                        .inputBoxDecorationShaddow(),
+                                  ),
+                                  const SizedBox(
+                                    height: 30,
+                                  ),
+                                  Container(
+                                    child: TextFormField(
+                                      controller: educationController,
+                                      decoration: ThemeHelper()
+                                          .textInputDecoration(
+                                              'Education (*optional)',
+                                              'Enter education Level. (i.e. BS or BA, etc)'),
+                                    ),
                                     decoration: ThemeHelper()
                                         .inputBoxDecorationShaddow(),
                                   ),

@@ -198,6 +198,18 @@ class APIClient {
     }
   }
 
+  // get shortlisted job for per talent
+  Future<http.Response> getShortlistJobsByUserId({token, pageNum, pageLength}) async {
+    try {
+      header['api-token'] = token;
+      var response = await http.get(
+          Uri.parse(endpoint + "/appliedjobs/shortlist_jobs_by_user/" + pageNum.toString() + "/" + pageLength.toString()),
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception("Unknow Error.");
+    }
+  }
   // get talents either applied for current company per job
   Future<http.Response> getTalentsAppliedForPerJob({token, pageNum, pageLength, jobId}) async {
     try {

@@ -192,13 +192,14 @@ class _MessageTalentBoard extends State<MessageTalentBoard> {
       child: Scaffold(
         appBar: CustomAppBar(
           leadingIcon: const Icon(
-            CupertinoIcons.line_horizontal_3,
+            CupertinoIcons.arrow_left,
             size: 40,
             color: Colors.white,
           ),
           backgroundColor: primaryColor,
-          // leadingAction: () {
-          // },
+          leadingAction: () {
+            Navigator.of(context).pop();
+          },
           leadingFlag: true,
           actionEvent: () {},
           actionFlag: true,
@@ -253,191 +254,175 @@ class _MessageTalentBoard extends State<MessageTalentBoard> {
           textColor: primaryColor,
           inactiveIconColor: Colors.grey,
         ),
-        body: SingleChildScrollView(
+        body: Padding(
+          padding: EdgeInsets.zero,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Message Details",
-                      style: TextStyle(fontSize: 26, color: primaryColor),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(CupertinoIcons.forward),
-                      color: primaryColor,
-                      iconSize: 30,
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                height: MediaQuery.of(context).size.height * 0.7,
-                width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.symmetric(horizontal: 0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height * 0.35 * 4 / 6,
-                      padding: EdgeInsets.zero,
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          CachedNetworkImage(
-                            imageUrl:
-                                "https://images.pexels.com/photos/2422915/pexels-photo-2422915.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-                            progressIndicatorBuilder:
-                                (context, url, downloadProgress) {
-                              return Center(
-                                child: SizedBox(
-                                  width: 30,
-                                  height: 30,
-                                  child: CircularProgressIndicator(
-                                      value: downloadProgress.progress),
+              Expanded(
+                child: Container(
+                  // height: MediaQuery.of(context).size.height * 0.7,
+                  width: MediaQuery.of(context).size.width,
+                  padding: const EdgeInsets.symmetric(horizontal: 0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        height:
+                            MediaQuery.of(context).size.height * 0.2,
+                        padding: EdgeInsets.zero,
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            CachedNetworkImage(
+                              imageUrl:
+                                  "https://images.pexels.com/photos/2422915/pexels-photo-2422915.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+                              progressIndicatorBuilder:
+                                  (context, url, downloadProgress) {
+                                return Center(
+                                  child: SizedBox(
+                                    width: 30,
+                                    height: 30,
+                                    child: CircularProgressIndicator(
+                                        value: downloadProgress.progress),
+                                  ),
+                                );
+                              },
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.error),
+                              fit: BoxFit.fill,
+                            ),
+                            Positioned.fill(
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.3),
                                 ),
-                              );
-                            },
-                            errorWidget: (context, url, error) =>
-                                const Icon(Icons.error),
-                            fit: BoxFit.fill,
-                          ),
-                          Positioned.fill(
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.3),
                               ),
                             ),
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                width: MediaQuery.of(context).size.width,
-                                height: MediaQuery.of(context).size.height *
-                                    0.35 *
-                                    4 /
-                                    6,
-                                padding: EdgeInsets.zero,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    InkWell(
-                                      onTap: () {
-                                        // Navigator.push(
-                                        //   context,
-                                        //   PageRouteBuilder(
-                                        //     transitionDuration: const Duration(
-                                        //         milliseconds: 500),
-                                        //     pageBuilder: (context, animation,
-                                        //         secondaryAnimation) {
-                                        //       return FadeTransition(
-                                        //         opacity: animation,
-                                        //         child: JobDetailBoard(
-                                        //           data:
-                                        //               JobModel.dumpListData[3],
-                                        //         ),
-                                        //       );
-                                        //     },
-                                        //   ),
-                                        // );
-                                      },
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: const [
-                                          Expanded(
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 12.0,
-                                                  vertical: 10),
-                                              child: Text(
-                                                "Project Manager",
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    fontSize: 28,
-                                                    color: Colors.white),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  height: MediaQuery.of(context).size.height *
+                                      0.2,
+                                  padding: EdgeInsets.zero,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          // Navigator.push(
+                                          //   context,
+                                          //   PageRouteBuilder(
+                                          //     transitionDuration: const Duration(
+                                          //         milliseconds: 500),
+                                          //     pageBuilder: (context, animation,
+                                          //         secondaryAnimation) {
+                                          //       return FadeTransition(
+                                          //         opacity: animation,
+                                          //         child: JobDetailBoard(
+                                          //           data:
+                                          //               JobModel.dumpListData[3],
+                                          //         ),
+                                          //       );
+                                          //     },
+                                          //   ),
+                                          // );
+                                        },
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: const [
+                                            Expanded(
+                                              child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 12.0,
+                                                    vertical: 5),
+                                                child: Text(
+                                                  "Project Manager",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      fontSize: 28,
+                                                      color: Colors.white),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 5),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: const [
-                                          Icon(
-                                            CupertinoIcons.location_solid,
-                                            color: Colors.white70,
-                                            size: 30.0,
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text(
-                                            "Riyadh",
-                                            style: TextStyle(
-                                              fontSize: 18,
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: const [
+                                            Icon(
+                                              CupertinoIcons.location_solid,
                                               color: Colors.white70,
+                                              size: 30.0,
                                             ),
-                                          ),
-                                        ],
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text(
+                                              "Riyadh",
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.white70,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                      const Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 5),
+                                        child: Text(
+                                          "To: Noon Company",
+                                          style: TextStyle(
+                                              fontSize: 24,
+                                              color: Colors.white),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(0),
+                                child: Chat(
+                                  messages: _messages,
+                                  onAttachmentPressed: _handleAtachmentPressed,
+                                  onMessageTap: _handleMessageTap,
+                                  onPreviewDataFetched:
+                                      _handlePreviewDataFetched,
+                                  onSendPressed: _handleSendPressed,
+                                  user: _user,
+                                  theme: const DefaultChatTheme(),
+                                  showUserAvatars: true,
+                                  showUserNames: true,
+                                  disableImageGallery: true,
                                 ),
                               ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 5),
-                            child: Text(
-                              "To: Noon Company",
-                              style:
-                                  TextStyle(fontSize: 24, color: primaryColor),
                             ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(0),
-                              child: Chat(
-                                messages: _messages,
-                                onAttachmentPressed: _handleAtachmentPressed,
-                                onMessageTap: _handleMessageTap,
-                                onPreviewDataFetched: _handlePreviewDataFetched,
-                                onSendPressed: _handleSendPressed,
-                                user: _user,
-                                theme: const DefaultChatTheme(),
-                                showUserAvatars: true,
-                                showUserNames: true,
-                                disableImageGallery: true,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ],

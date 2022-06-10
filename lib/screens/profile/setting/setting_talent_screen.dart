@@ -48,6 +48,8 @@ class _SettingTalentScreenState extends State<SettingTalentScreen> {
   TextEditingController currentJobTitleController;
   TextEditingController companyController;
   TextEditingController descriptionController;
+  TextEditingController yearsExperienceController;
+  TextEditingController educationController;
 
   // address values setting
   final GlobalKey<CSCPickerState> _cscPickerKey = GlobalKey();
@@ -97,6 +99,8 @@ class _SettingTalentScreenState extends State<SettingTalentScreen> {
     currentJobTitleController = TextEditingController();
     companyController = TextEditingController();
     descriptionController = TextEditingController();
+    yearsExperienceController = TextEditingController();
+    educationController = TextEditingController();
     // init talent data if exist
     if (appState.talent != null) {
       // phone number init
@@ -115,6 +119,8 @@ class _SettingTalentScreenState extends State<SettingTalentScreen> {
       firstnameController.text = (appState.talent).first_name;
       lastnameController.text = (appState.talent).last_name;
       descriptionController.text = (appState.talent).current_jobDescription;
+      yearsExperienceController.text = appState.talent.years_experience;
+      educationController.text = appState.talent.education;
     }
 
     String _tmpFirebaseUser = await appState.getLocalStorage('firebaseuser');
@@ -159,7 +165,6 @@ class _SettingTalentScreenState extends State<SettingTalentScreen> {
       print("last screen");
       if (isValid1 == true) {
         _formKey1.currentState?.save();
-        // print(1);
         if (_onValidationRegion()) {
           setState(() {
             isLoading = true;
@@ -179,13 +184,15 @@ class _SettingTalentScreenState extends State<SettingTalentScreen> {
                 "city": cityValue ?? "no city",
                 "state": stateValue
               },
-              "uuid" : currentFirebaseUserUid,
+              "uuid": currentFirebaseUserUid,
               "current_jobTitle": currentJobTitleController.text,
               "current_jobDescription": descriptionController.text,
-              "company": companyController.text
+              "company": companyController.text,
+              "years_experience": yearsExperienceController.text,
+              "education": educationController.text
             };
 
-            print(payloads);
+            // print(payloads);
             var res;
             if (appState.talent != null) {
               res = await api.updateTalentInfo(
@@ -511,7 +518,22 @@ class _SettingTalentScreenState extends State<SettingTalentScreen> {
                                     ],
                                   ),
                                 ),
-                                const SizedBox(height: 15.0),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                Container(
+                                  child: TextFormField(
+                                    controller: educationController,
+                                    decoration: ThemeHelper()
+                                        .textInputDecoration('Education',
+                                            'Enter your education level.'),
+                                  ),
+                                  decoration:
+                                      ThemeHelper().inputBoxDecorationShaddow(),
+                                ),
+                                const SizedBox(
+                                  height: 30,
+                                )
                               ],
                             ),
                           ),
@@ -566,6 +588,20 @@ class _SettingTalentScreenState extends State<SettingTalentScreen> {
                                         // Return null if the entered password is valid
                                         return null;
                                       }),
+                                  decoration:
+                                      ThemeHelper().inputBoxDecorationShaddow(),
+                                ),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                Container(
+                                  child: TextFormField(
+                                    controller: yearsExperienceController,
+                                    decoration: ThemeHelper()
+                                        .textInputDecoration(
+                                            'Years of Experience',
+                                            'Enter your experience of years.'),
+                                  ),
                                   decoration:
                                       ThemeHelper().inputBoxDecorationShaddow(),
                                 ),

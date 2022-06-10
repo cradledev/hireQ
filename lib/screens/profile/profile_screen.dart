@@ -49,7 +49,7 @@ class _ProfileScreen extends State<ProfileScreen> {
 
   // count of  applied job
   int appliedJobsCount;
-
+  int shortlistJobsCount;
   List<Color> colorList = <Color>[
     const Color(0xfffdcb6e),
     const Color(0xff0984e3),
@@ -64,6 +64,7 @@ class _ProfileScreen extends State<ProfileScreen> {
     setState(() {
       selectedStep = 2;
       appliedJobsCount = 0;
+      shortlistJobsCount = 0;
     });
     onInit();
   }
@@ -141,18 +142,21 @@ class _ProfileScreen extends State<ProfileScreen> {
   // get applied jobs count
   void onGetAppliedJobsCount() async {
     try {
-      var res = await api.getTotalCountAppliedJobsByMe(token: appState.user['jwt_token']);
+      var res = await api.getTotalCountAppliedJobsByMe(
+          token: appState.user['jwt_token']);
       if (res.statusCode == 200) {
         var body = jsonDecode(res.body.toString());
         setState(() {
-          appliedJobsCount = body['count'];  
+          appliedJobsCount = body['applied_count'];
+          shortlistJobsCount = body['shortlist_count'];
         });
-      } 
+      }
     } catch (e) {
       print(e);
       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Something went wrong")))
     }
   }
+
   @override
   void dispose() {
     super.dispose();
@@ -765,8 +769,8 @@ class _ProfileScreen extends State<ProfileScreen> {
                             ),
                             content: Text(
                               appliedJobsCount.toString(),
-                              style:
-                                  const TextStyle(color: Colors.white, fontSize: 40),
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 40),
                             ),
                             backgroundColor: secondaryColor,
                             onTap: () {
@@ -798,10 +802,10 @@ class _ProfileScreen extends State<ProfileScreen> {
                                 fontSize: 16,
                               ),
                             ),
-                            content: const Text(
-                              "5",
-                              style:
-                                  TextStyle(color: primaryColor, fontSize: 40),
+                            content: Text(
+                              shortlistJobsCount?.toString() ?? "0",
+                              style: const TextStyle(
+                                  color: primaryColor, fontSize: 40),
                             ),
                             backgroundColor: accentColor,
                             onTap: () {
@@ -903,8 +907,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                                     subtitle: Text(
                                       _pAppState.talent == null
                                           ? ""
-                                          : (_pAppState.talent)
-                                              .current_jobTitle,
+                                          : _pAppState.talent.years_experience.isEmpty ? "No Experience" : _pAppState.talent.years_experience,
                                       style: const TextStyle(fontSize: 16),
                                     ),
                                   ),
@@ -925,8 +928,7 @@ class _ProfileScreen extends State<ProfileScreen> {
                                     subtitle: Text(
                                       _pAppState.talent == null
                                           ? ""
-                                          : (_pAppState.talent)
-                                              .current_jobTitle,
+                                          : _pAppState.talent.education.isNotEmpty ? _pAppState.talent?.education : "No education",
                                       style: const TextStyle(fontSize: 16),
                                     ),
                                   ),

@@ -824,7 +824,7 @@ class _ProfileTalentEditScreen extends State<ProfileTalentEditScreen> {
                           SizedBox(
                             height: 30,
                           ),
-                          Text("No High Level Information in your Profile")
+                          Text("No work history Information in your Profile")
                         ])
                       : ListView.builder(
                           itemBuilder: (context, index) {

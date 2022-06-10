@@ -62,10 +62,6 @@ class _MessageScreen extends State<MessageScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      "Message Sent & Received",
-                      style: TextStyle(fontSize: 26, color: primaryColor),
-                    ),
                     IconButton(
                       onPressed: () {
                         Navigator.push(
@@ -83,10 +79,22 @@ class _MessageScreen extends State<MessageScreen> {
                           ),
                         );
                       },
-                      icon: const Icon(CupertinoIcons.forward),
+                      icon: const Icon(CupertinoIcons.arrow_left),
                       color: primaryColor,
                       iconSize: 30,
+                    ),
+                    Expanded(
+                      child: Column(
+                        children: const [
+                          Text(
+                            "Message Sent & Received",
+                            softWrap: true,
+                            style: TextStyle(fontSize: 26, color: primaryColor),
+                          ),
+                        ],
+                      ),
                     )
+                    
                   ],
                 ),
               ),
