@@ -91,6 +91,21 @@ class APIClient {
       throw Exception("Unknow Error.");
     }
   }
+
+  
+  // update company data for authenticated company
+  Future<http.Response> getTalentByuid({uid, token}) async {
+    try {
+      header['api-token'] = token;
+      var response = await http.get(
+          Uri.parse(endpoint + "/talents/talent_by_uid/" + uid.toString()),
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception("Unknow Error.");
+    }
+  }
+
   // ===================== Company, Talent profile =================
 
   // get profile model for authenticated company or talent

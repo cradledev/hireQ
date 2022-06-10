@@ -575,7 +575,7 @@ class _TalentDetailCardState extends State<TalentDetailCard>
         pageBuilder: ((context, animation, secondaryAnimation) {
           return FadeTransition(
             opacity: animation,
-            child:  MessageTalentBoard(room: room),
+            child:  MessageTalentBoard(room: room, talentData: widget.talentData),
           );
         }),
       ),

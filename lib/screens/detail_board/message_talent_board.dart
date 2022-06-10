@@ -9,6 +9,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
+import 'package:hire_q/models/talent_model.dart';
+import 'package:hire_q/provider/index.dart';
 import 'package:hire_q/widgets/custom_drawer_widget.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
@@ -22,10 +24,12 @@ import 'package:hire_q/helpers/constants.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
 
 import 'package:hire_q/widgets/common_widget.dart';
+import 'package:provider/provider.dart';
 
 class MessageTalentBoard extends StatefulWidget {
-  const MessageTalentBoard({Key key, this.room}) : super(key: key);
+  const MessageTalentBoard({Key key, this.room, this.talentData}) : super(key: key);
   final types.Room room;
+  final TalentModel talentData; 
   @override
   _MessageTalentBoard createState() => _MessageTalentBoard();
 }
@@ -35,18 +39,14 @@ class _MessageTalentBoard extends State<MessageTalentBoard> {
   int currentPage = 2;
   // search text controller
   TextEditingController _searchTextController;
-  List<types.Message> _messages = [];
-  final _user = const types.User(id: '06c33e8b-e835-4736-80f4-63f44b66666c');
+  // App state provider setting
+  AppState appState;
   @override
   void initState() {
     super.initState();
+    appState = Provider.of<AppState>(context, listen: false);
   }
 
-  void _addMessage(types.Message message) {
-    setState(() {
-      _messages.insert(0, message);
-    });
-  }
 
   void _handleAtachmentPressed() {
     showModalBottomSheet<void>(
@@ -363,16 +363,16 @@ class _MessageTalentBoard extends State<MessageTalentBoard> {
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
-                                          children: const [
+                                          children:  [
                                             Expanded(
                                               child: Padding(
-                                                padding: EdgeInsets.symmetric(
+                                                padding: const EdgeInsets.symmetric(
                                                     horizontal: 12.0,
                                                     vertical: 5),
                                                 child: Text(
-                                                  "Project Manager",
+                                                  widget.talentData.first_name + ' ' + widget.talentData.last_name,
                                                   textAlign: TextAlign.center,
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                       fontSize: 28,
                                                       color: Colors.white),
                                                 ),
@@ -387,18 +387,18 @@ class _MessageTalentBoard extends State<MessageTalentBoard> {
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
-                                          children: const [
-                                            Icon(
+                                          children:  [
+                                            const Icon(
                                               CupertinoIcons.location_solid,
                                               color: Colors.white70,
                                               size: 30.0,
                                             ),
-                                            SizedBox(
+                                            const SizedBox(
                                               width: 10,
                                             ),
                                             Text(
-                                              "Riyadh",
-                                              style: TextStyle(
+                                              widget.talentData.region.isEmpty ? "" : jsonDecode(widget.talentData.region)['city'] ?? "No City",
+                                              style: const TextStyle(
                                                 fontSize: 18,
                                                 color: Colors.white70,
                                               ),
@@ -406,12 +406,12 @@ class _MessageTalentBoard extends State<MessageTalentBoard> {
                                           ],
                                         ),
                                       ),
-                                      const Padding(
-                                        padding: EdgeInsets.symmetric(
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
                                             horizontal: 8, vertical: 5),
                                         child: Text(
-                                          "To: Noon Company",
-                                          style: TextStyle(
+                                          appState.company.name,
+                                          style: const TextStyle(
                                               fontSize: 24,
                                               color: Colors.white),
                                         ),
