@@ -127,7 +127,7 @@ class _MessageScreen extends State<MessageScreen> {
                                 if(res.statusCode == 200) {
                                 body = jsonDecode(res.body),
                                 print(body['name']),
-                                talentModel = TalentModel(first_name: body['account_manager_name'], last_name: '', region: jsonEncode(body['region']) )
+                                talentModel = TalentModel(first_name: body['name'], last_name: '', region: jsonEncode(body['region']) )
                               }});
                           // if (res.statusCode == 200) {
                           //   var body = jsonDecode(res.body);
