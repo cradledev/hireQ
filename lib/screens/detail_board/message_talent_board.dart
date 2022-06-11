@@ -410,7 +410,9 @@ class _MessageTalentBoard extends State<MessageTalentBoard> {
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 8, vertical: 5),
                                         child: Text(
-                                          appState.company.name,
+                                          appState.user['type'] == 'company'?appState.company.name : appState.talent.first_name + ' ' + appState.talent.last_name
+
+                                          ,
                                           style: const TextStyle(
                                               fontSize: 24,
                                               color: Colors.white),

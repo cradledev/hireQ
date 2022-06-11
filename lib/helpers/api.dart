@@ -50,6 +50,19 @@ class APIClient {
     }
   }
 
+  // get Company data by uid
+  Future<http.Response> getCompanyByuid({uid, token}) async {
+    try {
+      header['api-token'] = token;
+      var response = await http.get(
+          Uri.parse(endpoint + "/companies/company_by_uid/" + uid.toString()),
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception("Unknow Error.");
+    }
+  }
+
   // =================== Talent Model ============
 
   // get talent info by user id
@@ -93,7 +106,7 @@ class APIClient {
   }
 
   
-  // update company data for authenticated company
+  // get Talent data by uid
   Future<http.Response> getTalentByuid({uid, token}) async {
     try {
       header['api-token'] = token;
