@@ -518,4 +518,19 @@ class APIClient {
       throw Exception('Unknown Error');
     }
   }
+
+  // Create Video history
+  Future<http.Response> createCompanyVideoHistory({token, payloads}) async {
+    try {
+      header['api-token'] = token;
+      var response = await http.post(
+          Uri.parse(
+              endpoint + "/profileviewhistories/company"),
+          body: payloads,
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception('Unknown Error');
+    }
+  }
 }

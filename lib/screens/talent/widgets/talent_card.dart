@@ -193,7 +193,7 @@ class _TalentCardState extends State<TalentCard> with TickerProviderStateMixin {
                 }
                 else {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("You must log in. Please try it now.",
+                      content: Text("You must login to view video. Please try it now.",
                           textAlign: TextAlign.left),
                       backgroundColor: Colors.red,
                     ));
