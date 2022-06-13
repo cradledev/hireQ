@@ -104,6 +104,12 @@ class _RegisterNextScreenState extends State<RegisterNextScreen> {
 
   @override
   void dispose() {
+    firstnameController.dispose();
+    lastnameController.dispose();
+    currentJobTitleController.dispose();
+    companyController.dispose();
+    yearsExperienceController.dispose();
+    educationController.dispose();
     super.dispose();
   }
 

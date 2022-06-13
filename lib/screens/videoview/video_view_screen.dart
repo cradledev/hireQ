@@ -1,14 +1,21 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:hire_q/helpers/api.dart';
 import 'package:hire_q/helpers/constants.dart';
 import 'package:hire_q/models/talent1_model.dart';
+import 'package:hire_q/models/talent_model.dart';
+import 'package:hire_q/provider/index.dart';
 import 'package:hire_q/screens/detail_board/talent_detail_board.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
 
 import 'package:hire_q/widgets/common_widget.dart';
 import 'package:hire_q/widgets/custom_drawer_widget.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:provider/provider.dart';
 
 class VideoViewScreen extends StatefulWidget {
   const VideoViewScreen({Key key}) : super(key: key);
@@ -20,13 +27,67 @@ class _VideoViewScreen extends State<VideoViewScreen> {
   int currentPage = 3;
   // search text controller
   TextEditingController _searchTextController;
+  // App state setting
+  AppState appState;
+
+  // api setting
+  APIClient api;
+
+  // scroll page controller for infinite scroll
+  PagingController<int, TalentModel> _pagingController;
+  static const PageSize = 2;
   @override
   void initState() {
     super.initState();
+    onInit();
+  }
+
+  void onInit() {
+    appState = Provider.of<AppState>(context, listen: false);
+    api = APIClient();
+
+    // The PageController allows us to instruct the PageView to change pages.
+    _pagingController = PagingController(firstPageKey: 0);
+
+    _pagingController.addPageRequestListener((pageKey) {
+      _fetchPage(pageKey);
+    });
+  }
+
+  // fetch job data with pagination
+  Future<void> _fetchPage(int pageKey) async {
+    try {
+      var res = await api.getComprehensiveShortlistJobsInfoForCompanyJobs(
+          companyId: appState.company.id,
+          pageNum: pageKey + 1,
+          pageLength: PageSize,
+          token: appState.user['jwt_token']);
+      if (res.statusCode == 200) {
+        var body = jsonDecode(res.body);
+        List<TalentModel> newItems = (body as List)
+            .map((element) => TalentModel.fromJson(element))
+            .toList();
+        final isLastPage = newItems.length < PageSize;
+        if (isLastPage) {
+          _pagingController.appendLastPage(newItems);
+        } else {
+          final nextPageKey = pageKey + 1;
+          _pagingController.appendPage(newItems, nextPageKey);
+        }
+        setState(() {});
+      } else {
+        List<TalentModel> newItems = [];
+        _pagingController.appendLastPage(newItems);
+        setState(() {});
+      }
+    } catch (error) {
+      _pagingController.error = error;
+    }
   }
 
   @override
   void dispose() {
+    _pagingController.dispose();
     super.dispose();
   }
 
@@ -39,13 +100,14 @@ class _VideoViewScreen extends State<VideoViewScreen> {
       child: Scaffold(
         appBar: CustomAppBar(
           leadingIcon: const Icon(
-            CupertinoIcons.line_horizontal_3,
+            CupertinoIcons.arrow_left,
             size: 40,
             color: Colors.white,
           ),
           backgroundColor: primaryColor,
-          // leadingAction: () {
-          // },
+          leadingAction: () {
+            Navigator.of(context).pop();
+          },
           leadingFlag: true,
           actionEvent: () {},
           actionFlag: true,
@@ -100,67 +162,57 @@ class _VideoViewScreen extends State<VideoViewScreen> {
           textColor: primaryColor,
           inactiveIconColor: Colors.grey,
         ),
-        body: SingleChildScrollView(
+        body: Container(
+          padding: EdgeInsets.zero,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "Video Views",
-                      style: TextStyle(fontSize: 26, color: primaryColor),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(CupertinoIcons.forward),
-                      color: primaryColor,
-                      iconSize: 30,
+                  children: const [
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          "Video Views",
+                          style: TextStyle(fontSize: 26, color: primaryColor),
+                        ),
+                      ),
                     )
                   ],
                 ),
               ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.7,
-                child: ListView.builder(
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () {
-                        // Navigator.push(
-                        //   context,
-                        //   PageRouteBuilder(
-                        //     transitionDuration:
-                        //         const Duration(milliseconds: 500),
-                        //     pageBuilder:
-                        //         (context, animation, secondaryAnimation) {
-                        //       return FadeTransition(
-                        //         opacity: animation,
-                        //         child: TalentDetailBoard(
-                        //           data: TalentModel1.dumpListData[1],
-                        //         ),
-                        //       );
-                        //     },
-                        //   ),
-                        // );
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.only(bottom: 10),
-                        padding: const EdgeInsets.symmetric(horizontal: 14),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(32),
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: () => Future.sync(
+                    () {
+                      _pagingController.refresh();
+                      setState(() {});
+                    },
+                  ),
+                  child: PagedListView.separated(
+                    pagingController: _pagingController,
+                    padding: const EdgeInsets.all(16),
+                    builderDelegate: PagedChildBuilderDelegate<TalentModel>(
+                      itemBuilder: (context, _perItem, index) {
+                        return Card(
+                          elevation: 5,
+                          child: ListTile(
+                            onTap: () {
+                              onGotoDetail(_perItem);
+                            },
+                            leading: ClipRRect(
+                              borderRadius: BorderRadius.circular(3.0),
                               child: CachedNetworkImage(
                                 width: 64,
                                 height: 64,
-                                imageUrl:
-                                    "https://images.unsplash.com/photo-1569124589354-615739ae007b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
+                                imageUrl: _perItem.talent_logo.isEmpty
+                                    ? "https://via.placeholder.com/150"
+                                    : appState.hostAddress +
+                                        _perItem.talent_logo,
                                 progressIndicatorBuilder:
                                     (context, url, downloadProgress) {
                                   return Center(
@@ -177,74 +229,73 @@ class _VideoViewScreen extends State<VideoViewScreen> {
                                 fit: BoxFit.cover,
                               ),
                             ),
-                            Expanded(
-                              child: Container(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 2),
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 5),
-                                height: 68,
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                        width: 1, color: accentColor),
-                                  ),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: const [
-                                    Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 8),
-                                      child: Text(
-                                        "Beca Lway",
-                                        style: TextStyle(
-                                          color: primaryColor,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 8),
-                                      child: Text(
-                                        "@Beca_Lway",
-                                        style: TextStyle(
-                                          color: Colors.black45,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                // child: const ListTile(
-                                //   title: Text(
-                                //     "Jeddah",
-                                //     style: TextStyle(
-                                //       color: primaryColor,
-                                //     ),
-                                //   ),
-                                //   subtitle: Text(
-                                //     "Project Manager",
-                                //     style: TextStyle(fontSize: 16),
-                                //   ),
-                                // ),
-                              ),
+                            title: Text(
+                              _perItem?.first_name ?? "No First name" + _perItem?.last_name ?? "No Last name",
+                              style: const TextStyle(color: primaryColor),
                             ),
-                          ],
+                            subtitle: Text(
+                                _perItem?.current_jobTitle ?? ""),
+                            // trailing: Chip(
+                            //   padding: const EdgeInsets.all(0),
+                            //   backgroundColor: primaryColor,
+                            //   label: Text(
+                            //     _perItem?.shortlisttalents_count?.toString() ??
+                            //         "0",
+                            //     style: const TextStyle(color: Colors.white),
+                            //   ),
+                            // ),
+                          ),
+                        );
+                      },
+                      firstPageErrorIndicatorBuilder: (context) => Center(
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                  child: const Text('Retry'),
+                                  onPressed: () => _pagingController.refresh())
+                            ],
+                          ),
                         ),
                       ),
-                    );
-                  },
-                  itemCount: 30,
-                  shrinkWrap: true,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  scrollDirection: Axis.vertical,
+                      noItemsFoundIndicatorBuilder: (context) => Center(
+                        child: SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Text('No Items Found'),
+                              ],
+                            )),
+                      ),
+                    ),
+                    separatorBuilder: (context, index) => const SizedBox(
+                      height: 16,
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  // when click per item, it goes to detail page including shortlist, applied q counts for per job for self company
+  void onGotoDetail(TalentModel _pTalentData) {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 800),
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return FadeTransition(
+            opacity: animation,
+            child: TalentDetailBoard(data: _pTalentData),
+          );
+        },
       ),
     );
   }

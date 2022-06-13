@@ -88,6 +88,7 @@ class _JobsQCompanyScreen extends State<JobsQCompanyScreen> {
 
   @override
   void dispose() {
+    _pagingController.dispose();
     super.dispose();
   }
 

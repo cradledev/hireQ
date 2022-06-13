@@ -752,20 +752,20 @@ class _ProfileScreen extends State<ProfileScreen> {
                             ),
                             backgroundColor: primaryColor,
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                PageRouteBuilder(
-                                  transitionDuration:
-                                      const Duration(milliseconds: 500),
-                                  pageBuilder:
-                                      (context, animation, secondaryAnimation) {
-                                    return FadeTransition(
-                                      opacity: animation,
-                                      child: const VideoViewScreen(),
-                                    );
-                                  },
-                                ),
-                              );
+                              // Navigator.push(
+                              //   context,
+                              //   PageRouteBuilder(
+                              //     transitionDuration:
+                              //         const Duration(milliseconds: 500),
+                              //     pageBuilder:
+                              //         (context, animation, secondaryAnimation) {
+                              //       return FadeTransition(
+                              //         opacity: animation,
+                              //         child: const VideoViewScreen(),
+                              //       );
+                              //     },
+                              //   ),
+                              // );
                             },
                           ),
                         ),

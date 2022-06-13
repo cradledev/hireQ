@@ -143,6 +143,12 @@ class _ProfileCompanyAddJobScreenState
 
   @override
   void dispose() {
+    jobTitleController.dispose();
+    yearsOfExperienceController.dispose();
+    salaryController.dispose();
+    departmentController.dispose();
+    rolesController.dispose();
+    descriptionController.dispose();
     super.dispose();
   }
 

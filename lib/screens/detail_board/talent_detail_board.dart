@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:hire_q/helpers/constants.dart';
 import 'package:hire_q/models/applied_job_model.dart';
 import 'package:hire_q/models/talent_model.dart';
-import 'package:hire_q/provider/index.dart';
 import 'package:hire_q/provider/jobs_provider.dart';
 import 'package:hire_q/screens/detail_board/consider_talent_list_board.dart';
 import 'package:hire_q/screens/detail_board/talent_detail_card.dart';
@@ -17,11 +16,12 @@ import 'package:hire_q/widgets/custom_drawer_widget.dart';
 import 'package:provider/provider.dart';
 
 class TalentDetailBoard extends StatefulWidget {
-  const TalentDetailBoard({Key key, this.data, this.type, this.shortlistSourceFrom = "", this.sourceFromDetailCompany = ""}) : super(key: key);
+  const TalentDetailBoard({Key key, this.data, this.type, this.shortlistSourceFrom = "", this.sourceFromDetailCompany = "", this.onlyDetail = false}) : super(key: key);
   final TalentModel data;
   final String type;
   final String shortlistSourceFrom;
   final String sourceFromDetailCompany;
+  final bool onlyDetail;
   @override
   _TalentDetailBoard createState() => _TalentDetailBoard();
 }
@@ -45,6 +45,10 @@ class _TalentDetailBoard extends State<TalentDetailBoard> {
 
   // go to previous page (consider talent list board with selected applied job id)
   void onPreviousPage() async {
+    if (widget.onlyDetail) {
+      Navigator.of(context).pop();
+      return;
+    }
     AppliedJobModel _selectedAppliedJob =
         Provider.of<JobsProvider>(context, listen: false).currentSelectedAppliedJob;
     Navigator.pushAndRemoveUntil(
