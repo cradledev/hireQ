@@ -51,6 +51,7 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
   // total count of applied talent for company jobs
   int totalCountOfTalents = 0;
   int totalCountOfShortlist = 0;
+  int videoViewsCount;
   List<Color> colorList = <Color>[
     const Color(0xfffdcb6e),
     const Color(0xff0984e3),
@@ -74,6 +75,7 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
       selectedStep = 2;
       totalCountOfTalents = 0;
       totalCountOfShortlist = 0;
+      videoViewsCount = 0;
     });
     // APIClient instance
     api = APIClient();
@@ -86,6 +88,7 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
         setState(() {});
       });
       onGetProfile();
+      onGetVideoViewsCount();
     });
   }
 
@@ -217,6 +220,24 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
       ),
     );
   }
+
+  // get video views count
+  void onGetVideoViewsCount() async {
+    try {
+      var res = await api.getVideoViewsCount(
+          token: appState.user['jwt_token']);
+      if (res.statusCode == 200) {
+        var body = jsonDecode(res.body.toString());
+        setState(() {
+          videoViewsCount = body['count'];
+        });
+      }
+    } catch (e) {
+      print(e);
+      // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Something went wrong")))
+    }
+  }
+
 
   @override
   void dispose() {
@@ -746,8 +767,8 @@ class _ProfileCompanyScreen extends State<ProfileCompanyScreen> {
                                 fontSize: 16,
                               ),
                             ),
-                            content: const Text(
-                              "487",
+                            content:  Text(
+                              videoViewsCount?.toString() ?? '0',
                               style:
                                   TextStyle(color: accentColor, fontSize: 40),
                             ),

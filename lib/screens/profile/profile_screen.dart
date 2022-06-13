@@ -50,6 +50,7 @@ class _ProfileScreen extends State<ProfileScreen> {
   // count of  applied job
   int appliedJobsCount;
   int shortlistJobsCount;
+  int videoViewsCount;
   List<Color> colorList = <Color>[
     const Color(0xfffdcb6e),
     const Color(0xff0984e3),
@@ -65,6 +66,7 @@ class _ProfileScreen extends State<ProfileScreen> {
       selectedStep = 2;
       appliedJobsCount = 0;
       shortlistJobsCount = 0;
+      videoViewsCount = 0;
     });
     onInit();
   }
@@ -94,6 +96,7 @@ class _ProfileScreen extends State<ProfileScreen> {
       onGetTalent();
       onGetProfile();
       onGetAppliedJobsCount();
+      onGetVideoViewsCount();
     });
   }
 
@@ -156,6 +159,24 @@ class _ProfileScreen extends State<ProfileScreen> {
       // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Something went wrong")))
     }
   }
+
+  // get video views count
+  void onGetVideoViewsCount() async {
+    try {
+      var res = await api.getVideoViewsCount(
+          token: appState.user['jwt_token']);
+      if (res.statusCode == 200) {
+        var body = jsonDecode(res.body.toString());
+        setState(() {
+          videoViewsCount = body['count'];
+        });
+      }
+    } catch (e) {
+      print(e);
+      // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Something went wrong")))
+    }
+  }
+
 
   @override
   void dispose() {
@@ -724,8 +745,8 @@ class _ProfileScreen extends State<ProfileScreen> {
                                 fontSize: 16,
                               ),
                             ),
-                            content: const Text(
-                              "487",
+                            content:  Text(
+                              videoViewsCount?.toString() ?? '0',
                               style:
                                   TextStyle(color: accentColor, fontSize: 40),
                             ),

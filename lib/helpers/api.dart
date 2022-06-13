@@ -533,4 +533,18 @@ class APIClient {
       throw Exception('Unknown Error');
     }
   }
+
+  // Get Video Views Count
+  Future<http.Response> getVideoViewsCount({token}) async {
+    try {
+      header['api-token'] = token;
+      var response = await http.get(
+          Uri.parse(
+              endpoint + "/profileviewhistories/"),
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception('Unknown Error');
+    }
+  }
 }
