@@ -391,7 +391,7 @@ class _ProfileTalentAddvideoScreenState
               "video_id": body['id'],
               "video": null,
               "job": _tmpProfile.job == null ? [] : jsonDecode(_tmpProfile.job),
-              'work_history': _tmpProfile.work_history == null
+              'work_history': _tmpProfile.work_history.isEmpty
                   ? []
                   : jsonDecode(_tmpProfile.work_history),
               "type": appState.user['type']

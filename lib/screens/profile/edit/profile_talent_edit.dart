@@ -156,7 +156,7 @@ class _ProfileTalentEditScreen extends State<ProfileTalentEditScreen> {
                 "job": _tmpProfile.job == null
                     ? []
                     : jsonDecode(_tmpProfile.job) as List,
-                "work_history": _tmpProfile.work_history == null
+                "work_history": _tmpProfile.work_history.isEmpty
                     ? []
                     : (jsonDecode(_tmpProfile.work_history) as List)
                         .map((e) => e.toString())
@@ -175,7 +175,7 @@ class _ProfileTalentEditScreen extends State<ProfileTalentEditScreen> {
                 "video": body['url'],
                 "job":
                     _tmpProfile.job == null ? [] : jsonDecode(_tmpProfile.job),
-                "work_history": _tmpProfile.work_history == null
+                "work_history": _tmpProfile.work_history.isEmpty
                     ? []
                     : jsonDecode(_tmpProfile.work_history),
                 "type": _tmpProfile.type
@@ -206,6 +206,7 @@ class _ProfileTalentEditScreen extends State<ProfileTalentEditScreen> {
 
   // profile update
   void onProfileUpdate(_id, _payloads) async {
+    print(_payloads);
     try {
       var res = await api.updateProfile(
           id: _id, token: appState.user['jwt_token'], payloads: _payloads);
@@ -400,7 +401,7 @@ class _ProfileTalentEditScreen extends State<ProfileTalentEditScreen> {
                       }
                     } else {
                       List<String> _preSaveHighLevelInfo =
-                          tmpProfile.work_history == null
+                          tmpProfile.work_history.isEmpty
                               ? []
                               : (jsonDecode(tmpProfile.work_history) as List)
                                   .map((e) => e.toString())
@@ -835,7 +836,7 @@ class _ProfileTalentEditScreen extends State<ProfileTalentEditScreen> {
                                   (DismissDirection direction) async {
                                 ProfileModel tmpProfile = appState.profile;
                                 List<String> _preSaveHighLevelInfo =
-                                    tmpProfile.work_history == null
+                                    tmpProfile.work_history.isEmpty
                                         ? []
                                         : (jsonDecode(tmpProfile.work_history)
                                                 as List)
