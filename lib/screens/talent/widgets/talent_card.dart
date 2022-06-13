@@ -8,6 +8,7 @@ import 'package:hire_q/provider/index.dart';
 import 'package:hire_q/screens/profile/edit/profile_talent_addvideo_screen.dart';
 import 'package:hire_q/widgets/common_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:hire_q/helpers/api.dart';
 
 import 'package:hire_q/widgets/image_gradient_overlay.dart';
 
@@ -23,6 +24,12 @@ class _TalentCardState extends State<TalentCard> with TickerProviderStateMixin {
   // animation controller
   AnimationController _controller;
 
+  // app state import
+  AppState appState;
+
+  // API setting
+  APIClient api;
+
   // is deatil ?
   bool isDetail = false;
   @override
@@ -33,6 +40,8 @@ class _TalentCardState extends State<TalentCard> with TickerProviderStateMixin {
 
   // custom init function
   void onInit() {
+    appState = Provider.of<AppState>(context, listen: false);
+    api = APIClient();
     if (mounted) {
       _controller = AnimationController(
         vsync: this,
@@ -169,31 +178,25 @@ class _TalentCardState extends State<TalentCard> with TickerProviderStateMixin {
           Center(
             child: InkWell(
               onTap: () {
-                if (widget.talentData.video_id != null) {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      transitionDuration: const Duration(microseconds: 800),
-                      pageBuilder: (context, animation, secondaryAnimation) {
-                        return FadeTransition(
-                          opacity: animation,
-                          child: ProfileTalentAddvideoScreen(
-                            isView: true,
-                            videoId: widget.talentData?.video_id,
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                  print("object");
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text(
-                      "This talent has no video right now.",
-                      textAlign: TextAlign.center,
-                    ),
-                    backgroundColor: Colors.red,
-                  ));
+                if (appState.user !=null) {
+                  if (widget.talentData.video_id != null) {
+                    _trackVideoHistory();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text(
+                        "This talent has no video right now.",
+                        textAlign: TextAlign.center,
+                      ),
+                      backgroundColor: Colors.red,
+                    ));
+                  }
+                }
+                else {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("You must log in. Please try it now.",
+                          textAlign: TextAlign.left),
+                      backgroundColor: Colors.red,
+                    ));
                 }
               },
               child: ClipRRect(
@@ -401,6 +404,42 @@ class _TalentCardState extends State<TalentCard> with TickerProviderStateMixin {
       isDetail = true;
     });
     _controller.forward();
+  }
+
+  // trach Video History
+  void _trackVideoHistory() async {
+    Map payloads = {
+      'who': appState.user['id'],
+      'which':widget.talentData.user_id,
+    };
+    try {
+      var res = await api.createVideoHistory(
+        token: appState.user['jwt_token'],
+        payloads: jsonEncode(payloads)
+      );
+      print(res.body);
+
+      if(res.statusCode == 200) {
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            transitionDuration: const Duration(microseconds: 800),
+            pageBuilder: (context, animation, secondaryAnimation) {
+              return FadeTransition(
+                opacity: animation,
+                child: ProfileTalentAddvideoScreen(
+                  isView: true,
+                  videoId: widget.talentData?.video_id,
+                ),
+              );
+            },
+          ),
+        );
+      }
+    }
+    catch (e) {
+      print(e);
+    }
   }
 
   @override

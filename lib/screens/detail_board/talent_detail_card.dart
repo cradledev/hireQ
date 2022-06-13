@@ -132,6 +132,41 @@ class _TalentDetailCardState extends State<TalentDetailCard>
     }
   }
 
+    // trach Video History
+  void _trackVideoHistory() async {
+    Map payloads = {
+      'who': appState.user['id'],
+      'which':widget.talentData.user_id,
+    };
+    try {
+      var res = await api.createVideoHistory(
+        token: appState.user['jwt_token'],
+        payloads: jsonEncode(payloads)
+      );
+      print(res.body);
+      if(res.statusCode == 200) {
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            transitionDuration: const Duration(microseconds: 800),
+            pageBuilder: (context, animation, secondaryAnimation) {
+              return FadeTransition(
+                opacity: animation,
+                child: ProfileTalentAddvideoScreen(
+                  isView: true,
+                  videoId: widget.talentData?.video_id,
+                ),
+              );
+            },
+          ),
+        );
+      }
+    }
+    catch (e) {
+      print(e);
+    }
+  }
+
   // display job short info
   Widget widgetTalentShortInfo(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -241,22 +276,7 @@ class _TalentDetailCardState extends State<TalentDetailCard>
             child: InkWell(
               onTap: () {
                 if (widget.talentData.video_id != null) {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      transitionDuration: const Duration(microseconds: 800),
-                      pageBuilder: (context, animation, secondaryAnimation) {
-                        return FadeTransition(
-                          opacity: animation,
-                          child: ProfileTalentAddvideoScreen(
-                            isView: true,
-                            videoId: widget.talentData?.video_id,
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                  print("object");
+                  _trackVideoHistory();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text(
