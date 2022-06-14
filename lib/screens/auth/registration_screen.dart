@@ -51,13 +51,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           'password': passwordController.text,
           'type': appState.entryType
         };
+        setState(() {
+          isLoading = true;
+        });
         var res = await appState.post(
             Uri.parse(appState.endpoint + "/users/"), jsonEncode(payload));
-        setState(() {
-          isLoading = false;
-        });
+
         if (res.statusCode == 200) {
           var body = jsonDecode(res.body);
+          setState(() {
+              isLoading = false;
+            });
           if (body['status'] == "success") {
             Navigator.pushReplacement(
               context,
@@ -75,24 +79,28 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             );
           }
         } else {
+          setState(() {
+            isLoading = false;
+          });
           var body = jsonDecode(res.body);
           appState.notifyToastDanger(context: context, message: body['error']);
         }
       } catch (e) {
-        appState.notifyToastDanger(context: context, message: "Unknown error is occured.");
+        appState.notifyToastDanger(
+            context: context, message: "Unknown error is occured.");
         setState(() {
           isLoading = false;
         });
       }
-      // Navigator.pushReplacement(
-      //   context,
-      //   PageRouteBuilder(
-      //       transitionDuration: const Duration(milliseconds: 800),
-      //       pageBuilder: (context, animation, secondaryAnimation) {
-      //         return FadeTransition(
-      //             opacity: animation, child: const EmailValidationScreen());
-      //       }),
-      // );
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+            transitionDuration: const Duration(milliseconds: 800),
+            pageBuilder: (context, animation, secondaryAnimation) {
+              return FadeTransition(
+                  opacity: animation, child: const EmailValidationScreen());
+            }),
+      );
     }
   }
 

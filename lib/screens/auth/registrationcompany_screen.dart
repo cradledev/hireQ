@@ -111,6 +111,7 @@ class _RegisterCompanyScreenState extends State<RegisterCompanyScreen> {
         _formKey.currentState?.save();
         // print(1);
         if (_onValidationRegion()) {
+          print(1);
           setState(() {
             isLoading = true;
           });
