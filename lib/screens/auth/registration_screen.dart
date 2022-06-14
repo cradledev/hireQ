@@ -92,15 +92,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           isLoading = false;
         });
       }
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-            transitionDuration: const Duration(milliseconds: 800),
-            pageBuilder: (context, animation, secondaryAnimation) {
-              return FadeTransition(
-                  opacity: animation, child: const EmailValidationScreen());
-            }),
-      );
     }
   }
 
