@@ -3,8 +3,8 @@ import 'package:http/http.dart' as http;
 
 class APIClient {
   // REST API Endpoint
-  // static const endpoint = "http://192.168.116.39:5000/api/v1";
-  static const endpoint = "http://155.254.19.130:2083/api/v1";
+  static const endpoint = "http://192.168.116.39:5000/api/v1";
+  // static const endpoint = "http://155.254.19.130:2083/api/v1";
   // Request Header
   final header = {
     "content-type": "application/json",
@@ -542,6 +542,20 @@ class APIClient {
       var response = await http.get(
           Uri.parse(
               endpoint + "/profileviewhistories/"),
+          headers: header);
+      return response;
+    } catch (e) {
+      throw Exception('Unknown Error');
+    }
+  }
+
+  // get video views detail information
+  Future<http.Response> getVideoViewsDetails({token, pageNum, pageLength}) async {
+    try {
+      header['api-token'] = token;
+      var response = await http.get(
+          Uri.parse(
+              endpoint + "/profileviewhistories/video_views_list/" + pageNum.toString() + "/" + pageLength.toString() ),
           headers: header);
       return response;
     } catch (e) {

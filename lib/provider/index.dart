@@ -10,11 +10,11 @@ import 'package:flutter/material.dart';
 
 class AppState extends ChangeNotifier {
   // end point url
-  // final String _endpoint = 'http://192.168.116.39:5000/api/v1';
-  final String _endpoint = 'http://155.254.19.130:2083/api/v1';
+  final String _endpoint = 'http://192.168.116.39:5000/api/v1';
+  // final String _endpoint = 'http://155.254.19.130:2083/api/v1';
   // hosting address
-  // final String _hostAddress = 'http://192.168.116.39:5000';
-  final String _hostAddress = 'http://155.254.19.130:2083';
+  final String _hostAddress = 'http://192.168.116.39:5000';
+  // final String _hostAddress = 'http://155.254.19.130:2083';
   
   // is talent? flag
   bool _talentSwipeUp = false;

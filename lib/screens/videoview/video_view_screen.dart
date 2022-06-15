@@ -6,11 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hire_q/helpers/api.dart';
 import 'package:hire_q/helpers/constants.dart';
-import 'package:hire_q/models/talent1_model.dart';
 import 'package:hire_q/models/talent_model.dart';
+import 'package:hire_q/models/video_view_model.dart';
 import 'package:hire_q/provider/index.dart';
-import 'package:hire_q/screens/detail_board/talent_detail_board.dart';
 import 'package:hire_q/screens/lobby/lobby_screen.dart';
+import 'package:hire_q/screens/videoview/detail/company_detail_screen.dart';
+import 'package:hire_q/screens/videoview/detail/talent_detail_screen.dart';
 
 import 'package:hire_q/widgets/common_widget.dart';
 import 'package:hire_q/widgets/custom_drawer_widget.dart';
@@ -34,7 +35,7 @@ class _VideoViewScreen extends State<VideoViewScreen> {
   APIClient api;
 
   // scroll page controller for infinite scroll
-  PagingController<int, TalentModel> _pagingController;
+  PagingController<int, VideoViewModel> _pagingController;
   static const PageSize = 2;
   @override
   void initState() {
@@ -57,15 +58,14 @@ class _VideoViewScreen extends State<VideoViewScreen> {
   // fetch job data with pagination
   Future<void> _fetchPage(int pageKey) async {
     try {
-      var res = await api.getComprehensiveShortlistJobsInfoForCompanyJobs(
-          companyId: appState.company.id,
+      var res = await api.getVideoViewsDetails(
           pageNum: pageKey + 1,
           pageLength: PageSize,
           token: appState.user['jwt_token']);
       if (res.statusCode == 200) {
         var body = jsonDecode(res.body);
-        List<TalentModel> newItems = (body as List)
-            .map((element) => TalentModel.fromJson(element))
+        List<VideoViewModel> newItems = (body as List)
+            .map((element) => VideoViewModel.fromJson(element))
             .toList();
         final isLastPage = newItems.length < PageSize;
         if (isLastPage) {
@@ -76,7 +76,7 @@ class _VideoViewScreen extends State<VideoViewScreen> {
         }
         setState(() {});
       } else {
-        List<TalentModel> newItems = [];
+        List<VideoViewModel> newItems = [];
         _pagingController.appendLastPage(newItems);
         setState(() {});
       }
@@ -196,56 +196,103 @@ class _VideoViewScreen extends State<VideoViewScreen> {
                   child: PagedListView.separated(
                     pagingController: _pagingController,
                     padding: const EdgeInsets.all(16),
-                    builderDelegate: PagedChildBuilderDelegate<TalentModel>(
+                    builderDelegate: PagedChildBuilderDelegate<VideoViewModel>(
                       itemBuilder: (context, _perItem, index) {
-                        return Card(
-                          elevation: 5,
-                          child: ListTile(
-                            onTap: () {
-                              onGotoDetail(_perItem);
-                            },
-                            leading: ClipRRect(
-                              borderRadius: BorderRadius.circular(3.0),
-                              child: CachedNetworkImage(
-                                width: 64,
-                                height: 64,
-                                imageUrl: _perItem.talent_logo.isEmpty
-                                    ? "https://via.placeholder.com/150"
-                                    : appState.hostAddress +
-                                        _perItem.talent_logo,
-                                progressIndicatorBuilder:
-                                    (context, url, downloadProgress) {
-                                  return Center(
-                                    child: SizedBox(
-                                      width: 30,
-                                      height: 30,
-                                      child: CircularProgressIndicator(
-                                          value: downloadProgress.progress),
-                                    ),
-                                  );
-                                },
-                                errorWidget: (context, url, error) =>
-                                    const Icon(Icons.error),
-                                fit: BoxFit.cover,
+                        if (_perItem.type == "talent") {
+                          return Card(
+                            elevation: 5,
+                            child: ListTile(
+                              onTap: () {
+                                onGotoDetail(_perItem, type: 'talent');
+                              },
+                              leading: ClipRRect(
+                                borderRadius: BorderRadius.circular(3.0),
+                                child: CachedNetworkImage(
+                                  width: 64,
+                                  height: 64,
+                                  imageUrl: _perItem.talent_logo.isEmpty
+                                      ? "https://via.placeholder.com/150"
+                                      : appState.hostAddress +
+                                          _perItem.talent_logo,
+                                  progressIndicatorBuilder:
+                                      (context, url, downloadProgress) {
+                                    return Center(
+                                      child: SizedBox(
+                                        width: 30,
+                                        height: 30,
+                                        child: CircularProgressIndicator(
+                                            value: downloadProgress.progress),
+                                      ),
+                                    );
+                                  },
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              title: Text(
+                                _perItem.first_name + " " + _perItem.last_name,
+                                style: const TextStyle(color: primaryColor),
+                              ),
+                              subtitle: Text(_perItem?.current_jobTitle ?? ""),
+                              trailing: Chip(
+                                padding: const EdgeInsets.all(0),
+                                backgroundColor: primaryColor,
+                                label: Text(
+                                  _perItem?.view_count?.toString() ?? "0",
+                                  style: const TextStyle(color: Colors.white),
+                                ),
                               ),
                             ),
-                            title: Text(
-                              _perItem?.first_name ?? "No First name" + _perItem?.last_name ?? "No Last name",
-                              style: const TextStyle(color: primaryColor),
+                          );
+                        } else {
+                          return Card(
+                            elevation: 5,
+                            child: ListTile(
+                              onTap: () {
+                                onGotoDetail(_perItem, type: 'company');
+                              },
+                              leading: ClipRRect(
+                                borderRadius: BorderRadius.circular(3.0),
+                                child: CachedNetworkImage(
+                                  width: 64,
+                                  height: 64,
+                                  imageUrl: _perItem.company_logo.isEmpty
+                                      ? "https://via.placeholder.com/150"
+                                      : appState.hostAddress +
+                                          _perItem.company_logo,
+                                  progressIndicatorBuilder:
+                                      (context, url, downloadProgress) {
+                                    return Center(
+                                      child: SizedBox(
+                                        width: 30,
+                                        height: 30,
+                                        child: CircularProgressIndicator(
+                                            value: downloadProgress.progress),
+                                      ),
+                                    );
+                                  },
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              title: Text(
+                                _perItem?.name?.toString() ?? "No Company name",
+                                style: const TextStyle(color: primaryColor),
+                              ),
+                              subtitle: Text(_perItem.account_manager_name),
+                              trailing: Chip(
+                                padding: const EdgeInsets.all(0),
+                                backgroundColor: primaryColor,
+                                label: Text(
+                                  _perItem?.view_count?.toString() ?? "0",
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ),
                             ),
-                            subtitle: Text(
-                                _perItem?.current_jobTitle ?? ""),
-                            // trailing: Chip(
-                            //   padding: const EdgeInsets.all(0),
-                            //   backgroundColor: primaryColor,
-                            //   label: Text(
-                            //     _perItem?.shortlisttalents_count?.toString() ??
-                            //         "0",
-                            //     style: const TextStyle(color: Colors.white),
-                            //   ),
-                            // ),
-                          ),
-                        );
+                          );
+                        }
                       },
                       firstPageErrorIndicatorBuilder: (context) => Center(
                         child: SizedBox(
@@ -285,18 +332,35 @@ class _VideoViewScreen extends State<VideoViewScreen> {
   }
 
   // when click per item, it goes to detail page including shortlist, applied q counts for per job for self company
-  void onGotoDetail(TalentModel _pTalentData) {
-    Navigator.push(
-      context,
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 800),
-        pageBuilder: (context, animation, secondaryAnimation) {
-          return FadeTransition(
-            opacity: animation,
-            child: TalentDetailBoard(data: _pTalentData),
-          );
-        },
-      ),
-    );
+  void onGotoDetail(VideoViewModel _pTalentData, {type = 'talent'}) {
+    if (type == "talent") {
+      Navigator.push(
+        context,
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 800),
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return FadeTransition(
+              opacity: animation,
+              child: TalentDetailScreen(
+                talentData: _pTalentData,
+              ),
+            );
+          },
+        ),
+      );
+    } else {
+      Navigator.push(
+        context,
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 800),
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return FadeTransition(
+              opacity: animation,
+              child: CompanyDetailScreen(companyData: _pTalentData),
+            );
+          },
+        ),
+      );
+    }
   }
 }

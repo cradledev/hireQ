@@ -80,7 +80,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
                         bottomRight: Radius.circular(10))),
                 child: const Center(
                   child: Text(
-                    "data",
+                    "",
                     style: TextStyle(color: Colors.white, fontSize: 24),
                   ),
                 ),
