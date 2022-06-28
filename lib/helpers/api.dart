@@ -3,8 +3,8 @@ import 'package:http/http.dart' as http;
 
 class APIClient {
   // REST API Endpoint
-  static const endpoint = "http://192.168.116.39:5000/api/v1";
-  // static const endpoint = "http://155.254.19.130:2083/api/v1";
+  // static const endpoint = "http://192.168.116.39:5000/api/v1";
+  static const endpoint = "http://146.190.40.119:2083/api/v1";
   // Request Header
   final header = {
     "content-type": "application/json",

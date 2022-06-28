@@ -748,24 +748,24 @@ class _ProfileScreen extends State<ProfileScreen> {
                             content:  Text(
                               videoViewsCount?.toString() ?? '0',
                               style:
-                                  TextStyle(color: accentColor, fontSize: 40),
+                                  const TextStyle(color: accentColor, fontSize: 40),
                             ),
                             backgroundColor: primaryColor,
                             onTap: () {
-                              // Navigator.push(
-                              //   context,
-                              //   PageRouteBuilder(
-                              //     transitionDuration:
-                              //         const Duration(milliseconds: 500),
-                              //     pageBuilder:
-                              //         (context, animation, secondaryAnimation) {
-                              //       return FadeTransition(
-                              //         opacity: animation,
-                              //         child: const VideoViewScreen(),
-                              //       );
-                              //     },
-                              //   ),
-                              // );
+                              Navigator.push(
+                                context,
+                                PageRouteBuilder(
+                                  transitionDuration:
+                                      const Duration(milliseconds: 500),
+                                  pageBuilder:
+                                      (context, animation, secondaryAnimation) {
+                                    return FadeTransition(
+                                      opacity: animation,
+                                      child: const VideoViewScreen(),
+                                    );
+                                  },
+                                ),
+                              );
                             },
                           ),
                         ),
